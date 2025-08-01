@@ -3,144 +3,120 @@ using System.IO;
 using System.IO.Hashing;
 using System.Linq;
 using System.Text;
+using AsciiChatacterMap;
 
-namespace language_dictionary
+namespace LanguageDictionary
 {
-    static public class English_Dictionary
+    public class EnglishDictionary
     {
         public const byte ENGLISH_LETTERS = 26;
         public const byte MAX_POSSIBLE_WORD_LENGTH = byte.MaxValue;
 
-
         //count of words
-        static private uint word_count = 0;
-        static public uint Word_Count() { return word_count; }
+        public readonly uint WORD_COUNT;
 
         //max length of a word in the dictionary
-        static private byte MAX_WORD_LENGTH = 0;
-        static public byte Max_Word_Length() { return MAX_WORD_LENGTH; }
+        public readonly byte MAX_WORD_LENGTH ;
 
         //count of word lengths
-        private static uint[] word_length_count;
-        public static uint[] Word_Length_Count()
-        {
-            uint[] x = new uint[MAX_POSSIBLE_WORD_LENGTH];
-            Array.Copy(word_length_count, x, MAX_POSSIBLE_WORD_LENGTH);
-            return x;
-        }
+        public readonly uint[] WORD_LENGTH_COUNT;
 
         //total letters in dictionary
-        private static ulong total_letters = 0;
-        public static ulong Total_Letters() { return total_letters; }
+        public readonly ulong TOTAL_LETTERS;
 
         //counts of letters in the dictionary
-        static private uint[] letter_count;
-        static public uint[] Letter_Count()
-        {
-            uint[] x = new uint[ENGLISH_LETTERS];
-            Array.Copy(letter_count, x, ENGLISH_LETTERS);
-            return x;
-        }
+        public readonly uint[] LETTER_COUNT;
 
         //max times a letter has appeared in a word
-        static private byte[] max_letter_count;
-        static public byte[] Max_Letter_Count()
-        {
-            byte[] x = new byte[ENGLISH_LETTERS];
-            Array.Copy(max_letter_count, x, ENGLISH_LETTERS);
-            return x;
-        }
-
+        public readonly byte[] MAX_LETTER_COUNT;
 
         //searchable and sortable object containing words and hash sums
-        private class Dictionary_Entry : IComparable<Dictionary_Entry>
+        private class DictionaryEntry : IComparable<DictionaryEntry>
         {
-            public readonly ulong hash;
-            public readonly string word;
+            public readonly uint HASH;
+            public readonly string WORD;
 
-            public Dictionary_Entry(ulong hash, string word)
+            public DictionaryEntry(uint hash, string word)
             {
-                this.hash = hash;
-                this.word = word;
+                this.HASH = hash;
+                this.WORD = word;
             }
 
-            int IComparable<Dictionary_Entry>.CompareTo(Dictionary_Entry other)
-            { return (int)(this.hash - other.hash); }
+            int IComparable<DictionaryEntry>.CompareTo(DictionaryEntry other)
+            { return (int)(this.HASH - other.HASH); }
         }
-        static private Dictionary_Entry[] dictionary;
+        private readonly DictionaryEntry[] _dictionary;
+        
         
         //validation
-        static public bool In_Dictionary(string s)
+        public bool InDictionary(string s)
         {
             //find the hash
             int index = Array.BinarySearch(
-                dictionary,
-                new Dictionary_Entry(Get_Word_Hash(s), s)
+                _dictionary,
+                new DictionaryEntry(GetWordHash(s), s)
                 );
             
             //make sure the hash and the word are the same
-            return index >= 0 && dictionary[index].word.Equals(s);
+            return index >= 0 && _dictionary[index].WORD.Equals(s);
         }
-
-
 
         // https://github.com/wordnik/wordlist/tree/main
         // with quation marks removed
         // one word per line
         // lower case
-        public static void Load_From_Txt(Stream s, string path)
+        public EnglishDictionary(Stream s, string path)
         {
             //dictionary sized based on nummber of words
-            word_count = (uint)File.ReadLines(path).Count();
-            dictionary = new Dictionary_Entry[word_count];
+            WORD_COUNT = (uint)File.ReadLines(path).Count();
+            _dictionary = new DictionaryEntry[WORD_COUNT];
             
             //metadata about the loaded words
-            letter_count = new uint[ENGLISH_LETTERS];
-            max_letter_count = new byte[ENGLISH_LETTERS];
-            word_length_count = new uint[MAX_POSSIBLE_WORD_LENGTH];
-            total_letters = 0;
+            LETTER_COUNT = new uint[ENGLISH_LETTERS];
+            MAX_LETTER_COUNT = new byte[ENGLISH_LETTERS];
+            WORD_LENGTH_COUNT = new uint[MAX_POSSIBLE_WORD_LENGTH];
+            TOTAL_LETTERS = 0;
 
             //setup for stream reading
-            ulong dictionary_cursor = 0;
+            ulong dictionaryCursor = 0;
             StreamReader sr = new StreamReader(s);
-            string word_from_file = sr.ReadLine();
+            string wordFromFile = sr.ReadLine();
             
             //read stream
-            while (word_from_file != null)
+            while (wordFromFile != null)
             {
-                byte[] word_letter_count = new byte[ENGLISH_LETTERS];
+                byte[] wordLetterCount = new byte[ENGLISH_LETTERS];
                 
                 //metadata count
-                word_length_count[word_from_file.Length]++;
-                foreach (char letter in word_from_file)
+                WORD_LENGTH_COUNT[wordFromFile.Length]++;
+                foreach (char letter in wordFromFile)
                 {
-                    total_letters++;
-                    letter_count[(letter - 'a')]++;
-                    word_letter_count[(letter - 'a')]++;
+                    TOTAL_LETTERS++;
+                    LETTER_COUNT[(letter - (byte)ASCII.Value.LETTER_a)]++;
+                    wordLetterCount[(letter - (byte)ASCII.Value.LETTER_a)]++;
                 }
 
                 //check for max letter occurances
                 for (byte x = 0; x < ENGLISH_LETTERS; x++)
-                    if (word_letter_count[x] > max_letter_count[x])
-                        max_letter_count[x] = word_letter_count[x];
-
+                    if (wordLetterCount[x] > MAX_LETTER_COUNT[x])
+                        MAX_LETTER_COUNT[x] = wordLetterCount[x];
+                
                 //store hash
-                dictionary[dictionary_cursor++] =
-                    new Dictionary_Entry(
-                        Get_Word_Hash(word_from_file),
-                        word_from_file);
+                _dictionary[dictionaryCursor++] =
+                    new DictionaryEntry(
+                        GetWordHash(wordFromFile),
+                        wordFromFile);
                 
                 //continue reading the stream
-                word_from_file = sr.ReadLine();
+                wordFromFile = sr.ReadLine();
             }
 
             //sort dictionary
-            Array.Sort(dictionary);
-
+            Array.Sort(_dictionary);
 
             //set max word length
             for (MAX_WORD_LENGTH = MAX_POSSIBLE_WORD_LENGTH - 1;
-                word_length_count[MAX_WORD_LENGTH] == 0;
+                WORD_LENGTH_COUNT[MAX_WORD_LENGTH] == 0;
                 MAX_WORD_LENGTH--) ;
 
             /*
@@ -186,13 +162,10 @@ namespace language_dictionary
         }
         */
 
-        private static ulong Get_Word_Hash(string s)
+        private static uint GetWordHash(string s)
         {
-            return BitConverter.ToUInt64(
-                Crc64.Hash(
-                    Encoding.ASCII.GetBytes(
-                        s.ToCharArray()
-                        )), 0);
+            return BitConverter.ToUInt32(Crc32.Hash(
+                Encoding.ASCII.GetBytes(s.ToCharArray())), 0);
         }
 
     }

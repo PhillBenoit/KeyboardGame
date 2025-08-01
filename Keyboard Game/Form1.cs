@@ -15,12 +15,13 @@ using System.Drawing;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using language_dictionary;
-using letter_tile;
-using user32;
+using LanguageDictionary;
+using LetterTile;
+using User32;
 using System.Collections.Generic;
+using AsciiChatacterMap;
 
-namespace Keyboard_Game
+namespace KeyboardGame
 {
 
     public partial class Form1 : Form
@@ -38,24 +39,26 @@ namespace Keyboard_Game
         private const string DGVCOL_POINTS = "points";
 
         //game tiles
-        private Letter_Bag bag;
+        private LetterBag _bag;
 
         //number of tiles to draw in a game
-        private byte tiles_to_draw = 20;
+        private const byte TILES_TO_DRAW = 20;
 
         //sets form to respond in game mode
-        private bool game_on = false;
+        private bool _gameOn = false;
 
         //timer variables
-        public ushort MAX_SECONDS = 120;
-        private ushort seconds;
+        private const ushort MAX_SECONDS = 120;
+        private ushort _seconds;
 
         //objext that holds all of the plaers' information
-        private player[] players;
+        private Player[] _players;
         
         //maps a keyboard handle to a player object
-        private Dictionary<IntPtr, player> keyboard_map =
-            new Dictionary<IntPtr, player>();
+        private readonly Dictionary<IntPtr, Player> _keyboardMap =
+            new Dictionary<IntPtr, Player>();
+
+        private EnglishDictionary _dictionary;
 
         //----------------------------------------------------
         //form functions
@@ -68,46 +71,46 @@ namespace Keyboard_Game
         private void Form1_Load(object sender, EventArgs e)
         {
             barTimer.Maximum = MAX_SECONDS;
-            players = new player[4];
-            players[0] = new player(new player_ui_elements(
+            _players = new Player[4];
+            _players[0] = new Player(new PlayerUiElements(
                 lblP1Score, lblP1CurrentWord, gridP1, btnP1Assign, btnP1Release,
                 btnP1Heartbeat, btnP1InDict, btnP1WorthPoints), 1);
-            players[1] = new player(new player_ui_elements(
+            _players[1] = new Player(new PlayerUiElements(
                 lblP2Score, lblP2CurrentWord, gridP2, btnP2Assign, btnP2Release,
                 btnP2Heartbeat, btnP2InDict, btnP2WorthPoints), 2);
-            players[2] = new player(new player_ui_elements(
+            _players[2] = new Player(new PlayerUiElements(
                 lblP3Score, lblP3CurrentWord, gridP3, btnP3Assign, btnP3Release,
                 btnP3Heartbeat, btnP3InDict, btnP3WorthPoints), 3);
-            players[3] = new player(new player_ui_elements(
+            _players[3] = new Player(new PlayerUiElements(
                 lblP4Score, lblP4CurrentWord, gridP4, btnP4Assign, btnP4Release,
                 btnP4Heartbeat, btnP4InDict, btnP4WorthPoints), 4);
-            foreach (player p in players) p.Reset();
+            foreach (Player p in _players) p.Reset();
             lblLetterPool.Text = "";
-            player_ui_elements.BACKUP_COLOR = btnP1Release.BackColor;
+            PlayerUiElements.BACKUP_COLOR = btnP1Release.BackColor;
         }
 
         //called once per second
         private void timer_Tick(object sender, EventArgs e)
         {
             //tick down timer
-            if (game_on)
+            if (_gameOn)
             {
-                seconds--;
+                _seconds--;
 
                 //update timer label
-                lblTimer.Text = String.Format("{0:D2}:{1:D2}", seconds / 60, seconds % 60);
+                lblTimer.Text = String.Format("{0:D2}:{1:D2}", _seconds / 60, _seconds % 60);
 
                 //set progress color based on amount of time remaining
                 Color c = Color.DarkGreen;
-                if (seconds < (MAX_SECONDS / 2)) c = Color.Gold;
-                if (seconds < (MAX_SECONDS / 4)) c = Color.Maroon;
+                if (_seconds < (MAX_SECONDS / 2)) c = Color.Gold;
+                if (_seconds < (MAX_SECONDS / 4)) c = Color.Maroon;
                 barTimer.ForeColor = c;
 
                 //update progress
-                barTimer.Value = seconds;
+                barTimer.Value = _seconds;
 
                 //check for game over
-                if (seconds == 0)
+                if (_seconds == 0)
                 {
                     startGameToolStripMenuItem_Click(sender, e);
                     MessageBox.Show(POPMSG_GAME_OVER);
@@ -142,19 +145,56 @@ namespace Keyboard_Game
             
         }
 
+        public static Nullable<Winuser.RAWINPUT> GetInputHeader(Message m)
+        {
+            //get size of input buffer
+            uint dwSize = 0;
+            Winuser.GetRawInputData(
+                m.LParam,
+                Winuser.RID_INPUT,
+                IntPtr.Zero,
+                ref dwSize,
+                (uint)Marshal.SizeOf(typeof(Winuser.RAWINPUTHEADER)
+                ));
+
+            IntPtr buffer = Marshal.AllocHGlobal((int)dwSize);
+            try
+            {
+                //read input buffer if it is of the expected size
+                if (Winuser.GetRawInputData(
+                    m.LParam,
+                    Winuser.RID_INPUT,
+                    buffer,
+                    ref dwSize,
+                    (uint)Marshal.SizeOf(typeof(Winuser.RAWINPUTHEADER)))
+                    == dwSize) return Marshal.PtrToStructure<Winuser.RAWINPUT>(buffer);
+
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(buffer);
+            }
+            return null;
+        }
+
+        private static bool IsWmType(Message message, int type)
+        { return message.Msg == type; }
+        private static bool IsRimType(Winuser.RAWINPUT message, int type)
+        { return message.header.dwType == type; }
+
         //process windows messages
         protected override void WndProc(ref Message m)
         {
             //filter for input messages
-            if (Winuser.is_wm_type(m, Winuser.WM_INPUT))
+            if (IsWmType(m, Winuser.WM_INPUT))
             {
                 //memory safe read message
-                Nullable<Winuser.RAWINPUT> null_or_raw = Winuser.get_input_header(m);
+                Nullable<Winuser.RAWINPUT> null_or_raw = GetInputHeader(m);
                 if (null_or_raw.Equals(null)) return;
                 Winuser.RAWINPUT raw = null_or_raw.Value;
                 
                 //filter for keyboard type input messages
-                if (Winuser.is_rim_type(raw, Winuser.RIM_TYPEKEYBOARD))
+                if (IsRimType(raw, Winuser.RIM_TYPEKEYBOARD))
                 {
                     //pressed key
                     ushort vkey = raw.data.keyboard.VKey;
@@ -162,29 +202,34 @@ namespace Keyboard_Game
                     //handle for device
                     IntPtr deviceHandle = raw.header.hDevice;
 
-                    player p;
+                    Player p;
                     //try to pull a player from the keyboard mappings
-                    if (keyboard_map.TryGetValue(deviceHandle,out p))
+                    if (_keyboardMap.TryGetValue(deviceHandle,out p))
                     {
                         //key up event
                         if (Convert.ToBoolean(raw.data.keyboard.Flags & Winuser.RIK_KEY_UP_FLAG))
                         {
-                            p.is_pressed[vkey] = false;
-                            p.ui.heartbeat.BackColor = player_ui_elements.BACKUP_COLOR;
+                            p.isPressed[vkey] = false;
+                            p.ui.heartbeat.BackColor = PlayerUiElements.BACKUP_COLOR;
+                            if (p.ui.currentWord.Text.Length > 0)
+                            {
+                                p.ui.inDict.BackColor = PlayerUiElements.BACKUP_COLOR;
+                                p.ui.worthPoints.BackColor = PlayerUiElements.BACKUP_COLOR;
+                            }
                         }
 
                         //key down event filtered for debounce
-                        else if (!p.is_pressed[vkey])
+                        else if (!p.isPressed[vkey])
                         {
                             //debounce makes sure key goes up before it can be pressed again
-                            p.is_pressed[vkey] = true;
+                            p.isPressed[vkey] = true;
                             p.ui.heartbeat.BackColor = Color.Gold;
-                            keypress_handler(p, (Winuser.ANSI)vkey);
+                            KeypressHandler(p, (Winuser.ANSI)vkey);
                         }
                     }
                     //look for player flagged for assignment
-                    else foreach(player pl in players)
-                            if (pl.assign_flag) confirm_assign(deviceHandle, pl);
+                    else foreach(Player pl in _players)
+                            if (pl.assignFlag) ConfirmAssign(deviceHandle, pl);
 
                 }
             }
@@ -194,44 +239,44 @@ namespace Keyboard_Game
         }
 
         //handles keypresses for known players
-        private void keypress_handler(player p, Winuser.ANSI key)
+        private void KeypressHandler(Player p, Winuser.ANSI key)
         {
             //game actions
-            if (game_on)
+            if (_gameOn)
             {
                 //get the word the player is currently typing
-                string s = p.ui.current_word.Text;
+                string s = p.ui.currentWord.Text;
 
                 //letters (shift to lower case)
                 if (key >= Winuser.ANSI.VK_A && key <= Winuser.ANSI.VK_Z)
-                    p.ui.current_word.Text += Convert.ToChar((key + 0x20));
+                    p.ui.currentWord.Text += Convert.ToChar((key + 0x20));
 
                 //backspace
                 else if (key == Winuser.ANSI.VK_BACKSPACE)
                 {
                     if (!string.IsNullOrEmpty(s))
-                        p.ui.current_word.Text = s.Remove(s.Length - 1);
+                        p.ui.currentWord.Text = s.Remove(s.Length - 1);
                 }
 
                 //delete
                 else if (key == Winuser.ANSI.VK_DELETE)
-                    p.ui.current_word.Text = "";
+                    p.ui.currentWord.Text = "";
 
                 //spacebar or enter to check word and add to score
                 else if (key == Winuser.ANSI.VK_SPACE ||
                     key == Winuser.ANSI.VK_RETURN)
                 {
-                    p.ui.worth_points.BackColor =
-                        player_ui_elements.BACKUP_COLOR;
+                    p.ui.worthPoints.BackColor =
+                        PlayerUiElements.BACKUP_COLOR;
                     
                     //make sure word is in the dictionary
-                    if (English_Dictionary.In_Dictionary(s))
+                    if (_dictionary.InDictionary(s))
                     {
-                        p.ui.in_dict.BackColor = Color.DarkGreen;
-                        p.Add_word(s, bag.Score_Word(s));
+                        p.ui.inDict.BackColor = Color.DarkGreen;
+                        p.AddWord(s, _bag.ScoreWord(s));
                     }
-                    else p.ui.in_dict.BackColor = Color.DarkRed;
-                    p.ui.current_word.Text = "";
+                    else p.ui.inDict.BackColor = Color.DarkRed;
+                    p.ui.currentWord.Text = "";
                 }
 
             }
@@ -241,40 +286,40 @@ namespace Keyboard_Game
 
             //up arrow toggles typed in word visibility
             if (key == Winuser.ANSI.VK_UP)
-                p.ui.current_word.Visible = !p.ui.current_word.Visible;
+                p.ui.currentWord.Visible = !p.ui.currentWord.Visible;
 
             //down arrow toggles score word list visibility
             else if (key == Winuser.ANSI.VK_DOWN)
-                p.ui.score_list.Visible = !p.ui.score_list.Visible;
+                p.ui.scoreList.Visible = !p.ui.scoreList.Visible;
 
             //right arrow toggles between ascending and descending score mode
             else if (key == Winuser.ANSI.VK_RIGHT)
-                p.ui.Set_Sort_Mode(
-                    p.ui.Get_Sort_Mode() == 
-                    player_ui_elements.SortModes.ScoreDesc ?
-                    player_ui_elements.SortModes.ScoreAsc :
-                    player_ui_elements.SortModes.ScoreDesc);
+                p.ui.SetSortMode(
+                    p.ui.GetSortMode() == 
+                    PlayerUiElements.SortModes.ScoreDesc ?
+                    PlayerUiElements.SortModes.ScoreAsc :
+                    PlayerUiElements.SortModes.ScoreDesc);
 
             //left arrow toggles between ascending and descending score mode
             else if (key == Winuser.ANSI.VK_LEFT)
-                p.ui.Set_Sort_Mode(
-                    p.ui.Get_Sort_Mode() ==
-                    player_ui_elements.SortModes.WordAlpha ?
-                    player_ui_elements.SortModes.WordLength :
-                    player_ui_elements.SortModes.WordAlpha);
+                p.ui.SetSortMode(
+                    p.ui.GetSortMode() ==
+                    PlayerUiElements.SortModes.WordAlpha ?
+                    PlayerUiElements.SortModes.WordLength :
+                    PlayerUiElements.SortModes.WordAlpha);
         }
 
         //called from windows message handler to assign player keyboard handle
-        private void confirm_assign(IntPtr h, player p)
+        private void ConfirmAssign(IntPtr h, Player p)
         {
-            keyboard_map.Add(h, p);
-            p.assign_flag = false;
+            _keyboardMap.Add(h, p);
+            p.assignFlag = false;
 
             //update and reactivate relevant ui elements
-            p.ui.assign.Text = String.Format(BTNMSG_READY, p.player_index);
-            foreach (player pl in players)
+            p.ui.assign.Text = String.Format(BTNMSG_READY, p.PLAYER_INDEX);
+            foreach (Player pl in _players)
             {
-                if (keyboard_map.ContainsValue(pl)) pl.ui.release.Enabled = true;
+                if (_keyboardMap.ContainsValue(pl)) pl.ui.release.Enabled = true;
                 else pl.ui.assign.Enabled = true;
             }
             menuStrip1.Enabled = true;
@@ -287,34 +332,34 @@ namespace Keyboard_Game
         //common button methods
 
         //sets binary flag for player assignment and locks down the ui
-        private void assign(player p)
+        private void Assign(Player p)
         {
             menuStrip1.Enabled = false;
-            foreach (player pl in players)
+            foreach (Player pl in _players)
             {
                 pl.ui.assign.Enabled = false;
                 pl.ui.release.Enabled = false;
             }
-            p.assign_flag = true;
+            p.assignFlag = true;
             p.ui.assign.Text = BTNMSG_WAIT;
         }
 
 
         //release keyboard handle from a player
-        private void release(player p)
+        private void Release(Player p)
         {
             //search for and remove handle
             IntPtr key = IntPtr.Zero;
-            foreach (var kh in keyboard_map) if (kh.Value == p) key = kh.Key;
-            keyboard_map.Remove(key);
+            foreach (var kh in _keyboardMap) if (kh.Value == p) key = kh.Key;
+            _keyboardMap.Remove(key);
             
             //reset ui elements
             p.Reset();
-            p.ui.assign.Text = String.Format(BTNMSG_ASSIGN, p.player_index);
+            p.ui.assign.Text = String.Format(BTNMSG_ASSIGN, p.PLAYER_INDEX);
             p.ui.assign.Enabled = true;
             p.ui.release.Enabled = false;
             miStartGame.Enabled =
-                keyboard_map.Count > 0 &&
+                _keyboardMap.Count > 0 &&
                 miLoadDictionary.Enabled == false;
         }
 
@@ -323,28 +368,28 @@ namespace Keyboard_Game
         //form button events
 
         private void btnP1Assign_Click(object sender, EventArgs e)
-        { assign(players[0]); }
+        { Assign(_players[0]); }
 
         private void btnP1Release_Click(object sender, EventArgs e)
-        { release(players[0]); }
+        { Release(_players[0]); }
 
         private void btnP2Assign_Click(object sender, EventArgs e)
-        { assign(players[1]); }
+        { Assign(_players[1]); }
 
         private void btnP2Release_Click(object sender, EventArgs e)
-        { release(players[1]); }
+        { Release(_players[1]); }
 
         private void btnP3Assign_Click(object sender, EventArgs e)
-        { assign(players[2]); }
+        { Assign(_players[2]); }
 
         private void btnP3Release_Click(object sender, EventArgs e)
-        { release(players[2]); }
+        { Release(_players[2]); }
 
         private void btnP4Assign_Click(object sender, EventArgs e)
-        { assign(players[3]); }
+        { Assign(_players[3]); }
 
         private void btnP4Release_Click(object sender, EventArgs e)
-        { release(players[3]); }
+        { Release(_players[3]); }
 
 
         //----------------------------------------
@@ -353,17 +398,17 @@ namespace Keyboard_Game
         //start / stop game
         private void startGameToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string next_text;
+            string nextText;
 
             //game stop actions
-            if (game_on)
+            if (_gameOn)
             {
-                next_text = MNUMSG_START;
-                foreach(player p in players)
+                nextText = MNUMSG_START;
+                foreach(Player p in _players)
                 {
-                    p.ui.current_word.Visible = true;
-                    p.ui.score_list.Visible = true;
-                    if (keyboard_map.ContainsValue(p))
+                    p.ui.currentWord.Visible = true;
+                    p.ui.scoreList.Visible = true;
+                    if (_keyboardMap.ContainsValue(p))
                         p.ui.release.Enabled = true;
                     else p.ui.assign.Enabled = true;
                 }
@@ -372,20 +417,20 @@ namespace Keyboard_Game
             //game start actions
             else
             {
-                next_text = MNUMSG_STOP;
-                seconds = MAX_SECONDS;
-                foreach (player p in players)
+                nextText = MNUMSG_STOP;
+                _seconds = MAX_SECONDS;
+                foreach (Player p in _players)
                 {
                     p.ui.assign.Enabled = false;
                     p.ui.release.Enabled = false;
                     p.Reset();
                 }
-                bag.Reset();
-                lblLetterPool.Text = bag.Draw(tiles_to_draw);
+                _bag.Reset();
+                lblLetterPool.Text = _bag.Draw(TILES_TO_DRAW);
             }
 
-            miStartGame.Text = next_text;
-            game_on = !game_on;
+            miStartGame.Text = nextText;
+            _gameOn = !_gameOn;
         }
 
         //load dictionary and set up bag of game tiles
@@ -398,13 +443,13 @@ namespace Keyboard_Game
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    English_Dictionary.Load_From_Txt(
+                    _dictionary = new EnglishDictionary(
                         openFileDialog.OpenFile(),
                         openFileDialog.FileName
                         );
-                    bag = new Letter_Bag(English_Dictionary.Max_Letter_Count(), 'a');
+                    _bag = new LetterBag(_dictionary.MAX_LETTER_COUNT, (char)ASCII.Value.LETTER_a);
                     miLoadDictionary.Enabled = false;
-                    miStartGame.Enabled = keyboard_map.Count > 0;
+                    miStartGame.Enabled = _keyboardMap.Count > 0;
                 }
                 
             }
@@ -414,14 +459,14 @@ namespace Keyboard_Game
         //-----------------------------------------------------
         //classes to organize game data
 
-        private class player_ui_elements
+        private class PlayerUiElements
         {
-            public readonly Label score, current_word;
-            public readonly DataGridView score_list;
+            public readonly Label score, currentWord;
+            public readonly DataGridView scoreList;
             public readonly Button assign, release,//player keyboard actions
-                heartbeat, in_dict, worth_points;//feedback on keyboard inout
-            private byte sort_index;
-            private readonly Action[] sort_modes = new Action[4];
+                heartbeat, inDict, worthPoints;//feedback on keyboard inout
+            private byte _sortIndex;
+            private readonly Action[] sortModes = new Action[4];
             public static Color BACKUP_COLOR;
             
 
@@ -436,110 +481,109 @@ namespace Keyboard_Game
                         x_dgr.Cells[0].Value.ToString().Length;
                 }
             }
-            private LengthSort length_compare = new LengthSort();
+            private readonly LengthSort _lengthCompare = new LengthSort();
             public enum SortModes { ScoreDesc, ScoreAsc, WordAlpha, WordLength }
-            private void Sort_Score_Dec()
-            { score_list.Sort(score_list.Columns[1],ListSortDirection.Descending); }
-            private void Sort_Score_Asc()
-            { score_list.Sort(score_list.Columns[1], ListSortDirection.Ascending); }
-            private void Sort_Alpha()
-            { score_list.Sort(score_list.Columns[0], ListSortDirection.Ascending); }
-            private void Sort_Length()
-            { score_list.Sort(length_compare); }
-            public void Set_Sort_Mode(SortModes s) { sort_index = (byte)s; Sort(); }
-            public SortModes Get_Sort_Mode() { return (SortModes)sort_index; }
-            public void Sort() { sort_modes[sort_index](); }
+            private void SortScoreDec()
+            { scoreList.Sort(scoreList.Columns[1],ListSortDirection.Descending); }
+            private void SortScoreAsc()
+            { scoreList.Sort(scoreList.Columns[1], ListSortDirection.Ascending); }
+            private void SortAlpha()
+            { scoreList.Sort(scoreList.Columns[0], ListSortDirection.Ascending); }
+            private void SortLength()
+            { scoreList.Sort(_lengthCompare); }
+            public void SetSortMode(SortModes s) { _sortIndex = (byte)s; Sort(); }
+            public SortModes GetSortMode() { return (SortModes)_sortIndex; }
+            public void Sort() { sortModes[_sortIndex](); }
 
 
             //makes row header a row count
-            private void dgv_sorted(object sender, EventArgs e)
+            private void DgvSorted(object sender, EventArgs e)
             {
-                foreach (DataGridViewRow r in score_list.Rows)
+                foreach (DataGridViewRow r in scoreList.Rows)
                     r.HeaderCell.Value = (r.Index + 1).ToString();
             }
 
             //constructor
-            public player_ui_elements(Label s, Label cw, DataGridView sl, Button an,
+            public PlayerUiElements(Label s, Label cw, DataGridView sl, Button an,
                 Button rl, Button hb, Button id, Button wp)
             {
                 score = s;
-                current_word = cw;
-                score_list = sl;
+                currentWord = cw;
+                scoreList = sl;
                 assign = an;
                 release = rl;
                 heartbeat = hb;
-                in_dict = id;
-                worth_points = wp;
+                inDict = id;
+                worthPoints = wp;
                 
                 //setup sorting
-                sort_modes[(byte)SortModes.ScoreDesc] = Sort_Score_Dec;
-                sort_modes[(byte)SortModes.ScoreAsc] = Sort_Score_Asc;
-                sort_modes[(byte)SortModes.WordAlpha] = Sort_Alpha;
-                sort_modes[(byte)SortModes.WordLength] = Sort_Length;
-                sort_index = (byte)SortModes.ScoreDesc;
+                sortModes[(byte)SortModes.ScoreDesc] = SortScoreDec;
+                sortModes[(byte)SortModes.ScoreAsc] = SortScoreAsc;
+                sortModes[(byte)SortModes.WordAlpha] = SortAlpha;
+                sortModes[(byte)SortModes.WordLength] = SortLength;
+                _sortIndex = (byte)SortModes.ScoreDesc;
 
                 //manual setup of datagridview
-                score_list.ColumnCount = 2;
-                score_list.Columns[0].HeaderText = DGVCOL_WORD;
-                score_list.Columns[1].HeaderText = DGVCOL_POINTS;
-                score_list.Columns[0].ValueType = typeof(String);
-                score_list.Columns[1].ValueType = typeof(UInt16);
-                score_list.Columns[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
-                score_list.Columns[1].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-                score_list.Sorted += dgv_sorted;
+                scoreList.ColumnCount = 2;
+                scoreList.Columns[0].HeaderText = DGVCOL_WORD;
+                scoreList.Columns[1].HeaderText = DGVCOL_POINTS;
+                scoreList.Columns[0].ValueType = typeof(String);
+                scoreList.Columns[1].ValueType = typeof(UInt16);
+                scoreList.Columns[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                scoreList.Columns[1].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                scoreList.Sorted += DgvSorted;
             }
 
             public void Reset()
             {
                 score.Text = "0";
-                current_word.Text = "";
-                score_list.Rows.Clear();
+                currentWord.Text = "";
+                scoreList.Rows.Clear();
                 heartbeat.BackColor = BACKUP_COLOR;
-                in_dict.BackColor = BACKUP_COLOR;
-                worth_points.BackColor = BACKUP_COLOR;
+                inDict.BackColor = BACKUP_COLOR;
+                worthPoints.BackColor = BACKUP_COLOR;
             }
         }
 
-        private class player
+        private class Player
         {
-            private uint score;
+            private uint _score;
 
-            public readonly player_ui_elements ui;
-            public readonly byte player_index;
+            public readonly PlayerUiElements ui;
+            public readonly byte PLAYER_INDEX;
 
-            //public IntPtr keyboard_handle;
-            public bool assign_flag;
-            public bool[] is_pressed;
+            public bool assignFlag;
+            public bool[] isPressed;
 
 
             public void Reset()
             {
-                score = 0;
-                is_pressed = new bool[Winuser.MAX_ANSI];
+                _score = 0;
+                isPressed = new bool[Winuser.MAX_ANSI];
                 ui.Reset();
             }
 
-            public void Add_word(String word, UInt16 points)
+            public void AddWord(String word, UInt16 points)
             {
                 //make sure word is not already in the list
-                foreach (DataGridViewRow row in ui.score_list.Rows)
+                foreach (DataGridViewRow row in ui.scoreList.Rows)
                     if (word.Equals(row.Cells[0].Value)) return;
 
                 //update the ui
-                score += points;
-                ui.worth_points.BackColor = points == 0 ? Color.DarkRed : Color.DarkGreen;
-                ui.score.Text = score.ToString();
-                ui.score_list.Rows.Add(word, points);
+                _score += points;
+                ui.worthPoints.BackColor = points == 0 ? Color.DarkRed : Color.DarkGreen;
+                ui.score.Text = _score.ToString();
+                ui.scoreList.Rows.Add(word, points);
                 ui.Sort();
             }
 
-            public player(player_ui_elements u, byte i)
+            public Player(PlayerUiElements u, byte i)
             {
                 ui = u;
-                player_index = i;
-                score = 0;
-                assign_flag = false;
-                is_pressed = new bool[Winuser.MAX_ANSI];
+                PLAYER_INDEX = i;
+                _score = 0;
+                assignFlag = false;
+                isPressed = new bool[Winuser.MAX_ANSI];
             }
         }
 

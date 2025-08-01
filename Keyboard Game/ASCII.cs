@@ -1,4 +1,4 @@
-﻿namespace ascii_chatacter_map
+﻿namespace AsciiChatacterMap
 {
     static public class ASCII
     {

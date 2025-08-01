@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Keyboard_Game
+namespace KeyboardGame
 {
     internal static class Program
     {

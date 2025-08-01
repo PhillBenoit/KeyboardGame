@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Keyboard_Game.Properties {
+namespace KeyboardGame.Properties {
     using System;
     
     

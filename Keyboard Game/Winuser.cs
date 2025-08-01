@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 
-namespace user32
+namespace User32
 {
     public static class Winuser
     {
@@ -16,43 +15,6 @@ namespace user32
         public const ushort RIC_INPUTSINK = 0x00; //receive input even when not focused
         public const ushort RIK_KEY_DOWN_FLAG = 0x00; //raw input keyboard keypress event flag
         public const ushort RIK_KEY_UP_FLAG = 0x01; //raw input keyboard keypress event flag
-
-        public static bool is_wm_type(Message m,int t)
-        { return m.Msg == t; }
-        public static bool is_rim_type(Winuser.RAWINPUT m, int t)
-        { return m.header.dwType == t; }
-
-        public static Nullable<Winuser.RAWINPUT> get_input_header(Message m)
-        {
-            //get size of input buffer
-            uint dwSize = 0;
-            Winuser.GetRawInputData(
-                m.LParam,
-                Winuser.RID_INPUT,
-                IntPtr.Zero,
-                ref dwSize,
-                (uint)Marshal.SizeOf(typeof(Winuser.RAWINPUTHEADER)
-                ));
-
-            IntPtr buffer = Marshal.AllocHGlobal((int)dwSize);
-            try
-            {
-                //read input buffer if it is of the expected size
-                if (Winuser.GetRawInputData(
-                    m.LParam,
-                    Winuser.RID_INPUT,
-                    buffer,
-                    ref dwSize,
-                    (uint)Marshal.SizeOf(typeof(Winuser.RAWINPUTHEADER)))
-                    == dwSize) return Marshal.PtrToStructure<Winuser.RAWINPUT>(buffer);
-                
-            }
-            finally
-            {
-                Marshal.FreeHGlobal(buffer);
-            }
-            return null;
-        }
 
         //structures for formatting data
         [StructLayout(LayoutKind.Sequential)]
