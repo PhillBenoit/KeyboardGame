@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
@@ -86,10 +87,10 @@
             // btnP1Assign
             // 
             this.btnP1Assign.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnP1Assign.Location = new System.Drawing.Point(56, 30);
+            this.btnP1Assign.Location = new System.Drawing.Point(63, 38);
             this.btnP1Assign.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnP1Assign.Name = "btnP1Assign";
-            this.btnP1Assign.Size = new System.Drawing.Size(156, 60);
+            this.btnP1Assign.Size = new System.Drawing.Size(176, 75);
             this.btnP1Assign.TabIndex = 0;
             this.btnP1Assign.Text = "Assign Player 1";
             this.btnP1Assign.UseVisualStyleBackColor = true;
@@ -99,30 +100,31 @@
             // 
             this.lblP1CurrentWord.BackColor = System.Drawing.SystemColors.HighlightText;
             this.lblP1CurrentWord.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblP1CurrentWord.Location = new System.Drawing.Point(12, 92);
+            this.lblP1CurrentWord.Location = new System.Drawing.Point(14, 115);
             this.lblP1CurrentWord.Name = "lblP1CurrentWord";
-            this.lblP1CurrentWord.Size = new System.Drawing.Size(563, 32);
+            this.lblP1CurrentWord.Size = new System.Drawing.Size(633, 40);
             this.lblP1CurrentWord.TabIndex = 2;
             this.lblP1CurrentWord.Text = "123456789012345678901234567890";
             this.lblP1CurrentWord.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // menuStrip1
             // 
+            this.menuStrip1.GripMargin = new System.Windows.Forms.Padding(2, 2, 0, 2);
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.miLoadDictionary,
             this.miStartGame});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Padding = new System.Windows.Forms.Padding(5, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(1233, 28);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(6, 2, 0, 2);
+            this.menuStrip1.Size = new System.Drawing.Size(1387, 33);
             this.menuStrip1.TabIndex = 4;
             this.menuStrip1.Text = "menuStrip1";
             // 
             // miLoadDictionary
             // 
             this.miLoadDictionary.Name = "miLoadDictionary";
-            this.miLoadDictionary.Size = new System.Drawing.Size(128, 24);
+            this.miLoadDictionary.Size = new System.Drawing.Size(152, 29);
             this.miLoadDictionary.Text = "Load Dictionary";
             this.miLoadDictionary.Click += new System.EventHandler(this.loadDictionaryToolStripMenuItem_Click);
             // 
@@ -130,16 +132,16 @@
             // 
             this.miStartGame.Enabled = false;
             this.miStartGame.Name = "miStartGame";
-            this.miStartGame.Size = new System.Drawing.Size(97, 24);
+            this.miStartGame.Size = new System.Drawing.Size(115, 29);
             this.miStartGame.Text = "Start Game";
             this.miStartGame.Click += new System.EventHandler(this.startGameToolStripMenuItem_Click);
             // 
             // barTimer
             // 
-            this.barTimer.Location = new System.Drawing.Point(118, 397);
+            this.barTimer.Location = new System.Drawing.Point(133, 496);
             this.barTimer.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.barTimer.Name = "barTimer";
-            this.barTimer.Size = new System.Drawing.Size(1115, 32);
+            this.barTimer.Size = new System.Drawing.Size(1254, 40);
             this.barTimer.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.barTimer.TabIndex = 9;
             // 
@@ -147,9 +149,9 @@
             // 
             this.lblTimer.AutoSize = true;
             this.lblTimer.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F);
-            this.lblTimer.Location = new System.Drawing.Point(12, 397);
+            this.lblTimer.Location = new System.Drawing.Point(14, 496);
             this.lblTimer.Name = "lblTimer";
-            this.lblTimer.Size = new System.Drawing.Size(86, 32);
+            this.lblTimer.Size = new System.Drawing.Size(98, 38);
             this.lblTimer.TabIndex = 10;
             this.lblTimer.Text = "00:00";
             // 
@@ -162,11 +164,11 @@
             // btnP1Release
             // 
             this.btnP1Release.Enabled = false;
-            this.btnP1Release.Image = global::KeyboardGame.Properties.Resources.Offline_16xLG;
-            this.btnP1Release.Location = new System.Drawing.Point(218, 30);
+            this.btnP1Release.Image = ((System.Drawing.Image)(resources.GetObject("btnP1Release.Image")));
+            this.btnP1Release.Location = new System.Drawing.Point(245, 38);
             this.btnP1Release.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnP1Release.Name = "btnP1Release";
-            this.btnP1Release.Size = new System.Drawing.Size(25, 25);
+            this.btnP1Release.Size = new System.Drawing.Size(28, 31);
             this.btnP1Release.TabIndex = 14;
             this.btnP1Release.UseVisualStyleBackColor = true;
             this.btnP1Release.Click += new System.EventHandler(this.btnP1Release_Click);
@@ -175,10 +177,10 @@
             // 
             this.lblLetterPool.BackColor = System.Drawing.SystemColors.HighlightText;
             this.lblLetterPool.Font = new System.Drawing.Font("Microsoft Sans Serif", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblLetterPool.Location = new System.Drawing.Point(0, 347);
+            this.lblLetterPool.Location = new System.Drawing.Point(0, 434);
             this.lblLetterPool.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblLetterPool.Name = "lblLetterPool";
-            this.lblLetterPool.Size = new System.Drawing.Size(1233, 48);
+            this.lblLetterPool.Size = new System.Drawing.Size(1387, 60);
             this.lblLetterPool.TabIndex = 15;
             this.lblLetterPool.Text = "1234567890123456789012345678901234567890";
             this.lblLetterPool.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -187,11 +189,11 @@
             // 
             this.lblP1Score.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblP1Score.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.lblP1Score.Location = new System.Drawing.Point(280, 30);
+            this.lblP1Score.Location = new System.Drawing.Point(315, 38);
             this.lblP1Score.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblP1Score.Name = "lblP1Score";
             this.lblP1Score.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.lblP1Score.Size = new System.Drawing.Size(261, 60);
+            this.lblP1Score.Size = new System.Drawing.Size(294, 75);
             this.lblP1Score.TabIndex = 17;
             this.lblP1Score.Text = "99999999999";
             this.lblP1Score.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -215,8 +217,8 @@
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.gridP1.DefaultCellStyle = dataGridViewCellStyle1;
             this.gridP1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.gridP1.Location = new System.Drawing.Point(12, 128);
-            this.gridP1.Margin = new System.Windows.Forms.Padding(4);
+            this.gridP1.Location = new System.Drawing.Point(14, 160);
+            this.gridP1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.gridP1.Name = "gridP1";
             this.gridP1.ReadOnly = true;
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -229,67 +231,67 @@
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.gridP1.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridP1.RowHeadersWidth = 51;
-            this.gridP1.Size = new System.Drawing.Size(563, 198);
+            this.gridP1.Size = new System.Drawing.Size(633, 248);
             this.gridP1.TabIndex = 18;
             this.gridP1.TabStop = false;
             // 
             // btnP1InDict
             // 
             this.btnP1InDict.Enabled = false;
-            this.btnP1InDict.Location = new System.Drawing.Point(218, 66);
+            this.btnP1InDict.Location = new System.Drawing.Point(245, 82);
             this.btnP1InDict.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnP1InDict.Name = "btnP1InDict";
-            this.btnP1InDict.Size = new System.Drawing.Size(25, 25);
+            this.btnP1InDict.Size = new System.Drawing.Size(28, 31);
             this.btnP1InDict.TabIndex = 19;
             this.btnP1InDict.UseVisualStyleBackColor = true;
             // 
             // btnP1WorthPoints
             // 
             this.btnP1WorthPoints.Enabled = false;
-            this.btnP1WorthPoints.Location = new System.Drawing.Point(248, 66);
+            this.btnP1WorthPoints.Location = new System.Drawing.Point(279, 82);
             this.btnP1WorthPoints.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnP1WorthPoints.Name = "btnP1WorthPoints";
-            this.btnP1WorthPoints.Size = new System.Drawing.Size(25, 25);
+            this.btnP1WorthPoints.Size = new System.Drawing.Size(28, 31);
             this.btnP1WorthPoints.TabIndex = 21;
             this.btnP1WorthPoints.UseVisualStyleBackColor = true;
             // 
             // btnP1Heartbeat
             // 
             this.btnP1Heartbeat.Enabled = false;
-            this.btnP1Heartbeat.Location = new System.Drawing.Point(248, 30);
+            this.btnP1Heartbeat.Location = new System.Drawing.Point(279, 38);
             this.btnP1Heartbeat.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnP1Heartbeat.Name = "btnP1Heartbeat";
-            this.btnP1Heartbeat.Size = new System.Drawing.Size(25, 25);
+            this.btnP1Heartbeat.Size = new System.Drawing.Size(28, 31);
             this.btnP1Heartbeat.TabIndex = 20;
             this.btnP1Heartbeat.UseVisualStyleBackColor = true;
             // 
             // btnP2WorthPoints
             // 
             this.btnP2WorthPoints.Enabled = false;
-            this.btnP2WorthPoints.Location = new System.Drawing.Point(887, 66);
+            this.btnP2WorthPoints.Location = new System.Drawing.Point(998, 82);
             this.btnP2WorthPoints.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnP2WorthPoints.Name = "btnP2WorthPoints";
-            this.btnP2WorthPoints.Size = new System.Drawing.Size(25, 25);
+            this.btnP2WorthPoints.Size = new System.Drawing.Size(28, 31);
             this.btnP2WorthPoints.TabIndex = 29;
             this.btnP2WorthPoints.UseVisualStyleBackColor = true;
             // 
             // btnP2Heartbeat
             // 
             this.btnP2Heartbeat.Enabled = false;
-            this.btnP2Heartbeat.Location = new System.Drawing.Point(887, 30);
+            this.btnP2Heartbeat.Location = new System.Drawing.Point(998, 38);
             this.btnP2Heartbeat.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnP2Heartbeat.Name = "btnP2Heartbeat";
-            this.btnP2Heartbeat.Size = new System.Drawing.Size(25, 25);
+            this.btnP2Heartbeat.Size = new System.Drawing.Size(28, 31);
             this.btnP2Heartbeat.TabIndex = 28;
             this.btnP2Heartbeat.UseVisualStyleBackColor = true;
             // 
             // btnP2InDict
             // 
             this.btnP2InDict.Enabled = false;
-            this.btnP2InDict.Location = new System.Drawing.Point(857, 66);
+            this.btnP2InDict.Location = new System.Drawing.Point(964, 82);
             this.btnP2InDict.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnP2InDict.Name = "btnP2InDict";
-            this.btnP2InDict.Size = new System.Drawing.Size(25, 25);
+            this.btnP2InDict.Size = new System.Drawing.Size(28, 31);
             this.btnP2InDict.TabIndex = 27;
             this.btnP2InDict.UseVisualStyleBackColor = true;
             // 
@@ -312,8 +314,8 @@
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.gridP2.DefaultCellStyle = dataGridViewCellStyle3;
             this.gridP2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.gridP2.Location = new System.Drawing.Point(657, 128);
-            this.gridP2.Margin = new System.Windows.Forms.Padding(4);
+            this.gridP2.Location = new System.Drawing.Point(739, 160);
+            this.gridP2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.gridP2.Name = "gridP2";
             this.gridP2.ReadOnly = true;
             dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -326,7 +328,7 @@
             dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.gridP2.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.gridP2.RowHeadersWidth = 51;
-            this.gridP2.Size = new System.Drawing.Size(563, 198);
+            this.gridP2.Size = new System.Drawing.Size(633, 248);
             this.gridP2.TabIndex = 26;
             this.gridP2.TabStop = false;
             // 
@@ -334,11 +336,11 @@
             // 
             this.lblP2Score.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblP2Score.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.lblP2Score.Location = new System.Drawing.Point(919, 30);
+            this.lblP2Score.Location = new System.Drawing.Point(1034, 38);
             this.lblP2Score.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblP2Score.Name = "lblP2Score";
             this.lblP2Score.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.lblP2Score.Size = new System.Drawing.Size(261, 60);
+            this.lblP2Score.Size = new System.Drawing.Size(294, 75);
             this.lblP2Score.TabIndex = 25;
             this.lblP2Score.Text = "99999999999";
             this.lblP2Score.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -346,11 +348,11 @@
             // btnP2Release
             // 
             this.btnP2Release.Enabled = false;
-            this.btnP2Release.Image = global::KeyboardGame.Properties.Resources.Offline_16xLG;
-            this.btnP2Release.Location = new System.Drawing.Point(857, 30);
+            this.btnP2Release.Image = ((System.Drawing.Image)(resources.GetObject("btnP2Release.Image")));
+            this.btnP2Release.Location = new System.Drawing.Point(964, 38);
             this.btnP2Release.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnP2Release.Name = "btnP2Release";
-            this.btnP2Release.Size = new System.Drawing.Size(25, 25);
+            this.btnP2Release.Size = new System.Drawing.Size(28, 31);
             this.btnP2Release.TabIndex = 24;
             this.btnP2Release.UseVisualStyleBackColor = true;
             this.btnP2Release.Click += new System.EventHandler(this.btnP2Release_Click);
@@ -359,9 +361,9 @@
             // 
             this.lblP2CurrentWord.BackColor = System.Drawing.SystemColors.HighlightText;
             this.lblP2CurrentWord.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblP2CurrentWord.Location = new System.Drawing.Point(657, 92);
+            this.lblP2CurrentWord.Location = new System.Drawing.Point(739, 115);
             this.lblP2CurrentWord.Name = "lblP2CurrentWord";
-            this.lblP2CurrentWord.Size = new System.Drawing.Size(563, 32);
+            this.lblP2CurrentWord.Size = new System.Drawing.Size(633, 40);
             this.lblP2CurrentWord.TabIndex = 23;
             this.lblP2CurrentWord.Text = "123456789012345678901234567890";
             this.lblP2CurrentWord.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -369,10 +371,10 @@
             // btnP2Assign
             // 
             this.btnP2Assign.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnP2Assign.Location = new System.Drawing.Point(695, 30);
+            this.btnP2Assign.Location = new System.Drawing.Point(782, 38);
             this.btnP2Assign.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnP2Assign.Name = "btnP2Assign";
-            this.btnP2Assign.Size = new System.Drawing.Size(156, 60);
+            this.btnP2Assign.Size = new System.Drawing.Size(176, 75);
             this.btnP2Assign.TabIndex = 22;
             this.btnP2Assign.Text = "Assign Player 2";
             this.btnP2Assign.UseVisualStyleBackColor = true;
@@ -381,30 +383,30 @@
             // btnP4WorthPoints
             // 
             this.btnP4WorthPoints.Enabled = false;
-            this.btnP4WorthPoints.Location = new System.Drawing.Point(887, 480);
+            this.btnP4WorthPoints.Location = new System.Drawing.Point(998, 600);
             this.btnP4WorthPoints.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnP4WorthPoints.Name = "btnP4WorthPoints";
-            this.btnP4WorthPoints.Size = new System.Drawing.Size(25, 25);
+            this.btnP4WorthPoints.Size = new System.Drawing.Size(28, 31);
             this.btnP4WorthPoints.TabIndex = 45;
             this.btnP4WorthPoints.UseVisualStyleBackColor = true;
             // 
             // btnP4Heartbeat
             // 
             this.btnP4Heartbeat.Enabled = false;
-            this.btnP4Heartbeat.Location = new System.Drawing.Point(887, 444);
+            this.btnP4Heartbeat.Location = new System.Drawing.Point(998, 555);
             this.btnP4Heartbeat.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnP4Heartbeat.Name = "btnP4Heartbeat";
-            this.btnP4Heartbeat.Size = new System.Drawing.Size(25, 25);
+            this.btnP4Heartbeat.Size = new System.Drawing.Size(28, 31);
             this.btnP4Heartbeat.TabIndex = 44;
             this.btnP4Heartbeat.UseVisualStyleBackColor = true;
             // 
             // btnP4InDict
             // 
             this.btnP4InDict.Enabled = false;
-            this.btnP4InDict.Location = new System.Drawing.Point(857, 480);
+            this.btnP4InDict.Location = new System.Drawing.Point(964, 600);
             this.btnP4InDict.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnP4InDict.Name = "btnP4InDict";
-            this.btnP4InDict.Size = new System.Drawing.Size(25, 25);
+            this.btnP4InDict.Size = new System.Drawing.Size(28, 31);
             this.btnP4InDict.TabIndex = 43;
             this.btnP4InDict.UseVisualStyleBackColor = true;
             // 
@@ -427,8 +429,8 @@
             dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.gridP4.DefaultCellStyle = dataGridViewCellStyle5;
             this.gridP4.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.gridP4.Location = new System.Drawing.Point(657, 542);
-            this.gridP4.Margin = new System.Windows.Forms.Padding(4);
+            this.gridP4.Location = new System.Drawing.Point(739, 678);
+            this.gridP4.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.gridP4.Name = "gridP4";
             this.gridP4.ReadOnly = true;
             dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -441,7 +443,7 @@
             dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.gridP4.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.gridP4.RowHeadersWidth = 51;
-            this.gridP4.Size = new System.Drawing.Size(563, 198);
+            this.gridP4.Size = new System.Drawing.Size(633, 248);
             this.gridP4.TabIndex = 42;
             this.gridP4.TabStop = false;
             // 
@@ -449,11 +451,11 @@
             // 
             this.lblP4Score.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblP4Score.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.lblP4Score.Location = new System.Drawing.Point(919, 444);
+            this.lblP4Score.Location = new System.Drawing.Point(1034, 555);
             this.lblP4Score.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblP4Score.Name = "lblP4Score";
             this.lblP4Score.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.lblP4Score.Size = new System.Drawing.Size(261, 60);
+            this.lblP4Score.Size = new System.Drawing.Size(294, 75);
             this.lblP4Score.TabIndex = 41;
             this.lblP4Score.Text = "99999999999";
             this.lblP4Score.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -461,11 +463,11 @@
             // btnP4Release
             // 
             this.btnP4Release.Enabled = false;
-            this.btnP4Release.Image = global::KeyboardGame.Properties.Resources.Offline_16xLG;
-            this.btnP4Release.Location = new System.Drawing.Point(857, 444);
+            this.btnP4Release.Image = ((System.Drawing.Image)(resources.GetObject("btnP4Release.Image")));
+            this.btnP4Release.Location = new System.Drawing.Point(964, 555);
             this.btnP4Release.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnP4Release.Name = "btnP4Release";
-            this.btnP4Release.Size = new System.Drawing.Size(25, 25);
+            this.btnP4Release.Size = new System.Drawing.Size(28, 31);
             this.btnP4Release.TabIndex = 40;
             this.btnP4Release.UseVisualStyleBackColor = true;
             this.btnP4Release.Click += new System.EventHandler(this.btnP4Release_Click);
@@ -474,9 +476,9 @@
             // 
             this.lblP4CurrentWord.BackColor = System.Drawing.SystemColors.HighlightText;
             this.lblP4CurrentWord.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblP4CurrentWord.Location = new System.Drawing.Point(657, 506);
+            this.lblP4CurrentWord.Location = new System.Drawing.Point(739, 632);
             this.lblP4CurrentWord.Name = "lblP4CurrentWord";
-            this.lblP4CurrentWord.Size = new System.Drawing.Size(563, 32);
+            this.lblP4CurrentWord.Size = new System.Drawing.Size(633, 40);
             this.lblP4CurrentWord.TabIndex = 39;
             this.lblP4CurrentWord.Text = "123456789012345678901234567890";
             this.lblP4CurrentWord.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -484,10 +486,10 @@
             // btnP4Assign
             // 
             this.btnP4Assign.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnP4Assign.Location = new System.Drawing.Point(695, 444);
+            this.btnP4Assign.Location = new System.Drawing.Point(782, 555);
             this.btnP4Assign.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnP4Assign.Name = "btnP4Assign";
-            this.btnP4Assign.Size = new System.Drawing.Size(156, 60);
+            this.btnP4Assign.Size = new System.Drawing.Size(176, 75);
             this.btnP4Assign.TabIndex = 38;
             this.btnP4Assign.Text = "Assign Player 4";
             this.btnP4Assign.UseVisualStyleBackColor = true;
@@ -496,30 +498,30 @@
             // btnP3WorthPoints
             // 
             this.btnP3WorthPoints.Enabled = false;
-            this.btnP3WorthPoints.Location = new System.Drawing.Point(248, 480);
+            this.btnP3WorthPoints.Location = new System.Drawing.Point(279, 600);
             this.btnP3WorthPoints.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnP3WorthPoints.Name = "btnP3WorthPoints";
-            this.btnP3WorthPoints.Size = new System.Drawing.Size(25, 25);
+            this.btnP3WorthPoints.Size = new System.Drawing.Size(28, 31);
             this.btnP3WorthPoints.TabIndex = 37;
             this.btnP3WorthPoints.UseVisualStyleBackColor = true;
             // 
             // btnP3Heartbeat
             // 
             this.btnP3Heartbeat.Enabled = false;
-            this.btnP3Heartbeat.Location = new System.Drawing.Point(248, 444);
+            this.btnP3Heartbeat.Location = new System.Drawing.Point(279, 555);
             this.btnP3Heartbeat.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnP3Heartbeat.Name = "btnP3Heartbeat";
-            this.btnP3Heartbeat.Size = new System.Drawing.Size(25, 25);
+            this.btnP3Heartbeat.Size = new System.Drawing.Size(28, 31);
             this.btnP3Heartbeat.TabIndex = 36;
             this.btnP3Heartbeat.UseVisualStyleBackColor = true;
             // 
             // btnP3InDict
             // 
             this.btnP3InDict.Enabled = false;
-            this.btnP3InDict.Location = new System.Drawing.Point(218, 480);
+            this.btnP3InDict.Location = new System.Drawing.Point(245, 600);
             this.btnP3InDict.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnP3InDict.Name = "btnP3InDict";
-            this.btnP3InDict.Size = new System.Drawing.Size(25, 25);
+            this.btnP3InDict.Size = new System.Drawing.Size(28, 31);
             this.btnP3InDict.TabIndex = 35;
             this.btnP3InDict.UseVisualStyleBackColor = true;
             // 
@@ -542,8 +544,8 @@
             dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.gridP3.DefaultCellStyle = dataGridViewCellStyle7;
             this.gridP3.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.gridP3.Location = new System.Drawing.Point(12, 542);
-            this.gridP3.Margin = new System.Windows.Forms.Padding(4);
+            this.gridP3.Location = new System.Drawing.Point(14, 678);
+            this.gridP3.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.gridP3.Name = "gridP3";
             this.gridP3.ReadOnly = true;
             dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -556,7 +558,7 @@
             dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.gridP3.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
             this.gridP3.RowHeadersWidth = 51;
-            this.gridP3.Size = new System.Drawing.Size(563, 198);
+            this.gridP3.Size = new System.Drawing.Size(633, 248);
             this.gridP3.TabIndex = 34;
             this.gridP3.TabStop = false;
             // 
@@ -564,11 +566,11 @@
             // 
             this.lblP3Score.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblP3Score.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.lblP3Score.Location = new System.Drawing.Point(280, 444);
+            this.lblP3Score.Location = new System.Drawing.Point(315, 555);
             this.lblP3Score.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblP3Score.Name = "lblP3Score";
             this.lblP3Score.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.lblP3Score.Size = new System.Drawing.Size(261, 60);
+            this.lblP3Score.Size = new System.Drawing.Size(294, 75);
             this.lblP3Score.TabIndex = 33;
             this.lblP3Score.Text = "99999999999";
             this.lblP3Score.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -576,11 +578,11 @@
             // btnP3Release
             // 
             this.btnP3Release.Enabled = false;
-            this.btnP3Release.Image = global::KeyboardGame.Properties.Resources.Offline_16xLG;
-            this.btnP3Release.Location = new System.Drawing.Point(218, 444);
+            this.btnP3Release.Image = ((System.Drawing.Image)(resources.GetObject("btnP3Release.Image")));
+            this.btnP3Release.Location = new System.Drawing.Point(245, 555);
             this.btnP3Release.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnP3Release.Name = "btnP3Release";
-            this.btnP3Release.Size = new System.Drawing.Size(25, 25);
+            this.btnP3Release.Size = new System.Drawing.Size(28, 31);
             this.btnP3Release.TabIndex = 32;
             this.btnP3Release.UseVisualStyleBackColor = true;
             this.btnP3Release.Click += new System.EventHandler(this.btnP3Release_Click);
@@ -589,9 +591,9 @@
             // 
             this.lblP3CurrentWord.BackColor = System.Drawing.SystemColors.HighlightText;
             this.lblP3CurrentWord.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblP3CurrentWord.Location = new System.Drawing.Point(12, 506);
+            this.lblP3CurrentWord.Location = new System.Drawing.Point(14, 632);
             this.lblP3CurrentWord.Name = "lblP3CurrentWord";
-            this.lblP3CurrentWord.Size = new System.Drawing.Size(563, 32);
+            this.lblP3CurrentWord.Size = new System.Drawing.Size(633, 40);
             this.lblP3CurrentWord.TabIndex = 31;
             this.lblP3CurrentWord.Text = "123456789012345678901234567890";
             this.lblP3CurrentWord.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -599,10 +601,10 @@
             // btnP3Assign
             // 
             this.btnP3Assign.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnP3Assign.Location = new System.Drawing.Point(56, 444);
+            this.btnP3Assign.Location = new System.Drawing.Point(63, 555);
             this.btnP3Assign.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnP3Assign.Name = "btnP3Assign";
-            this.btnP3Assign.Size = new System.Drawing.Size(156, 60);
+            this.btnP3Assign.Size = new System.Drawing.Size(176, 75);
             this.btnP3Assign.TabIndex = 30;
             this.btnP3Assign.Text = "Assign Player 3";
             this.btnP3Assign.UseVisualStyleBackColor = true;
@@ -610,9 +612,9 @@
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1233, 753);
+            this.ClientSize = new System.Drawing.Size(1387, 941);
             this.Controls.Add(this.btnP4WorthPoints);
             this.Controls.Add(this.btnP4Heartbeat);
             this.Controls.Add(this.btnP4InDict);
