@@ -1,0 +1,5 @@
+﻿RegisterRawInputDevices
+GetRawInputData
+PCRAWINPUTDEVICE
+RAWINPUTDEVICECLASS
+RAWINPUT
