@@ -1,11 +1,4 @@
-﻿/*
-using System;
-using System.IO;
-using System.IO.Hashing;
-using System.Linq;
-using EncodingEnums;
-*/
-using System.Text;
+﻿using System.Text;
 
 namespace LanguageDictionary
 {
@@ -125,55 +118,6 @@ namespace LanguageDictionary
             for (MAX_WORD_LENGTH = MAX_POSSIBLE_WORD_LENGTH - 1;
                 WORD_LENGTH_COUNT[MAX_WORD_LENGTH] == 0;
                 MAX_WORD_LENGTH--) ;
-
-            /*
-            
-            unused formula based on occrance rate of letters in the dictionary
-            
-            double[] occurance_rate = new double[ENGLISH_LETTERS];
-            double dmin = Double.MaxValue;
-            double dmax = Double.MinValue;
-            ushort[] tile_count = new ushort[ENGLISH_LETTERS];
-            ushort tile_reduction;
-            ushort points_offset;
-            ushort total_tiles = 0;
-
-            for (ushort x = 0; x < ENGLISH_LETTERS; x++) {
-                occurance_rate[x] = (letter_count[x] / (double)total_letters) * 100;
-                if (occurance_rate[x] < dmin) dmin = occurance_rate[x];
-                if (occurance_rate[x] > dmax) dmax = occurance_rate[x];
-            }
-            for (ushort x = 0; x < ENGLISH_LETTERS; x++)
-                occurance_rate[x] = Occurance_Scaler(occurance_rate[x], dmin, dmax);
-            tile_reduction = (ushort)(Occurance_Scaler(dmin, dmin, dmax) - 1);
-            points_offset = (ushort)(Occurance_Scaler(dmax, dmin, dmax) - tile_reduction + 1);
-            for (ushort x = 0; x < ENGLISH_LETTERS; x++) {
-                tile_count[x] = (ushort)(Convert.ToInt16(occurance_rate[x]) - tile_reduction);
-                total_tiles += tile_count[x];
-            }
-            for (ushort x = 0; x < ENGLISH_LETTERS; x++)
-                Console.WriteLine(Convert.ToChar((x + 'a')) + " " + (
-                    //4*Math.Log((letter_count[x] / (double)character_counter) * 10000, 7.1)
-                    tile_count[x]
-                    ).ToString());
-            */
         }
-
-        /*
-          
-         unused formula for scaling letter occurances
-
-        private static ushort Occurance_Scaler(double x, double min, double max)
-        {
-            return Convert.ToUInt16((min + max) / 3 * Math.Log(x * 100, (min + 1) * (min + max) / 2));
-        }
-        
-
-        private static int GetWordHash(string s)
-        {
-            return BitConverter.ToUInt32(Crc32.Hash(
-                System.Text.Encoding.ASCII.GetBytes(s.ToCharArray())), 0);
-        }
-        */
     }
 }

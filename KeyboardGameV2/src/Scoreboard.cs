@@ -1,11 +1,5 @@
-﻿/*
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-*/
+﻿//ilist compatible object to store the words discovered
+
 using System.Collections;
 
 namespace KeyboardGameV2.src
@@ -87,12 +81,14 @@ namespace KeyboardGameV2.src
             _data.Sort();
         }
 
+        //object for individual entries in the scoreboard
         public class ScoreEntry(string Word, uint Points) : IComparable
         {
             public readonly string Word = Word;
             public readonly uint Points = Points;
             public bool[] Players = new bool[4];
 
+            //sorted first by score then by word size
             public int CompareTo(object? obj)
             {
                 ArgumentNullException.ThrowIfNull(obj);

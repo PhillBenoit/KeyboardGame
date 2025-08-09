@@ -10,13 +10,14 @@ This program works by:
 - using a binary search of word hashes to verify spelling 
 */
 
-//using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
-//using System.Windows.Forms;
 using KeyboardGameV2.src;
 using LanguageDictionary;
 using Windows.Win32;
+using System.Windows.Forms;
+using System.Diagnostics;
+
 
 namespace KeyboardGameV2
 {
@@ -26,27 +27,19 @@ namespace KeyboardGameV2
         private const string MNUMSG_ASSIGN = "Assign Player {0}";
         private const string MNUMSG_RELEASE = "Release Player {0}";
         private const string MSG_ASSIGN = "please press a letter";
-        //private const string BTNMSG_READY = "Player {0} Ready";
         private const string MNUMSG_START = "Start Game";
         private const string MNUMSG_STOP = "Stop Game";
         private const string POPMSG_HANDLE_ERROR = "Failed to set up handler for raw input.";
         private const string POPMSG_FILE_FILTER = "one word per line txt files (*.txt)|*.txt";
         private const string POPMSG_GAME_OVER = "Game Over!";
-        //private const string DGVCOL_WORD = "word";
-        //private const string DGVCOL_POINTS = "points";
 
         //game tiles
         private LetterBag _bag = new();
 
         private readonly Scoreboard _scoreboard = [];
 
-        //private byte _playerCount = 0;
-
         //number of tiles to draw in a game
         private const byte TILES_TO_DRAW = 20;
-
-        //sets form to respond in game mode
-        //private bool _gameOn = false;
 
         //timer variables
         private const ushort MAX_SECONDS = 120;
@@ -105,13 +98,14 @@ namespace KeyboardGameV2
             }
         }
 
+        
+
         protected override void OnHandleCreated(EventArgs e)
         {
-            base.OnHandleCreated(e);
-
             //throw error message box if device registration fails
             if (!RegisterKBHandle((Windows.Win32.Foundation.HWND)this.Handle))
                 MessageBox.Show(POPMSG_HANDLE_ERROR);
+            base.OnHandleCreated(e);
         }
 
         //method declared unsafe for the use of a variable's address
@@ -130,22 +124,13 @@ namespace KeyboardGameV2
         {
             //get size of input buffer
             uint dwSize = 0;
-            PInvoke.GetRawInputData(
+            uint output = PInvoke.GetRawInputData(
                 (Windows.Win32.UI.Input.HRAWINPUT)m.LParam,
                 Windows.Win32.UI.Input.RAW_INPUT_DATA_COMMAND_FLAGS.RID_INPUT,
                 null,
                 ref dwSize,
                 (uint)sizeof(Windows.Win32.UI.Input.HRAWINPUT));
-
-            /*
-            Winuser.GetRawInputData(
-                m.LParam,
-                Winuser.RID_INPUT,
-                IntPtr.Zero,
-                ref dwSize,
-                (uint)Marshal.SizeOf(typeof(Winuser.RAWINPUTHEADER)
-                ));
-            */
+            Debug.WriteLine("output " +  (int)output);
             IntPtr buffer = Marshal.AllocHGlobal((int)dwSize);
             try
             {
@@ -166,31 +151,36 @@ namespace KeyboardGameV2
             return null;
         }
 
-        private static bool IsWmType(Message message, int type)
-        { return message.Msg == type; }
-        private static bool IsRimType(Windows.Win32.UI.Input.RAWINPUT message, int type)
-        { return message.header.dwType == type; }
+        private static bool IsWmType(Message message,
+            Win32Enum.WINDOWS_MESSAGE_TYPE type)
+        { return message.Msg == (int)type; }
+        private static bool IsRimType(Windows.Win32.UI.Input.RAWINPUT message,
+            Win32Enum.RIM_TYPE type)
+        { return message.header.dwType == (int)type; }
 
         //process windows messages
         protected override void WndProc(ref Message m)
         {
             //filter for input messages
-            if (IsWmType(m, (int)Win32Enum.WINDOWS_MESSAGE_TYPE.WM_INPUT))
+            if (IsWmType(m, Win32Enum.WINDOWS_MESSAGE_TYPE.WM_INPUT))
             {
+                Debug.WriteLine("iswmtype");
                 //memory safe read message
                 Windows.Win32.UI.Input.RAWINPUT? null_or_raw = ReadInputMessage(m);
+                if (null_or_raw != null) Debug.WriteLine(null_or_raw.Value.header.dwType);
+                else Debug.WriteLine("null");
                 if (null_or_raw is null) return;
                 Windows.Win32.UI.Input.RAWINPUT raw = null_or_raw.Value;
-
+                
                 //filter for keyboard type input messages
-                if (IsRimType(raw, (int)Win32Enum.RIM_TYPE.KEYBOARD))
+                if (IsRimType(raw, Win32Enum.RIM_TYPE.KEYBOARD))
                 {
                     //pressed key
                     ushort vkey = raw.data.keyboard.VKey;
 
                     //handle for device
                     IntPtr deviceHandle = raw.header.hDevice;
-
+                    Debug.WriteLine("isrimtype");
                     //try to pull a player from the keyboard mappings
                     if (_keyboardMap.TryGetValue(deviceHandle, out KBGPlayer? p))
                     {
@@ -298,6 +288,7 @@ namespace KeyboardGameV2
 
         private void ConfirmAssign(IntPtr h, KBGPlayer p)
         {
+            Debug.WriteLine("confirmassign");
             _keyboardMap.Add(h, p);
             p.assignFlag = false;
 
@@ -313,8 +304,17 @@ namespace KeyboardGameV2
         {
             string nextText;
 
-            //release
+            //assign
             if (p.UI.IsAssigned())
+            {
+                nextText = String.Format(MNUMSG_RELEASE, p.PLAYER_INDEX);
+                mnuStrip.Enabled = false;
+                p.assignFlag = true;
+                p.UI.SetWord(MSG_ASSIGN);
+            }
+
+            //release
+            else
             {
                 nextText = String.Format(MNUMSG_ASSIGN, p.PLAYER_INDEX);
                 //search for and remove handle
@@ -327,15 +327,6 @@ namespace KeyboardGameV2
                 mnuStart.Enabled =
                     _keyboardMap.Count > 0 &&
                     mnuLoad.Enabled == false;
-            }
-
-            //assign
-            else
-            {
-                nextText = String.Format(MNUMSG_RELEASE, p.PLAYER_INDEX);
-                mnuStrip.Enabled = false;
-                p.assignFlag = true;
-                p.UI.SetWord(MSG_ASSIGN);
             }
 
             p.UI.SetAssignText(nextText);
@@ -357,7 +348,9 @@ namespace KeyboardGameV2
                 barTimer.Maximum = MAX_SECONDS;
                 foreach (KBGPlayer p in _players) p.Reset();
                 _bag.Reset();
-                lblLetterPool.Text = _bag.Draw(TILES_TO_DRAW);
+                _scoreboard.Clear();
+                lblLetterPool.Text = _bag.Draw(TILES_TO_DRAW,
+                    optSorted.Checked, optPoints.Checked, optSpaces.Checked);
             }
 
             mnuStart.Text = nextText;

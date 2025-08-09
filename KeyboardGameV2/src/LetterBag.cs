@@ -1,5 +1,4 @@
-﻿//using System;
-//using System.Collections.Generic;
+﻿//bag of letters selected at random for the letter pool
 using System.Text;
 
 namespace KeyboardGameV2.src
@@ -12,14 +11,28 @@ namespace KeyboardGameV2.src
             public bool inBag = true;
         }
 
+        //full set of letters
         private readonly LetterTile[] BAG;
+        
+        //rng for selection
         private readonly Random RNG;
+        
+        //point value for letters
         private readonly byte[] POINTS_MAP;
+        
+        //total number of letters in the bag
         private readonly ushort TILE_COUNT;
+        
+        //encoder for unicode used to give pool letters a subscript score
         private readonly UnicodeEncoding UNICODE;
+        
+        //number of letters left in the bag
         public ushort tilesRemaining;
+        
+        //holds the count of letters in the ltter pool
         private byte[] _drawCount;
 
+        //generic constructor for basic declaration
         public LetterBag()
         {
             BAG = new LetterTile[1];
@@ -29,7 +42,7 @@ namespace KeyboardGameV2.src
             _drawCount = new byte[1];
         }
 
-        //constructor
+        //real constructor
         public LetterBag(byte[] letters, char firstLetter)
         {
             //metadata for counting
@@ -105,7 +118,7 @@ namespace KeyboardGameV2.src
 
         //returns a formatted string for display and loads validation metadata
         //null if not enough letters remain in the bag
-        public string? Draw(ushort numberOfLetters)
+        public string? Draw(ushort numberOfLetters, bool sort, bool score, bool spaces)
         {
             //reject request if not enough tiles
             if (numberOfLetters > tilesRemaining) return null;
@@ -135,7 +148,7 @@ namespace KeyboardGameV2.src
             }
 
             //alphabetize the list
-            Array.Sort(letters);
+            if (sort) Array.Sort(letters);
 
             //load unicode formatted return string
             foreach(char l in letters)
@@ -144,21 +157,28 @@ namespace KeyboardGameV2.src
                 lettersWithScore.Add((byte)l);
                 lettersWithScore.Add(0x00);
                 
-                //substring for score
-                foreach (char digit in POINTS_MAP[l - BAG[0].LETTER].ToString())
-                {
-                    lettersWithScore.Add((byte)(digit + 0x50));
-                    lettersWithScore.Add(0x20);
-                }
+                if (score)
+                    //substring for score
+                    foreach (char digit in POINTS_MAP[l - BAG[0].LETTER].ToString())
+                    {
+                        lettersWithScore.Add((byte)(digit + 0x50));
+                        lettersWithScore.Add(0x20);
+                    }
                 
-                //space
-                lettersWithScore.Add(0x20);
-                lettersWithScore.Add(0x00);
+                if (spaces)
+                {
+                    //space
+                    lettersWithScore.Add(0x20);
+                    lettersWithScore.Add(0x00);
+                }
             }
 
-            //remove last space
-            lettersWithScore.RemoveAt(lettersWithScore.LastIndexOf(0x20));
-            lettersWithScore.RemoveAt(lettersWithScore.LastIndexOf(0x00));
+            if (spaces)
+            {
+                //remove last space
+                lettersWithScore.RemoveAt(lettersWithScore.LastIndexOf(0x20));
+                lettersWithScore.RemoveAt(lettersWithScore.LastIndexOf(0x00));
+            }
 
             return UNICODE.GetString([..lettersWithScore]);
         }

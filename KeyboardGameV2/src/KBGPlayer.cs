@@ -1,12 +1,8 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-using System.Text;
-//using System.Threading.Tasks;
-//using System.ComponentModel.Design;
+﻿using System.Text;
 
 namespace KeyboardGameV2.src
 {
+    //collection of UI elements and variables associated with a player
     internal class KBGPlayer(byte PlayerIndex, Label CurrentWord, Label Score, Button Heartbeat,
         Button InDictionary, Button WorthPoints, ToolStripMenuItem Assign)
     {
@@ -17,6 +13,8 @@ namespace KeyboardGameV2.src
             private readonly Button Heartbeat = Heartbeat, InDictionary = InDictionary, WorthPoints = WorthPoints;
             private readonly ToolStripMenuItem Assign = Assign;
 
+            //UI modifiers
+            //------------------------------
             public void SetWord(string word) { CurrentWord.Text = word; }
             public string GetWord() { return CurrentWord.Text; }
             public void SetScore(uint score) { Score.Text = score.ToString(); }
@@ -39,15 +37,23 @@ namespace KeyboardGameV2.src
             {
                 CurrentWord.Text = "";
                 Score.Text = "0";
+                CurrentWord.Visible = true;
                 ClearLights();
             }
         }
+        //Player variables
+        //------------------------------
         public readonly UIControlls UI = new(CurrentWord, Score, Heartbeat, InDictionary, WorthPoints, Assign);
         private uint _score = 0;
 
+        //player number for UI purposes
         public readonly byte PLAYER_INDEX = PlayerIndex;
 
+        //flag for keyboard assignment
         public bool assignFlag = false;
+        
+        //debounce makes sure a key is released
+        //before same key can be pressed again
         public bool[] isPressed = new bool[CharEncoding.MAX_ANSI];
 
         public void AddPoints(uint points) { _score += points; UI.SetScore(_score); }

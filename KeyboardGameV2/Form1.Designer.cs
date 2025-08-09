@@ -85,15 +85,15 @@
             mnuStrip.Items.AddRange(new ToolStripItem[] { mnuLoad, mnuStart, mnuOptions, mnuPlayers });
             mnuStrip.Location = new Point(0, 0);
             mnuStrip.Name = "mnuStrip";
-            mnuStrip.Padding = new Padding(7, 3, 0, 3);
-            mnuStrip.Size = new Size(914, 30);
+            mnuStrip.Padding = new Padding(18, 7, 0, 7);
+            mnuStrip.Size = new Size(2285, 66);
             mnuStrip.TabIndex = 0;
             mnuStrip.Text = "menuStrip1";
             // 
             // mnuLoad
             // 
             mnuLoad.Name = "mnuLoad";
-            mnuLoad.Size = new Size(128, 24);
+            mnuLoad.Size = new Size(296, 52);
             mnuLoad.Text = "Load Dictionary";
             mnuLoad.Click += Click_mnuLoad;
             // 
@@ -101,7 +101,7 @@
             // 
             mnuStart.Enabled = false;
             mnuStart.Name = "mnuStart";
-            mnuStart.Size = new Size(97, 24);
+            mnuStart.Size = new Size(224, 52);
             mnuStart.Text = "Start Game";
             mnuStart.Click += Click_mnuStart;
             // 
@@ -109,14 +109,14 @@
             // 
             mnuOptions.DropDownItems.AddRange(new ToolStripItem[] { mnuLetterPool });
             mnuOptions.Name = "mnuOptions";
-            mnuOptions.Size = new Size(75, 24);
+            mnuOptions.Size = new Size(173, 52);
             mnuOptions.Text = "Options";
             // 
             // mnuLetterPool
             // 
             mnuLetterPool.DropDownItems.AddRange(new ToolStripItem[] { optSorted, optPoints, optSpaces });
             mnuLetterPool.Name = "mnuLetterPool";
-            mnuLetterPool.Size = new Size(224, 26);
+            mnuLetterPool.Size = new Size(390, 66);
             mnuLetterPool.Text = "Letter Pool";
             // 
             // optSorted
@@ -125,7 +125,7 @@
             optSorted.CheckOnClick = true;
             optSorted.CheckState = CheckState.Checked;
             optSorted.Name = "optSorted";
-            optSorted.Size = new Size(224, 26);
+            optSorted.Size = new Size(327, 66);
             optSorted.Text = "Sorted";
             // 
             // optPoints
@@ -134,7 +134,7 @@
             optPoints.CheckOnClick = true;
             optPoints.CheckState = CheckState.Checked;
             optPoints.Name = "optPoints";
-            optPoints.Size = new Size(224, 26);
+            optPoints.Size = new Size(327, 66);
             optPoints.Text = "Points";
             // 
             // optSpaces
@@ -143,21 +143,21 @@
             optSpaces.CheckOnClick = true;
             optSpaces.CheckState = CheckState.Checked;
             optSpaces.Name = "optSpaces";
-            optSpaces.Size = new Size(224, 26);
+            optSpaces.Size = new Size(327, 66);
             optSpaces.Text = "Spaces";
             // 
             // mnuPlayers
             // 
             mnuPlayers.DropDownItems.AddRange(new ToolStripItem[] { optP1, optP2, optP3, optP4 });
             mnuPlayers.Name = "mnuPlayers";
-            mnuPlayers.Size = new Size(69, 24);
+            mnuPlayers.Size = new Size(159, 52);
             mnuPlayers.Text = "Players";
             // 
             // optP1
             // 
             optP1.CheckOnClick = true;
             optP1.Name = "optP1";
-            optP1.Size = new Size(224, 26);
+            optP1.Size = new Size(343, 66);
             optP1.Text = "Player 1";
             optP1.Click += Click_optP1;
             // 
@@ -165,7 +165,7 @@
             // 
             optP2.CheckOnClick = true;
             optP2.Name = "optP2";
-            optP2.Size = new Size(224, 26);
+            optP2.Size = new Size(343, 66);
             optP2.Text = "Player 2";
             optP2.Click += Click_optP2;
             // 
@@ -173,7 +173,7 @@
             // 
             optP3.CheckOnClick = true;
             optP3.Name = "optP3";
-            optP3.Size = new Size(224, 26);
+            optP3.Size = new Size(343, 66);
             optP3.Text = "Player 3";
             optP3.Click += Click_optP3;
             // 
@@ -181,7 +181,7 @@
             // 
             optP4.CheckOnClick = true;
             optP4.Name = "optP4";
-            optP4.Size = new Size(224, 26);
+            optP4.Size = new Size(343, 66);
             optP4.Text = "Player 4";
             optP4.Click += Click_optP4;
             // 
@@ -194,26 +194,28 @@
             // 
             lblTimer.AutoSize = true;
             lblTimer.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblTimer.Location = new Point(14, 32);
+            lblTimer.Location = new Point(35, 77);
+            lblTimer.Margin = new Padding(8, 0, 8, 0);
             lblTimer.Name = "lblTimer";
-            lblTimer.Size = new Size(89, 41);
+            lblTimer.Size = new Size(212, 96);
             lblTimer.TabIndex = 1;
             lblTimer.Text = "00:00";
             // 
             // barTimer
             // 
-            barTimer.Location = new Point(102, 32);
-            barTimer.Margin = new Padding(3, 4, 3, 4);
+            barTimer.Location = new Point(255, 77);
+            barTimer.Margin = new Padding(8, 10, 8, 10);
             barTimer.Name = "barTimer";
-            barTimer.Size = new Size(799, 43);
+            barTimer.Size = new Size(1998, 103);
             barTimer.TabIndex = 2;
             // 
             // lblLetterPool
             // 
             lblLetterPool.Font = new Font("Segoe UI", 24F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblLetterPool.Location = new Point(14, 79);
+            lblLetterPool.Location = new Point(35, 190);
+            lblLetterPool.Margin = new Padding(8, 0, 8, 0);
             lblLetterPool.Name = "lblLetterPool";
-            lblLetterPool.Size = new Size(887, 93);
+            lblLetterPool.Size = new Size(2218, 223);
             lblLetterPool.TabIndex = 3;
             lblLetterPool.Text = "1234567890123456789012345678901234567890";
             lblLetterPool.TextAlign = ContentAlignment.MiddleCenter;
@@ -225,11 +227,11 @@
             boxP1.Controls.Add(btnP1InDictionary);
             boxP1.Controls.Add(lblP1CurrentWord);
             boxP1.Controls.Add(btnP1Heartbeat);
-            boxP1.Location = new Point(14, 176);
-            boxP1.Margin = new Padding(3, 4, 3, 4);
+            boxP1.Location = new Point(35, 422);
+            boxP1.Margin = new Padding(8, 10, 8, 10);
             boxP1.Name = "boxP1";
-            boxP1.Padding = new Padding(3, 4, 3, 4);
-            boxP1.Size = new Size(477, 128);
+            boxP1.Padding = new Padding(8, 10, 8, 10);
+            boxP1.Size = new Size(1192, 307);
             boxP1.TabIndex = 4;
             boxP1.TabStop = false;
             boxP1.Text = "Player 1";
@@ -237,9 +239,10 @@
             // lblP1Score
             // 
             lblP1Score.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblP1Score.Location = new Point(151, 72);
+            lblP1Score.Location = new Point(378, 173);
+            lblP1Score.Margin = new Padding(8, 0, 8, 0);
             lblP1Score.Name = "lblP1Score";
-            lblP1Score.Size = new Size(319, 43);
+            lblP1Score.Size = new Size(798, 103);
             lblP1Score.TabIndex = 6;
             lblP1Score.Text = "12345678901234567890";
             lblP1Score.TextAlign = ContentAlignment.MiddleRight;
@@ -247,29 +250,30 @@
             // btnP1WorthPoints
             // 
             btnP1WorthPoints.Enabled = false;
-            btnP1WorthPoints.Location = new Point(103, 72);
-            btnP1WorthPoints.Margin = new Padding(3, 4, 3, 4);
+            btnP1WorthPoints.Location = new Point(258, 173);
+            btnP1WorthPoints.Margin = new Padding(8, 10, 8, 10);
             btnP1WorthPoints.Name = "btnP1WorthPoints";
-            btnP1WorthPoints.Size = new Size(41, 43);
+            btnP1WorthPoints.Size = new Size(102, 103);
             btnP1WorthPoints.TabIndex = 7;
             btnP1WorthPoints.UseVisualStyleBackColor = true;
             // 
             // btnP1InDictionary
             // 
             btnP1InDictionary.Enabled = false;
-            btnP1InDictionary.Location = new Point(55, 72);
-            btnP1InDictionary.Margin = new Padding(3, 4, 3, 4);
+            btnP1InDictionary.Location = new Point(138, 173);
+            btnP1InDictionary.Margin = new Padding(8, 10, 8, 10);
             btnP1InDictionary.Name = "btnP1InDictionary";
-            btnP1InDictionary.Size = new Size(41, 43);
+            btnP1InDictionary.Size = new Size(102, 103);
             btnP1InDictionary.TabIndex = 6;
             btnP1InDictionary.UseVisualStyleBackColor = true;
             // 
             // lblP1CurrentWord
             // 
             lblP1CurrentWord.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblP1CurrentWord.Location = new Point(7, 25);
+            lblP1CurrentWord.Location = new Point(18, 60);
+            lblP1CurrentWord.Margin = new Padding(8, 0, 8, 0);
             lblP1CurrentWord.Name = "lblP1CurrentWord";
-            lblP1CurrentWord.Size = new Size(467, 43);
+            lblP1CurrentWord.Size = new Size(1168, 103);
             lblP1CurrentWord.TabIndex = 5;
             lblP1CurrentWord.Text = "123456789012345678901234567890";
             lblP1CurrentWord.TextAlign = ContentAlignment.MiddleCenter;
@@ -277,10 +281,10 @@
             // btnP1Heartbeat
             // 
             btnP1Heartbeat.Enabled = false;
-            btnP1Heartbeat.Location = new Point(7, 72);
-            btnP1Heartbeat.Margin = new Padding(3, 4, 3, 4);
+            btnP1Heartbeat.Location = new Point(18, 173);
+            btnP1Heartbeat.Margin = new Padding(8, 10, 8, 10);
             btnP1Heartbeat.Name = "btnP1Heartbeat";
-            btnP1Heartbeat.Size = new Size(41, 43);
+            btnP1Heartbeat.Size = new Size(102, 103);
             btnP1Heartbeat.TabIndex = 5;
             btnP1Heartbeat.UseVisualStyleBackColor = true;
             // 
@@ -291,11 +295,11 @@
             boxP2.Controls.Add(btnP2InDictionary);
             boxP2.Controls.Add(lblP2CurrentWord);
             boxP2.Controls.Add(btnP2Heartbeat);
-            boxP2.Location = new Point(14, 312);
-            boxP2.Margin = new Padding(3, 4, 3, 4);
+            boxP2.Location = new Point(35, 749);
+            boxP2.Margin = new Padding(8, 10, 8, 10);
             boxP2.Name = "boxP2";
-            boxP2.Padding = new Padding(3, 4, 3, 4);
-            boxP2.Size = new Size(477, 128);
+            boxP2.Padding = new Padding(8, 10, 8, 10);
+            boxP2.Size = new Size(1192, 307);
             boxP2.TabIndex = 5;
             boxP2.TabStop = false;
             boxP2.Text = "Player 2";
@@ -303,9 +307,10 @@
             // lblP2Score
             // 
             lblP2Score.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblP2Score.Location = new Point(151, 72);
+            lblP2Score.Location = new Point(378, 173);
+            lblP2Score.Margin = new Padding(8, 0, 8, 0);
             lblP2Score.Name = "lblP2Score";
-            lblP2Score.Size = new Size(319, 43);
+            lblP2Score.Size = new Size(798, 103);
             lblP2Score.TabIndex = 6;
             lblP2Score.Text = "12345678901234567890";
             lblP2Score.TextAlign = ContentAlignment.MiddleRight;
@@ -313,29 +318,30 @@
             // btnP2WorthPoints
             // 
             btnP2WorthPoints.Enabled = false;
-            btnP2WorthPoints.Location = new Point(103, 72);
-            btnP2WorthPoints.Margin = new Padding(3, 4, 3, 4);
+            btnP2WorthPoints.Location = new Point(258, 173);
+            btnP2WorthPoints.Margin = new Padding(8, 10, 8, 10);
             btnP2WorthPoints.Name = "btnP2WorthPoints";
-            btnP2WorthPoints.Size = new Size(41, 43);
+            btnP2WorthPoints.Size = new Size(102, 103);
             btnP2WorthPoints.TabIndex = 7;
             btnP2WorthPoints.UseVisualStyleBackColor = true;
             // 
             // btnP2InDictionary
             // 
             btnP2InDictionary.Enabled = false;
-            btnP2InDictionary.Location = new Point(55, 72);
-            btnP2InDictionary.Margin = new Padding(3, 4, 3, 4);
+            btnP2InDictionary.Location = new Point(138, 173);
+            btnP2InDictionary.Margin = new Padding(8, 10, 8, 10);
             btnP2InDictionary.Name = "btnP2InDictionary";
-            btnP2InDictionary.Size = new Size(41, 43);
+            btnP2InDictionary.Size = new Size(102, 103);
             btnP2InDictionary.TabIndex = 6;
             btnP2InDictionary.UseVisualStyleBackColor = true;
             // 
             // lblP2CurrentWord
             // 
             lblP2CurrentWord.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblP2CurrentWord.Location = new Point(7, 25);
+            lblP2CurrentWord.Location = new Point(18, 60);
+            lblP2CurrentWord.Margin = new Padding(8, 0, 8, 0);
             lblP2CurrentWord.Name = "lblP2CurrentWord";
-            lblP2CurrentWord.Size = new Size(467, 43);
+            lblP2CurrentWord.Size = new Size(1168, 103);
             lblP2CurrentWord.TabIndex = 5;
             lblP2CurrentWord.Text = "123456789012345678901234567890";
             lblP2CurrentWord.TextAlign = ContentAlignment.MiddleCenter;
@@ -343,10 +349,10 @@
             // btnP2Heartbeat
             // 
             btnP2Heartbeat.Enabled = false;
-            btnP2Heartbeat.Location = new Point(7, 72);
-            btnP2Heartbeat.Margin = new Padding(3, 4, 3, 4);
+            btnP2Heartbeat.Location = new Point(18, 173);
+            btnP2Heartbeat.Margin = new Padding(8, 10, 8, 10);
             btnP2Heartbeat.Name = "btnP2Heartbeat";
-            btnP2Heartbeat.Size = new Size(41, 43);
+            btnP2Heartbeat.Size = new Size(102, 103);
             btnP2Heartbeat.TabIndex = 5;
             btnP2Heartbeat.UseVisualStyleBackColor = true;
             // 
@@ -357,11 +363,11 @@
             boxP3.Controls.Add(btnP3InDictionary);
             boxP3.Controls.Add(lblP3CurrentWord);
             boxP3.Controls.Add(btnP3Heartbeat);
-            boxP3.Location = new Point(14, 448);
-            boxP3.Margin = new Padding(3, 4, 3, 4);
+            boxP3.Location = new Point(35, 1075);
+            boxP3.Margin = new Padding(8, 10, 8, 10);
             boxP3.Name = "boxP3";
-            boxP3.Padding = new Padding(3, 4, 3, 4);
-            boxP3.Size = new Size(477, 128);
+            boxP3.Padding = new Padding(8, 10, 8, 10);
+            boxP3.Size = new Size(1192, 307);
             boxP3.TabIndex = 8;
             boxP3.TabStop = false;
             boxP3.Text = "Player 3";
@@ -369,9 +375,10 @@
             // lblP3Score
             // 
             lblP3Score.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblP3Score.Location = new Point(151, 72);
+            lblP3Score.Location = new Point(378, 173);
+            lblP3Score.Margin = new Padding(8, 0, 8, 0);
             lblP3Score.Name = "lblP3Score";
-            lblP3Score.Size = new Size(319, 43);
+            lblP3Score.Size = new Size(798, 103);
             lblP3Score.TabIndex = 6;
             lblP3Score.Text = "12345678901234567890";
             lblP3Score.TextAlign = ContentAlignment.MiddleRight;
@@ -379,29 +386,30 @@
             // btnP3WorthPoints
             // 
             btnP3WorthPoints.Enabled = false;
-            btnP3WorthPoints.Location = new Point(103, 72);
-            btnP3WorthPoints.Margin = new Padding(3, 4, 3, 4);
+            btnP3WorthPoints.Location = new Point(258, 173);
+            btnP3WorthPoints.Margin = new Padding(8, 10, 8, 10);
             btnP3WorthPoints.Name = "btnP3WorthPoints";
-            btnP3WorthPoints.Size = new Size(41, 43);
+            btnP3WorthPoints.Size = new Size(102, 103);
             btnP3WorthPoints.TabIndex = 7;
             btnP3WorthPoints.UseVisualStyleBackColor = true;
             // 
             // btnP3InDictionary
             // 
             btnP3InDictionary.Enabled = false;
-            btnP3InDictionary.Location = new Point(55, 72);
-            btnP3InDictionary.Margin = new Padding(3, 4, 3, 4);
+            btnP3InDictionary.Location = new Point(138, 173);
+            btnP3InDictionary.Margin = new Padding(8, 10, 8, 10);
             btnP3InDictionary.Name = "btnP3InDictionary";
-            btnP3InDictionary.Size = new Size(41, 43);
+            btnP3InDictionary.Size = new Size(102, 103);
             btnP3InDictionary.TabIndex = 6;
             btnP3InDictionary.UseVisualStyleBackColor = true;
             // 
             // lblP3CurrentWord
             // 
             lblP3CurrentWord.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblP3CurrentWord.Location = new Point(7, 25);
+            lblP3CurrentWord.Location = new Point(18, 60);
+            lblP3CurrentWord.Margin = new Padding(8, 0, 8, 0);
             lblP3CurrentWord.Name = "lblP3CurrentWord";
-            lblP3CurrentWord.Size = new Size(467, 43);
+            lblP3CurrentWord.Size = new Size(1168, 103);
             lblP3CurrentWord.TabIndex = 5;
             lblP3CurrentWord.Text = "123456789012345678901234567890";
             lblP3CurrentWord.TextAlign = ContentAlignment.MiddleCenter;
@@ -409,10 +417,10 @@
             // btnP3Heartbeat
             // 
             btnP3Heartbeat.Enabled = false;
-            btnP3Heartbeat.Location = new Point(7, 72);
-            btnP3Heartbeat.Margin = new Padding(3, 4, 3, 4);
+            btnP3Heartbeat.Location = new Point(18, 173);
+            btnP3Heartbeat.Margin = new Padding(8, 10, 8, 10);
             btnP3Heartbeat.Name = "btnP3Heartbeat";
-            btnP3Heartbeat.Size = new Size(41, 43);
+            btnP3Heartbeat.Size = new Size(102, 103);
             btnP3Heartbeat.TabIndex = 5;
             btnP3Heartbeat.UseVisualStyleBackColor = true;
             // 
@@ -423,11 +431,11 @@
             boxP4.Controls.Add(btnP4InDictionary);
             boxP4.Controls.Add(lblP4CurrentWord);
             boxP4.Controls.Add(btnP4Heartbeat);
-            boxP4.Location = new Point(14, 584);
-            boxP4.Margin = new Padding(3, 4, 3, 4);
+            boxP4.Location = new Point(35, 1402);
+            boxP4.Margin = new Padding(8, 10, 8, 10);
             boxP4.Name = "boxP4";
-            boxP4.Padding = new Padding(3, 4, 3, 4);
-            boxP4.Size = new Size(477, 128);
+            boxP4.Padding = new Padding(8, 10, 8, 10);
+            boxP4.Size = new Size(1192, 307);
             boxP4.TabIndex = 9;
             boxP4.TabStop = false;
             boxP4.Text = "Player 4";
@@ -435,9 +443,10 @@
             // lblP4Score
             // 
             lblP4Score.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblP4Score.Location = new Point(151, 72);
+            lblP4Score.Location = new Point(378, 173);
+            lblP4Score.Margin = new Padding(8, 0, 8, 0);
             lblP4Score.Name = "lblP4Score";
-            lblP4Score.Size = new Size(319, 43);
+            lblP4Score.Size = new Size(798, 103);
             lblP4Score.TabIndex = 6;
             lblP4Score.Text = "12345678901234567890";
             lblP4Score.TextAlign = ContentAlignment.MiddleRight;
@@ -445,29 +454,30 @@
             // btnP4WorthPoints
             // 
             btnP4WorthPoints.Enabled = false;
-            btnP4WorthPoints.Location = new Point(103, 72);
-            btnP4WorthPoints.Margin = new Padding(3, 4, 3, 4);
+            btnP4WorthPoints.Location = new Point(258, 173);
+            btnP4WorthPoints.Margin = new Padding(8, 10, 8, 10);
             btnP4WorthPoints.Name = "btnP4WorthPoints";
-            btnP4WorthPoints.Size = new Size(41, 43);
+            btnP4WorthPoints.Size = new Size(102, 103);
             btnP4WorthPoints.TabIndex = 7;
             btnP4WorthPoints.UseVisualStyleBackColor = true;
             // 
             // btnP4InDictionary
             // 
             btnP4InDictionary.Enabled = false;
-            btnP4InDictionary.Location = new Point(55, 72);
-            btnP4InDictionary.Margin = new Padding(3, 4, 3, 4);
+            btnP4InDictionary.Location = new Point(138, 173);
+            btnP4InDictionary.Margin = new Padding(8, 10, 8, 10);
             btnP4InDictionary.Name = "btnP4InDictionary";
-            btnP4InDictionary.Size = new Size(41, 43);
+            btnP4InDictionary.Size = new Size(102, 103);
             btnP4InDictionary.TabIndex = 6;
             btnP4InDictionary.UseVisualStyleBackColor = true;
             // 
             // lblP4CurrentWord
             // 
             lblP4CurrentWord.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblP4CurrentWord.Location = new Point(7, 25);
+            lblP4CurrentWord.Location = new Point(18, 60);
+            lblP4CurrentWord.Margin = new Padding(8, 0, 8, 0);
             lblP4CurrentWord.Name = "lblP4CurrentWord";
-            lblP4CurrentWord.Size = new Size(467, 43);
+            lblP4CurrentWord.Size = new Size(1168, 103);
             lblP4CurrentWord.TabIndex = 5;
             lblP4CurrentWord.Text = "123456789012345678901234567890";
             lblP4CurrentWord.TextAlign = ContentAlignment.MiddleCenter;
@@ -475,10 +485,10 @@
             // btnP4Heartbeat
             // 
             btnP4Heartbeat.Enabled = false;
-            btnP4Heartbeat.Location = new Point(7, 72);
-            btnP4Heartbeat.Margin = new Padding(3, 4, 3, 4);
+            btnP4Heartbeat.Location = new Point(18, 173);
+            btnP4Heartbeat.Margin = new Padding(8, 10, 8, 10);
             btnP4Heartbeat.Name = "btnP4Heartbeat";
-            btnP4Heartbeat.Size = new Size(41, 43);
+            btnP4Heartbeat.Size = new Size(102, 103);
             btnP4Heartbeat.TabIndex = 5;
             btnP4Heartbeat.UseVisualStyleBackColor = true;
             // 
@@ -488,19 +498,19 @@
             dgvScoreboard.AllowUserToDeleteRows = false;
             dgvScoreboard.AllowUserToOrderColumns = true;
             dgvScoreboard.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvScoreboard.Location = new Point(497, 176);
-            dgvScoreboard.Margin = new Padding(3, 4, 3, 4);
+            dgvScoreboard.Location = new Point(1242, 422);
+            dgvScoreboard.Margin = new Padding(8, 10, 8, 10);
             dgvScoreboard.Name = "dgvScoreboard";
             dgvScoreboard.ReadOnly = true;
             dgvScoreboard.RowHeadersWidth = 51;
-            dgvScoreboard.Size = new Size(403, 536);
+            dgvScoreboard.Size = new Size(1008, 1286);
             dgvScoreboard.TabIndex = 10;
             // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(20F, 48F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(914, 791);
+            ClientSize = new Size(2285, 1898);
             Controls.Add(dgvScoreboard);
             Controls.Add(boxP4);
             Controls.Add(boxP3);
@@ -511,8 +521,9 @@
             Controls.Add(lblTimer);
             Controls.Add(mnuStrip);
             MainMenuStrip = mnuStrip;
-            Margin = new Padding(3, 4, 3, 4);
+            Margin = new Padding(8, 10, 8, 10);
             Name = "Form1";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Not Scrabble or Boggle";
             mnuStrip.ResumeLayout(false);
             mnuStrip.PerformLayout();
