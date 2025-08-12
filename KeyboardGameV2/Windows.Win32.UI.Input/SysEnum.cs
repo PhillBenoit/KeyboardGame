@@ -1,6 +1,8 @@
-﻿namespace Windows.Win32
+﻿#pragma warning disable IDE0130 // Namespace does not match folder structure
+namespace Windows.Win32.UI.Input
+#pragma warning restore IDE0130 // Namespace does not match folder structure
 {
-    public static class Win32Enum
+    public static class SysEnum
     {
         public enum HID_USAGE_PAGE : byte
         {
