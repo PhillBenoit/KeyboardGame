@@ -58,14 +58,6 @@ namespace KeyboardGameV2.src
             ArgumentNullException.ThrowIfNull(value);
             int index = Array.BinarySearch([.. _data], (ScoreEntry)value);
             return index < 0 ? -1 : index;
-            /*
-            if (value is null) return -1;
-            ScoreEntry entry = (ScoreEntry)value;
-            for (int x = 0; x < _data.Count; x++)
-                if (_data[x].Word.Equals(entry.Word))
-                    return x;
-            return -1;
-            */
         }
 
         public void Insert(int index, object? value)
@@ -96,14 +88,22 @@ namespace KeyboardGameV2.src
             public readonly string Word = Word;
             public readonly uint Points = Points;
             public bool[] Players = new bool[4];
-
-            //sorted first by score then by word size
+            
             public int CompareTo(object? obj)
             {
                 ArgumentNullException.ThrowIfNull(obj);
                 ScoreEntry other = (ScoreEntry)obj;
-                if (this.Points == other.Points) return other.Word.Length - this.Word.Length;
-                else return (int)(this.Points - other.Points);
+
+                //sorted first by score
+                int scoreSort = (int)(other.Points - Points);
+                if (scoreSort != 0) return scoreSort;
+
+                //then by word size
+                int lengthSort = Word.Length - other.Word.Length;
+                if (lengthSort != 0) return lengthSort;
+
+                //finally alphabetically
+                return Word.CompareTo(other.Word);
             }
         }
     }

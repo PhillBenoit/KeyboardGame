@@ -10,16 +10,18 @@ This program works by:
 - using a binary search of word hashes to verify spelling 
 */
 
+using KeyboardGameV2.src;
 using System.Runtime.InteropServices;
 using System.Text;
-using KeyboardGameV2.src;
 using Windows.Win32.UI.Input;
-
 
 namespace KeyboardGameV2
 {
     public partial class Form1 : Form
     {
+        //Variables
+        //---------------------------------
+
         //strings for UI controlls
         private const string MNUMSG_ASSIGN = "Assign Player {0}";
         private const string MNUMSG_RELEASE = "Release Player {0}";
@@ -51,7 +53,92 @@ namespace KeyboardGameV2
 
         //dictionary of correctly spelled words
         private EnglishDictionary _dictionary = new();
-        
+
+        //Overrides for KB input
+        //---------------------------------
+
+        //capture keyboard handle creation to register for windows messages
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            if (!KeyEvent.RegisterKBHandle(this.Handle))
+                //throw error message box if device registration fails
+                MessageBox.Show(POPMSG_HANDLE_ERROR +
+                    Marshal.GetLastPInvokeErrorMessage());
+
+            base.OnHandleCreated(e);
+        }
+
+        //process windows messages
+        protected override void WndProc(ref Message m)
+        {
+            KeyEvent.KeyFrom? kf = KeyEvent.GetKeyFrom(ref m);
+
+            //filter message
+            if (kf is not null)
+            {
+                //try to pull a player from the keyboard mappings
+                if (_keyboardMap.TryGetValue(kf.from, out KBGPlayer? p))
+                {
+                    //key up event
+                    if (kf.isUp)
+                    {
+                        p.isPressed[kf.key] = false;
+                        if (p.UI.GetWord().Length == 1) p.UI.ClearLights();
+                        else p.UI.HeartbeatOff();
+                    }
+
+                    //key down event filtered for debounce
+                    else if (!p.isPressed[kf.key])
+                    {
+                        //debounce makes sure key goes up before it can be pressed again
+                        p.isPressed[kf.key] = true;
+                        p.UI.HeartbeatOn();
+                        keyEvents[kf.key](p, (CharEncoding.ANSI)kf.key);
+                    }
+                }
+                //look for player flagged for assignment
+                else foreach (KBGPlayer pl in _players)
+                        if (pl.assignFlag) ConfirmAssign(kf.from, pl);
+            }
+            //perform normal windows message processing for noninput messages
+            else base.WndProc(ref m);
+        }
+
+        //Keypress event methods and variables
+        //---------------------------------
+
+        //delegate array used to process key presses in O = 1 time
+        delegate void FormKeyEvent(KBGPlayer p, CharEncoding.ANSI key);
+        private readonly FormKeyEvent[] keyEvents = new FormKeyEvent[CharEncoding.MAX_ANSI];
+
+        private static void KEDefault(KBGPlayer p, CharEncoding.ANSI key) { }
+        private static void KELetter(KBGPlayer p, CharEncoding.ANSI key)
+        { p.UI.SetWord(p.UI.GetWord() + Convert.ToChar(key + 0x20)); }
+        private static void KEBackspace(KBGPlayer p, CharEncoding.ANSI key)
+        { string s = p.UI.GetWord(); if (!string.IsNullOrEmpty(s)) p.UI.SetWord(s[..^1]); }
+        private static void KEDelete(KBGPlayer p, CharEncoding.ANSI key)
+        { p.UI.SetWord(""); }
+        private static void KEUp(KBGPlayer p, CharEncoding.ANSI key)
+        { p.UI.ToggleWordVisibility(); }
+        private void KESubmit(KBGPlayer p, CharEncoding.ANSI key)
+        {
+            if (Timer.Enabled)
+            {
+                string s = p.UI.GetWord();
+                //make sure word is in the dictionary
+                if (_dictionary.InDictionary(s))
+                {
+                    p.UI.InDictionaryYes();
+                    AddWord(s, _bag.ScoreWord(s), p);
+                }
+                else p.UI.InDictionaryNo();
+                p.UI.SetWord("");
+            }
+        }
+
+        //Form functions
+        //---------------------------------
+
         //form constructor
         public Form1()
         {
@@ -72,6 +159,22 @@ namespace KeyboardGameV2
             }
             lblLetterPool.Text = "";
             dgvScoreboard.DataSource = _scoreboard;
+            dgvScoreboard.AutoGenerateColumns = true;
+
+            //make keypresses do nothing by default
+            for (byte x = 0; x < CharEncoding.MAX_ANSI; x++)
+                keyEvents[x] = KEDefault;
+
+            //assign individual keypress handlers
+            for (CharEncoding.ANSI letter = CharEncoding.ANSI.VK_A;
+                letter <= CharEncoding.ANSI.VK_Z;
+                letter++)
+                keyEvents[(int)letter] = KELetter;
+            keyEvents[(int)CharEncoding.ANSI.VK_BACKSPACE] = KEBackspace;
+            keyEvents[(int)CharEncoding.ANSI.VK_DELETE] = KEDelete;
+            keyEvents[(int)CharEncoding.ANSI.VK_UP] = KEUp;
+            keyEvents[(int)CharEncoding.ANSI.VK_SPACE] = KESubmit;
+            keyEvents[(int)CharEncoding.ANSI.VK_RETURN] = KESubmit;
         }
 
         //called once per second
@@ -98,97 +201,6 @@ namespace KeyboardGameV2
                 Click_mnuStart(sender, e);
                 MessageBox.Show(POPMSG_GAME_OVER);
             }
-        }
-
-        //capture keyboard handle creation to register for windows messages
-        protected override void OnHandleCreated(EventArgs e)
-        {
-            if (!Winuser.RegisterKBHandle(this.Handle))
-                //throw error message box if device registration fails
-                MessageBox.Show(POPMSG_HANDLE_ERROR +
-                    Marshal.GetLastPInvokeErrorMessage());
-            
-            base.OnHandleCreated(e);
-        }
-
-        //process windows messages
-        protected override void WndProc(ref Message m)
-        {
-            Winuser.KeyFrom? kf = Winuser.GetKeyFrom(ref m);
-            
-            //filter message
-            if (kf is not null)
-            {
-                //try to pull a player from the keyboard mappings
-                if (_keyboardMap.TryGetValue(kf.from, out KBGPlayer? p))
-                {
-                    //key up event
-                    if (kf.isUp)
-                    {
-                        p.isPressed[kf.key] = false;
-                        if (p.UI.GetWord().Length == 1) p.UI.ClearLights();
-                        else p.UI.HeartbeatOff();
-                    }
-
-                    //key down event filtered for debounce
-                    else if (!p.isPressed[kf.key])
-                    {
-                        //debounce makes sure key goes up before it can be pressed again
-                        p.isPressed[kf.key] = true;
-                        p.UI.HeartbeatOn();
-                        KeypressHandler(p, (CharEncoding.ANSI)kf.key);
-                    }
-                }
-                //look for player flagged for assignment
-                else foreach (KBGPlayer pl in _players)
-                        if (pl.assignFlag) ConfirmAssign(kf.from, pl);
-            }
-            //perform normal windows message processing for noninput messages
-            else base.WndProc(ref m);
-        }
-
-        //handles keypresses for known players
-        private void KeypressHandler(KBGPlayer p, CharEncoding.ANSI key)
-        {
-            //game actions
-            if (Timer.Enabled)
-            {
-                //get the word the player is currently typing
-                string s = p.UI.GetWord();
-
-                //letters (shift to lower case)
-                if (key >= CharEncoding.ANSI.VK_A && key <= CharEncoding.ANSI.VK_Z)
-                    p.UI.SetWord(s + Convert.ToChar(key + 0x20));
-
-                //backspace
-                else if (key == CharEncoding.ANSI.VK_BACKSPACE)
-                {
-                    if (!string.IsNullOrEmpty(s)) p.UI.SetWord(s[..^1]);
-                }
-
-                //delete
-                else if (key == CharEncoding.ANSI.VK_DELETE) p.UI.SetWord("");
-
-                //spacebar or enter to check word and add to score
-                else if (key == CharEncoding.ANSI.VK_SPACE ||
-                        key == CharEncoding.ANSI.VK_RETURN)
-                {
-                    //make sure word is in the dictionary
-                    if (_dictionary.InDictionary(s))
-                    {
-                        p.UI.InDictionaryYes();
-                        AddWord(s, _bag.ScoreWord(s), p);
-                    }
-                    else p.UI.InDictionaryNo();
-                    p.UI.SetWord("");
-                }
-
-            }
-
-            //universal actions
-
-            //up arrow toggles typed in word visibility
-            if (key == CharEncoding.ANSI.VK_UP) p.UI.ToggleWordVisibility();
         }
 
         //process a correctly spelled word
@@ -227,6 +239,7 @@ namespace KeyboardGameV2
             }
 
             //update the ui
+            dgvScoreboard.Update();
             player.AddPoints(points);
             if (points == 0) player.UI.WorthPointsNo();
             else player.UI.WorthPointsYes();
@@ -279,6 +292,9 @@ namespace KeyboardGameV2
             p.UI.SetAssignText(nextText);
         }
 
+        //Menu click events
+        //---------------------------------
+
         //individual calls from each player menu option
         private void Click_optP1(object sender, EventArgs e) { PlayerAssignment(_players[0]); }
         private void Click_optP2(object sender, EventArgs e) { PlayerAssignment(_players[1]); }
@@ -288,15 +304,15 @@ namespace KeyboardGameV2
         //starts / stops the game
         private void Click_mnuStart(object sender, EventArgs e)
         {
-
-
-            //game stop actions
-            if (Timer.Enabled) { }//nextText = MNUMSG_START;
+            //always do these
+            bool start = !Timer.Enabled;
+            mnuStart.Text = start ? MNUMSG_STOP : MNUMSG_START;
+            mnuOptions.Enabled = Timer.Enabled;
+            mnuPlayers.Enabled = Timer.Enabled;
 
             //game start actions
-            else
+            if (start)
             {
-                //nextText = MNUMSG_STOP;
                 _seconds = MAX_SECONDS;
                 barTimer.Maximum = MAX_SECONDS;
                 barTimer.Value = MAX_SECONDS;
@@ -307,11 +323,10 @@ namespace KeyboardGameV2
                     optSorted.Checked, optPoints.Checked, optSpaces.Checked);
             }
 
-            //always do these
-            Timer.Enabled = !Timer.Enabled;
-            mnuStart.Text = Timer.Enabled ? MNUMSG_STOP : MNUMSG_START;
-            mnuOptions.Enabled = !Timer.Enabled;
-            mnuPlayers.Enabled = !Timer.Enabled;
+            //stop game actions
+            //else{}
+
+            Timer.Enabled = start;
         }
 
         //load dictionary and set up bag of game tiles

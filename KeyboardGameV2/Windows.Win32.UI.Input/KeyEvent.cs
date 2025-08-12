@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 namespace Windows.Win32.UI.Input
 #pragma warning restore IDE0130 // Namespace does not match folder structure
 {
-    public static class Winuser
+    public static class KeyEvent
     {
-        //list of information to return from windows message
+        //information to save from a windows message about a keypress
         public class KeyFrom(ushort key, IntPtr from, bool isUp)
         {
             public readonly ushort key = key;
@@ -31,12 +31,12 @@ namespace Windows.Win32.UI.Input
                 ref dwSize,
                 (uint)sizeof(RAWINPUTHEADER));
 
-            //allocate buffer
+            //allocate space to save a copy of the buffer
             RAWINPUT rawinput;
             IntPtr buffer = Marshal.AllocHGlobal((int)dwSize);
             try
             {
-                //read buffer as long as it's of the expected size
+                //read and copy buffer as long as it's of the expected size
                 if (PInvoke.GetRawInputData(
                     (HRAWINPUT)m.LParam,
                     RAW_INPUT_DATA_COMMAND_FLAGS.RID_INPUT,
