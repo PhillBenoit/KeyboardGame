@@ -22,8 +22,8 @@ namespace KeyboardGameV2.src
             public void HeartbeatOff() { Heartbeat.BackColor = Control.DefaultBackColor; }
             public void InDictionaryYes() { InDictionary.BackColor = Color.DarkBlue; }
             public void InDictionaryNo() { InDictionary.BackColor = Color.DarkRed; }
-            public void WorthPointsYes() { InDictionary.BackColor = Color.DarkGreen; }
-            public void WorthPointsNo() { InDictionary.BackColor = Color.DarkRed; }
+            public void WorthPointsYes() { WorthPoints.BackColor = Color.DarkGreen; }
+            public void WorthPointsNo() { WorthPoints.BackColor = Color.DarkRed; }
             public void ToggleWordVisibility() { CurrentWord.Visible = !CurrentWord.Visible; }
             public void SetAssignText(string s) { Assign.Text = s; }
             public bool IsAssigned() { return Assign.Checked; }

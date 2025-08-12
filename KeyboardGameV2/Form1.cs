@@ -116,7 +116,7 @@ namespace KeyboardGameV2
         {
             Winuser.KeyFrom? kf = Winuser.GetKeyFrom(ref m);
             
-            //filter for input messages
+            //filter message
             if (kf is not null)
             {
                 //try to pull a player from the keyboard mappings
@@ -200,7 +200,9 @@ namespace KeyboardGameV2
             
             //try to find it in the list
             int index = _scoreboard.IndexOf(entry);
-            
+
+            System.Diagnostics.Debug.WriteLine("index " + index);
+
             //if found
             if (index > -1)
             {
@@ -221,6 +223,7 @@ namespace KeyboardGameV2
             {
                 _scoreboard.Add(entry);
                 _scoreboard.Sort();
+                System.Diagnostics.Debug.WriteLine("count "+_scoreboard.Count);
             }
 
             //update the ui
@@ -285,18 +288,18 @@ namespace KeyboardGameV2
         //starts / stops the game
         private void Click_mnuStart(object sender, EventArgs e)
         {
-            
-            string nextText;
+
 
             //game stop actions
-            if (Timer.Enabled) nextText = MNUMSG_START;
+            if (Timer.Enabled) { }//nextText = MNUMSG_START;
 
             //game start actions
             else
             {
-                nextText = MNUMSG_STOP;
+                //nextText = MNUMSG_STOP;
                 _seconds = MAX_SECONDS;
                 barTimer.Maximum = MAX_SECONDS;
+                barTimer.Value = MAX_SECONDS;
                 foreach (KBGPlayer p in _players) p.Reset();
                 _bag.Reset();
                 _scoreboard.Clear();
@@ -305,8 +308,10 @@ namespace KeyboardGameV2
             }
 
             //always do these
-            mnuStart.Text = nextText;
             Timer.Enabled = !Timer.Enabled;
+            mnuStart.Text = Timer.Enabled ? MNUMSG_STOP : MNUMSG_START;
+            mnuOptions.Enabled = !Timer.Enabled;
+            mnuPlayers.Enabled = !Timer.Enabled;
         }
 
         //load dictionary and set up bag of game tiles

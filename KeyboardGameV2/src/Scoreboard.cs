@@ -55,8 +55,17 @@ namespace KeyboardGameV2.src
 
         public int IndexOf(object? value)
         {
+            ArgumentNullException.ThrowIfNull(value);
+            int index = Array.BinarySearch([.. _data], (ScoreEntry)value);
+            return index < 0 ? -1 : index;
+            /*
             if (value is null) return -1;
-            return _data.IndexOf((ScoreEntry)value);
+            ScoreEntry entry = (ScoreEntry)value;
+            for (int x = 0; x < _data.Count; x++)
+                if (_data[x].Word.Equals(entry.Word))
+                    return x;
+            return -1;
+            */
         }
 
         public void Insert(int index, object? value)
