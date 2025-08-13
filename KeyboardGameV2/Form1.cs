@@ -186,12 +186,6 @@ namespace KeyboardGameV2
             //update timer label
             lblTimer.Text = String.Format("{0:D2}:{1:D2}", _seconds / 60, _seconds % 60);
 
-            //set progress color based on amount of time remaining
-            Color c = Color.DarkGreen;
-            if (_seconds < (MAX_SECONDS / 2)) c = Color.Gold;
-            if (_seconds < (MAX_SECONDS / 4)) c = Color.Maroon;
-            barTimer.ForeColor = c;
-
             //update progress
             barTimer.Value = (int)_seconds;
 
@@ -213,8 +207,6 @@ namespace KeyboardGameV2
             //try to find it in the list
             int index = _scoreboard.IndexOf(entry);
 
-            System.Diagnostics.Debug.WriteLine("index " + index);
-
             //if found
             if (index > -1)
             {
@@ -235,7 +227,6 @@ namespace KeyboardGameV2
             {
                 _scoreboard.Add(entry);
                 _scoreboard.Sort();
-                System.Diagnostics.Debug.WriteLine("count "+_scoreboard.Count);
             }
 
             //update the ui
