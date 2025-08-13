@@ -34,32 +34,33 @@ public class EnglishDictionary
         Search(letters, "", 0);
         found_words.Sort();
         System.Diagnostics.Debug.WriteLine(found_words.Count);
-        System.Diagnostics.Debug.WriteLine(found_words[0]);
-        System.Diagnostics.Debug.WriteLine(found_words[1]);
-        System.Diagnostics.Debug.WriteLine(found_words[2]);
-        System.Diagnostics.Debug.WriteLine(found_words[3]);
-        System.Diagnostics.Debug.WriteLine(found_words[4]);
+        foreach (string word in found_words)
+            if (word.Length > 5)
+                System.Diagnostics.Debug.WriteLine(word);
     }
 
-    private void TryWord(string word)
-    { if (InDictionary(word)) found_words.Add(word); }
+    private void TryWord(string word, int index)
+    { if (dictionary[index].endWord) found_words.Add(word); }
 
     private void Search(string pool, string root, int index)
     {
-        TryWord(root);
+        TryWord(root, index);
         if (pool.Length == 2)
         {
-            TryWord(root + pool[0]);
-            TryWord(root + pool[1]);
+            TryWord(root + pool[0], dictionary[index].children[pool[0] - (int)CharEncoding.ASCII.LETTER_a]);
+            TryWord(root + pool[1], dictionary[index].children[pool[1] - (int)CharEncoding.ASCII.LETTER_a]);
             return;
         }
         
         for (byte x = 1; x < pool.Length - 2; x++)
         {
-            string right = pool[(x+1)..];
-            string left = pool[..(x-1)];
             int nextIndex = dictionary[index].children[pool[x] - (int)CharEncoding.ASCII.LETTER_a];
-            if (nextIndex > 0) Search(left+right, root+pool[x], nextIndex);
+            if (nextIndex > 0)
+            {
+                string right = pool[(x + 1)..];
+                string left = pool[..(x - 1)];
+                Search(left + right, root + pool[x], nextIndex);
+            }
             while (x < pool.Length - 2 && pool[x] == pool[x+1]) x++;
         }
     }
