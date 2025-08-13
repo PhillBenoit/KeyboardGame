@@ -227,6 +227,7 @@
             boxP1.Controls.Add(btnP1InDictionary);
             boxP1.Controls.Add(lblP1CurrentWord);
             boxP1.Controls.Add(btnP1Heartbeat);
+            boxP1.Enabled = false;
             boxP1.Location = new Point(35, 422);
             boxP1.Margin = new Padding(8, 10, 8, 10);
             boxP1.Name = "boxP1";
@@ -295,6 +296,7 @@
             boxP2.Controls.Add(btnP2InDictionary);
             boxP2.Controls.Add(lblP2CurrentWord);
             boxP2.Controls.Add(btnP2Heartbeat);
+            boxP2.Enabled = false;
             boxP2.Location = new Point(35, 749);
             boxP2.Margin = new Padding(8, 10, 8, 10);
             boxP2.Name = "boxP2";
@@ -363,6 +365,7 @@
             boxP3.Controls.Add(btnP3InDictionary);
             boxP3.Controls.Add(lblP3CurrentWord);
             boxP3.Controls.Add(btnP3Heartbeat);
+            boxP3.Enabled = false;
             boxP3.Location = new Point(35, 1075);
             boxP3.Margin = new Padding(8, 10, 8, 10);
             boxP3.Name = "boxP3";
@@ -431,6 +434,7 @@
             boxP4.Controls.Add(btnP4InDictionary);
             boxP4.Controls.Add(lblP4CurrentWord);
             boxP4.Controls.Add(btnP4Heartbeat);
+            boxP4.Enabled = false;
             boxP4.Location = new Point(35, 1402);
             boxP4.Margin = new Padding(8, 10, 8, 10);
             boxP4.Name = "boxP4";

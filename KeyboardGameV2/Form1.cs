@@ -145,13 +145,13 @@ namespace KeyboardGameV2
             InitializeComponent();
             _players = new KBGPlayer[4];
             _players[0] = new KBGPlayer(1, lblP1CurrentWord, lblP1Score, btnP1Heartbeat,
-                btnP1InDictionary, btnP1WorthPoints, optP1);
+                btnP1InDictionary, btnP1WorthPoints, optP1, boxP1);
             _players[1] = new KBGPlayer(2, lblP2CurrentWord, lblP2Score, btnP2Heartbeat,
-                btnP2InDictionary, btnP2WorthPoints, optP2);
+                btnP2InDictionary, btnP2WorthPoints, optP2, boxP2);
             _players[2] = new KBGPlayer(3, lblP3CurrentWord, lblP3Score, btnP3Heartbeat,
-                btnP3InDictionary, btnP3WorthPoints, optP3);
+                btnP3InDictionary, btnP3WorthPoints, optP3, boxP3);
             _players[3] = new KBGPlayer(4, lblP4CurrentWord, lblP4Score, btnP4Heartbeat,
-                btnP4InDictionary, btnP4WorthPoints, optP4);
+                btnP4InDictionary, btnP4WorthPoints, optP4, boxP4);
             foreach (KBGPlayer p in _players)
             {
                 p.Reset();

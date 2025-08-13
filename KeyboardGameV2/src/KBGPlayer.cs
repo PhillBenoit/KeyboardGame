@@ -4,14 +4,16 @@ namespace KeyboardGameV2.src
 {
     //collection of UI elements and variables associated with a player
     internal class KBGPlayer(byte PlayerIndex, Label CurrentWord, Label Score, Button Heartbeat,
-        Button InDictionary, Button WorthPoints, ToolStripMenuItem Assign)
+        Button InDictionary, Button WorthPoints, ToolStripMenuItem Assign, GroupBox Box)
     {
         public class UIControlls(Label CurrentWord, Label Score, Button Heartbeat,
-            Button InDictionary, Button WorthPoints, ToolStripMenuItem Assign)
+            Button InDictionary, Button WorthPoints, ToolStripMenuItem Assign, GroupBox Box)
         {
             private readonly Label CurrentWord = CurrentWord, Score = Score;
             private readonly Button Heartbeat = Heartbeat, InDictionary = InDictionary, WorthPoints = WorthPoints;
             private readonly ToolStripMenuItem Assign = Assign;
+            private readonly GroupBox Box = Box;
+
 
             //UI modifiers
             //------------------------------
@@ -25,7 +27,7 @@ namespace KeyboardGameV2.src
             public void WorthPointsYes() { WorthPoints.BackColor = Color.DarkGreen; }
             public void WorthPointsNo() { WorthPoints.BackColor = Color.DarkRed; }
             public void ToggleWordVisibility() { CurrentWord.Visible = !CurrentWord.Visible; }
-            public void SetAssignText(string s) { Assign.Text = s; }
+            public void SetAssignText(string s) { Assign.Text = s; Box.Enabled = Assign.Checked; }
             public bool IsAssigned() { return Assign.Checked; }
 
             public void ClearLights() { 
@@ -43,7 +45,8 @@ namespace KeyboardGameV2.src
         }
         //Player variables
         //------------------------------
-        public readonly UIControlls UI = new(CurrentWord, Score, Heartbeat, InDictionary, WorthPoints, Assign);
+        public readonly UIControlls UI = new(CurrentWord, Score, Heartbeat,
+            InDictionary, WorthPoints, Assign, Box);
         private uint _score = 0;
 
         //player number for UI purposes
