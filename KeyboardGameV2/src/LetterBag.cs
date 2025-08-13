@@ -32,6 +32,8 @@ namespace KeyboardGameV2.src
         //holds the count of letters in the ltter pool
         private byte[] _drawCount;
 
+        public string draw_string = "";
+
         //generic constructor for basic declaration
         public LetterBag()
         {
@@ -149,6 +151,7 @@ namespace KeyboardGameV2.src
 
             //alphabetize the list
             if (sort) Array.Sort(letters);
+            draw_string = new string(letters);
 
             //load unicode formatted return string
             foreach(char l in letters)
