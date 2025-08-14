@@ -47,21 +47,29 @@ public class EnglishDictionary
         TryWord(root, index);
         if (pool.Length == 2)
         {
-            TryWord(root + pool[0], dictionary[index].children[pool[0] - (int)CharEncoding.ASCII.LETTER_a]);
-            TryWord(root + pool[1], dictionary[index].children[pool[1] - (int)CharEncoding.ASCII.LETTER_a]);
-            return;
+            int index1 = dictionary[index].children[pool[0] - (int)CharEncoding.ASCII.LETTER_a];
+            int index2 = dictionary[index].children[pool[1] - (int)CharEncoding.ASCII.LETTER_a];
+            int index3 = dictionary[index1].children[pool[1] - (int)CharEncoding.ASCII.LETTER_a];
+            int index4 = dictionary[index2].children[pool[0] - (int)CharEncoding.ASCII.LETTER_a];
+
+            TryWord(root + pool[0], index1);
+            TryWord(root + pool[1], index2);
+            TryWord(root + pool, index3);
+            TryWord(root + pool.Reverse(), index4);
         }
-        
-        for (byte x = 1; x < pool.Length - 2; x++)
+        else
         {
-            int nextIndex = dictionary[index].children[pool[x] - (int)CharEncoding.ASCII.LETTER_a];
-            if (nextIndex > 0)
+            for (byte x = 1; x < pool.Length - 2; x++)
             {
-                string right = pool[(x + 1)..];
-                string left = pool[..(x - 1)];
-                Search(left + right, root + pool[x], nextIndex);
+                int nextIndex = dictionary[index].children[pool[x] - (int)CharEncoding.ASCII.LETTER_a];
+                if (nextIndex > 0)
+                {
+                    string right = pool[(x + 1)..];
+                    string left = pool[..(x - 1)];
+                    Search(left + right, root + pool[x], nextIndex);
+                }
+                while (x < pool.Length - 2 && pool[x] == pool[x + 1]) x++;
             }
-            while (x < pool.Length - 2 && pool[x] == pool[x+1]) x++;
         }
     }
 
