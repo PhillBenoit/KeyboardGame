@@ -312,6 +312,7 @@ namespace KeyboardGameV2
                 _scoreboard.Clear();
                 lblLetterPool.Text = _bag.Draw(TILES_TO_DRAW,
                     optSorted.Checked, optPoints.Checked, optSpaces.Checked);
+                _dictionary.StartSearch(_bag.draw_string);
             }
 
             //stop game actions
