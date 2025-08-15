@@ -9,9 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="v1\**" />
-    <EmbeddedResource Remove="v1\**" />
-    <None Remove="v1\**" />
+    <Compile Remove="deprecated\**" />
+    <EmbeddedResource Remove="deprecated\**" />
+    <None Remove="deprecated\**" />
   </ItemGroup>
 
   <ItemGroup>

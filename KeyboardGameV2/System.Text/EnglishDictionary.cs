@@ -27,20 +27,28 @@ public class EnglishDictionary
     public readonly byte[] MAX_LETTER_COUNT;
 
     public List<string> found_words = [];
+    int calls;
 
     public void StartSearch(string letters)
     {
         found_words.Clear();
+        calls = 0;
         Search(letters, "", 0);
         found_words.Sort();
-        System.Diagnostics.Debug.WriteLine(found_words.Count);
+        System.Diagnostics.Debug.WriteLine("---------------------------------------------");
+        System.Diagnostics.Debug.WriteLine("Dictionary count: " + dictionary.Count);
+        System.Diagnostics.Debug.WriteLine("Dictionary capacity: " + dictionary.Capacity);
+        System.Diagnostics.Debug.WriteLine("found words: " + found_words.Count);
+        System.Diagnostics.Debug.WriteLine("total calls: " + calls);
+        int length_count = 0;
         foreach (string word in found_words)
             if (word.Length > 5)
-                System.Diagnostics.Debug.WriteLine(word);
+                length_count++;
+        System.Diagnostics.Debug.WriteLine("words longer than 5: " + length_count);
     }
 
     private void TryWord(string word, int index)
-    { if (dictionary[index].endWord) found_words.Add(word); }
+    { calls++;  if (dictionary[index].endWord) found_words.Add(word); }
 
     private void Search(string pool, string root, int index)
     {
