@@ -11,21 +11,23 @@ namespace KeyboardGameV2.src
 
         //full set of letters
         private readonly LetterTile[] BAG;
-        
+
         //rng for drawing letters
         private readonly Random RNG;
-        
+
         //point value for letters
         public readonly byte[] POINTS_MAP;
-        
+
         //total number of letters in the bag
         private readonly ushort TILE_COUNT;
-        
+
         //number of letters left in the bag
         public ushort tilesRemaining;
-        
+
         //holds the count of letters in the ltter pool
         public byte[] _drawCount;
+
+        public string draw_string = "";
 
         //generic constructor for basic declaration
         public LetterBag()
@@ -44,7 +46,7 @@ namespace KeyboardGameV2.src
             ushort tileCursor = 0;
             byte max = byte.MinValue;
             char letterCursor = firstLetter;
-            
+
             //establish the other class memebers
             RNG = new Random();
             POINTS_MAP = new byte[letters.Length];
@@ -54,14 +56,14 @@ namespace KeyboardGameV2.src
             for (byte x = 0; x < letters.Length; x++)
             {
                 TILE_COUNT += letters[x];
-                
+
                 //find the highest number count to establish 1 point letters
                 if (letters[x] > max) max = letters[x];
             }
             //creates a point scale by making the most comman letters worth 1 point
             //max(+1) letter count - each individual letter's count = a letter's score
             max++;
-            
+
             //create the new bag
             BAG = new LetterTile[TILE_COUNT];
             tilesRemaining = TILE_COUNT;
@@ -69,11 +71,11 @@ namespace KeyboardGameV2.src
             {
                 //store point value
                 POINTS_MAP[x] = (byte)(max - letters[x]);
-                
+
                 //create letter tiles
                 for (byte y = 0; y < letters[x]; y++)
                     BAG[tileCursor++] = new LetterTile(letterCursor);
-                
+
                 letterCursor++;
             }
         }
@@ -93,11 +95,11 @@ namespace KeyboardGameV2.src
         {
             //reject request if not enough tiles
             if (numberOfLetters > tilesRemaining) return null;
-            
+
             char[] letters = new char[numberOfLetters];
             int randomPull;
             _drawCount = new byte[POINTS_MAP.Length];
-            
+
 
             for (byte x = 0; x < numberOfLetters; x++)
             {
@@ -112,46 +114,14 @@ namespace KeyboardGameV2.src
                 letters[x] = BAG[randomPull].LETTER;
 
                 //increase count of letters used to determine a valid score
-                _drawCount[letters[x]-BAG[0].LETTER]++;
+                _drawCount[letters[x] - BAG[0].LETTER]++;
 
                 //decrement the count so the bag can never be overdrawn
                 tilesRemaining--;
             }
 
-            //alphabetize the list
-            if (sort) Array.Sort(letters);
-
-            //load unicode formatted return string
-            foreach(char l in letters)
-            {
-                //letter
-                lettersWithScore.Add((byte)l);
-                lettersWithScore.Add(0x00);
-                
-                if (score)
-                    //substring for score
-                    foreach (char digit in POINTS_MAP[l - BAG[0].LETTER].ToString())
-                    {
-                        lettersWithScore.Add((byte)(digit + 0x50));
-                        lettersWithScore.Add(0x20);
-                    }
-                
-                if (spaces)
-                {
-                    //space
-                    lettersWithScore.Add(0x20);
-                    lettersWithScore.Add(0x00);
-                }
-            }
-
-            if (spaces)
-            {
-                //remove last space
-                lettersWithScore.RemoveAt(lettersWithScore.LastIndexOf(0x20));
-                lettersWithScore.RemoveAt(lettersWithScore.LastIndexOf(0x00));
-            }
-
-            return UNICODE.GetString([..lettersWithScore]);
+            draw_string = new string(letters);
+            return draw_string;
         }
     }
 }
