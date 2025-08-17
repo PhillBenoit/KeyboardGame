@@ -245,16 +245,4 @@ public class EnglishDictionary
             for (int x = 0; x < children.Length; x++) children[x] = 0;
         }
     }
-
-    private readonly List<Trie> dictionary = [];
-
-    private class Trie
-    {
-        public int[] children = new int[ENGLISH_LETTERS];
-        public bool endWord = false;
-        public Trie()
-        {
-            for (int x = 0; x < children.Length; x++) children[x] = 0;
-        }
-    }
 }

@@ -57,7 +57,7 @@ namespace KeyboardGameV2.src
         
         //debounce makes sure a key is released
         //before same key can be pressed again
-        public bool[] isPressed = new bool[CharEncoding.MAX_ANSI];
+        public bool[] isPressed = new bool[CharEncoding.VK_COUNT];
 
         public void AddPoints(uint points) { _score += points; UI.SetScore(_score); }
 
@@ -65,7 +65,7 @@ namespace KeyboardGameV2.src
         {
             _score = 0;
             assignFlag = false;
-            isPressed = new bool[CharEncoding.MAX_ANSI];
+            isPressed = new bool[CharEncoding.VK_COUNT];
             UI.Reset();
         }
     }

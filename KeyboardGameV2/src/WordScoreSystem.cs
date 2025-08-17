@@ -31,7 +31,7 @@ namespace KeyboardGameV2.src
             //count letters in the word and compile score
             foreach (char letter in w)
             {
-                byte offsetLetter = (byte)(letter - CharEncoding.ASCII.LETTER_a);
+                byte offsetLetter = (byte)(letter - (char)CharEncoding.ASCII.LETTER_a);
                 wordLetterCount[offsetLetter]++;
                 score += POINTS_MAP[offsetLetter];
             }
@@ -52,7 +52,7 @@ namespace KeyboardGameV2.src
             for (int x = 0; x < _drawCount.Length; x++)
                 _drawCount[x] = 0;
             foreach (char letter in s)
-                _drawCount[(int)(letter-CharEncoding.ASCII.LETTER_a)]++;
+                _drawCount[(int)(letter - CharEncoding.ASCII.LETTER_a)]++;
         }
 
         public void SetDraw(string s, byte[] draw_count)

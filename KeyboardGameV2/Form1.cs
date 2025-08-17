@@ -95,7 +95,7 @@ namespace KeyboardGameV2
                         //debounce makes sure key goes up before it can be pressed again
                         p.isPressed[kf.key] = true;
                         p.UI.HeartbeatOn();
-                        keyEvents[kf.key](p, (CharEncoding.ANSI)kf.key);
+                        keyEvents[kf.key](p, (CharEncoding.VKEYS)kf.key);
                     }
                 }
                 //look for player flagged for assignment
@@ -110,19 +110,21 @@ namespace KeyboardGameV2
         //---------------------------------
 
         //delegate array used to process key presses in O = 1 time
-        delegate void FormKeyEvent(KBGPlayer p, CharEncoding.ANSI key);
-        private readonly FormKeyEvent[] keyEvents = new FormKeyEvent[CharEncoding.MAX_ANSI];
+        delegate void FormKeyEvent(KBGPlayer p, CharEncoding.VKEYS key);
+        private readonly FormKeyEvent[] keyEvents = new FormKeyEvent[CharEncoding.VK_COUNT];
 
-        private static void KEDefault(KBGPlayer p, CharEncoding.ANSI key) { }
-        private static void KELetter(KBGPlayer p, CharEncoding.ANSI key)
+        private static void KEDefault(KBGPlayer p, CharEncoding.VKEYS key) { }
+        private static void KELetter(KBGPlayer p, CharEncoding.VKEYS key)
         { p.UI.SetWord(p.UI.GetWord() + Convert.ToChar(key + 0x20)); }
-        private static void KEBackspace(KBGPlayer p, CharEncoding.ANSI key)
+        private static void KEColon(KBGPlayer p, CharEncoding.VKEYS key)
+        { p.UI.SetWord(p.UI.GetWord() + (char)CharEncoding.ASCII.LETTER_ñ); }
+        private static void KEBackspace(KBGPlayer p, CharEncoding.VKEYS key)
         { string s = p.UI.GetWord(); if (!string.IsNullOrEmpty(s)) p.UI.SetWord(s[..^1]); }
-        private static void KEDelete(KBGPlayer p, CharEncoding.ANSI key)
+        private static void KEDelete(KBGPlayer p, CharEncoding.VKEYS key)
         { p.UI.SetWord(""); }
-        private static void KEUp(KBGPlayer p, CharEncoding.ANSI key)
+        private static void KEUp(KBGPlayer p, CharEncoding.VKEYS key)
         { p.UI.ToggleWordVisibility(); }
-        private void KESubmit(KBGPlayer p, CharEncoding.ANSI key)
+        private void KESubmit(KBGPlayer p, CharEncoding.VKEYS key)
         {
             if (Timer.Enabled)
             {
@@ -165,19 +167,21 @@ namespace KeyboardGameV2
             dgvScoreboard.AutoGenerateColumns = true;
 
             //make keypresses do nothing by default
-            for (byte x = 0; x < CharEncoding.MAX_ANSI; x++)
+            for (byte x = 0; x < keyEvents.Length; x++)
                 keyEvents[x] = KEDefault;
 
             //assign individual keypress handlers
-            for (CharEncoding.ANSI letter = CharEncoding.ANSI.VK_A;
-                letter <= CharEncoding.ANSI.VK_Z;
+            for (CharEncoding.VKEYS letter = CharEncoding.VKEYS.VK_A;
+                letter <= CharEncoding.VKEYS.VK_Z;
                 letter++)
                 keyEvents[(int)letter] = KELetter;
-            keyEvents[(int)CharEncoding.ANSI.VK_BACKSPACE] = KEBackspace;
-            keyEvents[(int)CharEncoding.ANSI.VK_DELETE] = KEDelete;
-            keyEvents[(int)CharEncoding.ANSI.VK_UP] = KEUp;
-            keyEvents[(int)CharEncoding.ANSI.VK_SPACE] = KESubmit;
-            keyEvents[(int)CharEncoding.ANSI.VK_RETURN] = KESubmit;
+            keyEvents[(int)CharEncoding.VKEYS.VK_BACKSPACE] = KEBackspace;
+            keyEvents[(int)CharEncoding.VKEYS.VK_DELETE] = KEDelete;
+            keyEvents[(int)CharEncoding.VKEYS.VK_UP] = KEUp;
+            keyEvents[(int)CharEncoding.VKEYS.VK_SPACE] = KESubmit;
+            keyEvents[(int)CharEncoding.VKEYS.VK_RETURN] = KESubmit;
+            keyEvents[(int)CharEncoding.VKEYS.VK_SEMICOLON] = KEColon;
+            keyEvents[(int)CharEncoding.VKEYS.VK_TILDE] = KEColon;
         }
 
         //called once per second
