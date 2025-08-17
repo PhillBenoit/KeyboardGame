@@ -37,6 +37,9 @@
             optSorted = new ToolStripMenuItem();
             optPoints = new ToolStripMenuItem();
             optSpaces = new ToolStripMenuItem();
+            mnuLetterMode = new ToolStripMenuItem();
+            optDictionarySelect = new ToolStripMenuItem();
+            optBagSelect = new ToolStripMenuItem();
             mnuPlayers = new ToolStripMenuItem();
             optP1 = new ToolStripMenuItem();
             optP2 = new ToolStripMenuItem();
@@ -86,14 +89,14 @@
             mnuStrip.Location = new Point(0, 0);
             mnuStrip.Name = "mnuStrip";
             mnuStrip.Padding = new Padding(18, 7, 0, 7);
-            mnuStrip.Size = new Size(2285, 66);
+            mnuStrip.Size = new Size(2285, 71);
             mnuStrip.TabIndex = 0;
             mnuStrip.Text = "menuStrip1";
             // 
             // mnuLoad
             // 
             mnuLoad.Name = "mnuLoad";
-            mnuLoad.Size = new Size(296, 52);
+            mnuLoad.Size = new Size(296, 57);
             mnuLoad.Text = "Load Dictionary";
             mnuLoad.Click += Click_mnuLoad;
             // 
@@ -101,22 +104,22 @@
             // 
             mnuStart.Enabled = false;
             mnuStart.Name = "mnuStart";
-            mnuStart.Size = new Size(224, 52);
+            mnuStart.Size = new Size(224, 57);
             mnuStart.Text = "Start Game";
             mnuStart.Click += Click_mnuStart;
             // 
             // mnuOptions
             // 
-            mnuOptions.DropDownItems.AddRange(new ToolStripItem[] { mnuLetterPool });
+            mnuOptions.DropDownItems.AddRange(new ToolStripItem[] { mnuLetterPool, mnuLetterMode });
             mnuOptions.Name = "mnuOptions";
-            mnuOptions.Size = new Size(173, 52);
+            mnuOptions.Size = new Size(173, 57);
             mnuOptions.Text = "Options";
             // 
             // mnuLetterPool
             // 
             mnuLetterPool.DropDownItems.AddRange(new ToolStripItem[] { optSorted, optPoints, optSpaces });
             mnuLetterPool.Name = "mnuLetterPool";
-            mnuLetterPool.Size = new Size(390, 66);
+            mnuLetterPool.Size = new Size(538, 66);
             mnuLetterPool.Text = "Letter Pool";
             // 
             // optSorted
@@ -146,11 +149,34 @@
             optSpaces.Size = new Size(327, 66);
             optSpaces.Text = "Spaces";
             // 
+            // mnuLetterMode
+            // 
+            mnuLetterMode.DropDownItems.AddRange(new ToolStripItem[] { optDictionarySelect, optBagSelect });
+            mnuLetterMode.Name = "mnuLetterMode";
+            mnuLetterMode.Size = new Size(538, 66);
+            mnuLetterMode.Text = "Letter Mode";
+            // 
+            // optDictionarySelect
+            // 
+            optDictionarySelect.Checked = true;
+            optDictionarySelect.CheckState = CheckState.Checked;
+            optDictionarySelect.Name = "optDictionarySelect";
+            optDictionarySelect.Size = new Size(538, 66);
+            optDictionarySelect.Text = "Dictionary";
+            optDictionarySelect.Click += Click_LetterMode;
+            // 
+            // optBagSelect
+            // 
+            optBagSelect.Name = "optBagSelect";
+            optBagSelect.Size = new Size(538, 66);
+            optBagSelect.Text = "Bag";
+            optBagSelect.Click += Click_LetterMode;
+            // 
             // mnuPlayers
             // 
             mnuPlayers.DropDownItems.AddRange(new ToolStripItem[] { optP1, optP2, optP3, optP4 });
             mnuPlayers.Name = "mnuPlayers";
-            mnuPlayers.Size = new Size(159, 52);
+            mnuPlayers.Size = new Size(159, 57);
             mnuPlayers.Text = "Players";
             // 
             // optP1
@@ -584,5 +610,8 @@
         private Label lblP4CurrentWord;
         private Button btnP4Heartbeat;
         private DataGridView dgvScoreboard;
+        private ToolStripMenuItem mnuLetterMode;
+        private ToolStripMenuItem optDictionarySelect;
+        private ToolStripMenuItem optBagSelect;
     }
 }

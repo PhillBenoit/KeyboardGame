@@ -1,6 +1,4 @@
 ﻿//bag of letters selected at random for the letter pool
-using System.Text;
-
 namespace KeyboardGameV2.src
 {
     public class LetterBag
@@ -14,23 +12,20 @@ namespace KeyboardGameV2.src
         //full set of letters
         private readonly LetterTile[] BAG;
         
-        //rng for selection
+        //rng for drawing letters
         private readonly Random RNG;
         
         //point value for letters
-        private readonly byte[] POINTS_MAP;
+        public readonly byte[] POINTS_MAP;
         
         //total number of letters in the bag
         private readonly ushort TILE_COUNT;
-        
-        //encoder for unicode used to give pool letters a subscript score
-        private readonly UnicodeEncoding UNICODE;
         
         //number of letters left in the bag
         public ushort tilesRemaining;
         
         //holds the count of letters in the ltter pool
-        private byte[] _drawCount;
+        public byte[] _drawCount;
 
         //generic constructor for basic declaration
         public LetterBag()
@@ -38,7 +33,6 @@ namespace KeyboardGameV2.src
             BAG = new LetterTile[1];
             RNG = new Random();
             POINTS_MAP = new byte[1];
-            UNICODE = new UnicodeEncoding();
             _drawCount = new byte[1];
         }
 
@@ -55,7 +49,6 @@ namespace KeyboardGameV2.src
             RNG = new Random();
             POINTS_MAP = new byte[letters.Length];
             _drawCount = new byte[POINTS_MAP.Length];
-            UNICODE = new UnicodeEncoding();
 
             //count the number of tiles that need to be created
             for (byte x = 0; x < letters.Length; x++)
@@ -85,40 +78,18 @@ namespace KeyboardGameV2.src
             }
         }
 
-        public ushort ScoreWord(string w)
-        {
-            byte[] wordLetterCount = new byte[_drawCount.Length];
-            int score = 0;
-
-            //count letters in the word and compile score
-            foreach (char letter in w)
-            {
-                byte offsetLetter = (byte)(letter - BAG[0].LETTER);
-                wordLetterCount[offsetLetter]++;
-                score += POINTS_MAP[offsetLetter];
-            }
-            score *= w.Length;
-
-            //reject word if not enough letters are in the draw
-            for (byte x = 0; x < _drawCount.Length; x++)
-                if (_drawCount[x] - wordLetterCount[x] < 0)
-                    return 0;
-
-            //return score if enough letters found in the draw
-            return (ushort)score;
-        }
-
         public void Reset()
         {
             foreach (LetterTile t in BAG)
                 t.inBag = true;
             tilesRemaining = TILE_COUNT;
             _drawCount = new byte[POINTS_MAP.Length];
+            draw_string = "";
         }
 
         //returns a formatted string for display and loads validation metadata
         //null if not enough letters remain in the bag
-        public string? Draw(ushort numberOfLetters, bool sort, bool score, bool spaces)
+        public string? Draw(ushort numberOfLetters)
         {
             //reject request if not enough tiles
             if (numberOfLetters > tilesRemaining) return null;
@@ -126,7 +97,7 @@ namespace KeyboardGameV2.src
             char[] letters = new char[numberOfLetters];
             int randomPull;
             _drawCount = new byte[POINTS_MAP.Length];
-            List<byte> lettersWithScore = [];
+            
 
             for (byte x = 0; x < numberOfLetters; x++)
             {

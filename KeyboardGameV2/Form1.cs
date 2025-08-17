@@ -38,6 +38,8 @@ namespace KeyboardGameV2
         //list of words found by all players
         private readonly Scoreboard _scoreboard = [];
 
+        private WordScoreSystem wss;
+
         //number of tiles to draw in a game
         private const byte TILES_TO_DRAW = 20;
 
@@ -129,7 +131,7 @@ namespace KeyboardGameV2
                 if (_dictionary.InDictionary(s))
                 {
                     p.UI.InDictionaryYes();
-                    AddWord(s, _bag.ScoreWord(s), p);
+                    AddWord(s, wss.ScoreWord(s), p);
                 }
                 else p.UI.InDictionaryNo();
                 p.UI.SetWord("");
@@ -157,6 +159,7 @@ namespace KeyboardGameV2
                 p.Reset();
                 p.UI.SetAssignText(String.Format(MNUMSG_ASSIGN, p.PLAYER_INDEX));
             }
+            wss = new WordScoreSystem(new byte[1]);
             lblLetterPool.Text = "";
             dgvScoreboard.DataSource = _scoreboard;
             dgvScoreboard.AutoGenerateColumns = true;
@@ -203,7 +206,7 @@ namespace KeyboardGameV2
             //format found word for the scoreboard
             Scoreboard.ScoreEntry entry = new(word, points);
             entry.Players[player.PLAYER_INDEX - 1] = true;
-            
+
             //try to find it in the list
             int index = _scoreboard.IndexOf(entry);
 
@@ -310,7 +313,20 @@ namespace KeyboardGameV2
                 foreach (KBGPlayer p in _players) p.Reset();
                 _bag.Reset();
                 _scoreboard.Clear();
-                lblLetterPool.Text = _bag.Draw(TILES_TO_DRAW,
+
+                if (optDictionarySelect.Checked)
+                {
+                    wss = new WordScoreSystem(_dictionary.OCCURANCE_RATE_POINT_MAP);
+                    byte draw = TILES_TO_DRAW;
+                    wss.SetDraw(_dictionary.Draw(ref draw));
+                }
+                else
+                {
+                    wss = new WordScoreSystem(_bag.POINTS_MAP);
+                    string? s = _bag.Draw(TILES_TO_DRAW);
+                    if (s is not null) wss.SetDraw(s, _bag._drawCount);
+                }
+                lblLetterPool.Text = wss.FormatDraw(
                     optSorted.Checked, optPoints.Checked, optSpaces.Checked);
             }
 
@@ -337,6 +353,12 @@ namespace KeyboardGameV2
                 mnuLoad.Enabled = false;
                 mnuStart.Enabled = _keyboardMap.Count > 0;
             }
+        }
+
+        private void Click_LetterMode(object sender, EventArgs e)
+        {
+            optBagSelect.Checked = optDictionarySelect.Checked;
+            optDictionarySelect.Checked = !optDictionarySelect.Checked;
         }
     }
 }
