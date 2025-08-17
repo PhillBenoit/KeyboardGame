@@ -135,7 +135,7 @@ namespace System.Text
             TILDE,
             DELETE
         }
-        public static readonly byte MAX_ASCII = Enum.GetValues<ASCII>().Cast<byte>().Max();
+        public static readonly byte MAX_ASCII = (byte)(Enum.GetValues<ASCII>().Cast<byte>().Max() + 1);
         public enum ANSI : byte
         {
             ZERO,
@@ -394,7 +394,7 @@ namespace System.Text
             VK_PA1,
             VK_OEM_CLEAR
         }
-        public static readonly byte MAX_ANSI = Enum.GetValues<ANSI>().Cast<byte>().Max();
+        public static readonly byte MAX_ANSI = (byte)(Enum.GetValues<ANSI>().Cast<byte>().Max()+1);
 
     }
 }

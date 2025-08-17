@@ -328,6 +328,7 @@ namespace KeyboardGameV2
                 }
                 lblLetterPool.Text = wss.FormatDraw(
                     optSorted.Checked, optPoints.Checked, optSpaces.Checked);
+                _dictionary.StartSearch(_bag.draw_string);
             }
 
             //stop game actions
