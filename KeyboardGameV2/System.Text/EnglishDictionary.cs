@@ -12,6 +12,7 @@ public class EnglishDictionary
 
     //max length of a word in the dictionary
     public readonly byte MAX_WORD_LENGTH;
+    public readonly byte MIN_WORD_LENGTH;
 
     //count of word lengths
     public readonly uint[] WORD_LENGTH_COUNT;
@@ -93,13 +94,15 @@ public class EnglishDictionary
 
         do
         {
-            byte word_length = (byte)RNG.Next(1,(pool+2)-drawCount );
+            //byte word_length = (byte)RNG.Next(1,(pool+2)-drawCount );
+            byte word_length;
+            do word_length = (byte)RNG.Next(
+                word_stdev_min,
+                Math.Min(pool, word_stdev_max));
+            while (WORD_LENGTH_COUNT[word_length] == 0);
             byte[] wordLetterCount = new byte[ENGLISH_LETTERS];
             draw = "";
             DrawRecurse(ref word_length, word_length, 0, "");
-            
-            System.Diagnostics.Debug.WriteLine(draw);
-            
             foreach(char letter in draw)
                 wordLetterCount[(int)(letter - CharEncoding.ASCII.LETTER_a)]++;
             drawCount = 0;
@@ -246,7 +249,12 @@ public class EnglishDictionary
         //set max word length
         for (MAX_WORD_LENGTH = byte.MaxValue - 1;
             WORD_LENGTH_COUNT[MAX_WORD_LENGTH] == 0;
-            MAX_WORD_LENGTH--) ;
+            MAX_WORD_LENGTH--);
+
+        //set min word length
+        for (MIN_WORD_LENGTH = 1;
+            WORD_LENGTH_COUNT[MIN_WORD_LENGTH] == 0;
+            MIN_WORD_LENGTH++);
 
         //setup for occurance rate calculations
         OCCURANCE_RATE = new double[ENGLISH_LETTERS];
@@ -270,7 +278,24 @@ public class EnglishDictionary
         for (byte x = 0; x < ENGLISH_LETTERS; x++)
             OCCURANCE_RATE_POINT_MAP[x] = (byte)(points_offset -
                 (Occurance_Scaler(OCCURANCE_RATE[x], dmin, dmax) - tile_reduction));
+
+        //Word Length Standard Deviation
+        ulong total_word_lengths = 0;
+        for (byte x = MIN_WORD_LENGTH; x <= MAX_WORD_LENGTH; x++)
+            total_word_lengths += WORD_LENGTH_COUNT[x] * x;
+        average_word_length = (double)total_word_lengths / (double)WORD_COUNT;
+        word_length_stdev = 0.0;
+        for (byte x = MIN_WORD_LENGTH; x <= MAX_WORD_LENGTH; x++)
+            word_length_stdev += WORD_LENGTH_COUNT[x] * Math.Pow(x-average_word_length,2);
+        word_length_stdev = Math.Sqrt(word_length_stdev/(WORD_COUNT - 1));
+        word_stdev_min = (byte)Math.Max(MIN_WORD_LENGTH, (int)Math.Round((word_length_stdev * 2) - average_word_length));
+        word_stdev_max = Math.Min(MAX_WORD_LENGTH, (byte)Math.Round((word_length_stdev * 2) + average_word_length));
     }
+
+    public readonly double average_word_length;
+    public readonly double word_length_stdev;
+    public readonly byte word_stdev_min;
+    public readonly byte word_stdev_max;
 
     private static byte Occurance_Scaler(double x, double min, double max)
     {
