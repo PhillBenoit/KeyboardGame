@@ -115,7 +115,7 @@ namespace KeyboardGameV2
 
         private static void KEDefault(KBGPlayer p, CharEncoding.VKEYS key) { }
         private static void KELetter(KBGPlayer p, CharEncoding.VKEYS key)
-        { p.UI.SetWord(p.UI.GetWord() + Convert.ToChar(key + 0x20)); }
+        { p.UI.SetWord(p.UI.GetWord() + (char)(key + 0x20)); }
         private static void KEColon(KBGPlayer p, CharEncoding.VKEYS key)
         { p.UI.SetWord(p.UI.GetWord() + (char)CharEncoding.ASCII.LETTER_ñ); }
         private static void KEBackspace(KBGPlayer p, CharEncoding.VKEYS key)
@@ -194,7 +194,7 @@ namespace KeyboardGameV2
             lblTimer.Text = String.Format("{0:D2}:{1:D2}", _seconds / 60, _seconds % 60);
 
             //update progress
-            barTimer.Value = (int)_seconds;
+            barTimer.Value = _seconds;
 
             //check for game over
             if (_seconds == 0)
@@ -304,13 +304,14 @@ namespace KeyboardGameV2
         {
             //always do these
             bool start = !Timer.Enabled;
-            mnuStart.Text = start ? MNUMSG_STOP : MNUMSG_START;
+            string nextText;
             mnuOptions.Enabled = Timer.Enabled;
             mnuPlayers.Enabled = Timer.Enabled;
 
             //game start actions
             if (start)
             {
+                nextText = MNUMSG_STOP;
                 _seconds = MAX_SECONDS;
                 barTimer.Maximum = MAX_SECONDS;
                 barTimer.Value = MAX_SECONDS;
@@ -322,7 +323,7 @@ namespace KeyboardGameV2
                 {
                     wss = new WordScoreSystem(_dictionary.OCCURANCE_RATE_POINT_MAP);
                     byte draw = TILES_TO_DRAW;
-                    wss.SetDraw(_dictionary.Draw(ref draw));
+                    wss.SetDraw(_dictionary.Draw(draw));
                 }
                 else
                 {
@@ -332,12 +333,16 @@ namespace KeyboardGameV2
                 }
                 lblLetterPool.Text = wss.FormatDraw(
                     optSorted.Checked, optPoints.Checked, optSpaces.Checked);
-                _dictionary.StartSearch(_bag.draw_string);
             }
 
             //stop game actions
-            //else{}
+            else
+            {
+                nextText = MNUMSG_START;
+            }
 
+            //finish with these
+            mnuStart.Text = nextText;
             Timer.Enabled = start;
         }
 

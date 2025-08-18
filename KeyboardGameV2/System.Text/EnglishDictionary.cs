@@ -6,7 +6,6 @@ public class EnglishDictionary
 {
     public const byte ENGLISH_LETTERS =
         CharEncoding.ASCII.LETTER_z - CharEncoding.ASCII.LETTER_a + 1;
-    public const byte MAX_POSSIBLE_WORD_LENGTH = byte.MaxValue;
 
     //count of words
     public readonly uint WORD_COUNT;
@@ -34,7 +33,7 @@ public class EnglishDictionary
 
     private readonly List<TrieNode> dictionary = [];
 
-    //brute force for word pool
+    //bute force search of sorted string of letters
     //------------------------------------------------
 
     //loop independant storage for found words
@@ -84,13 +83,54 @@ public class EnglishDictionary
     //rng for drawing letters
     private readonly Random RNG;
     private string draw = "";
+    public byte[] drawLetterCount;
     private bool keep_drawing(ref byte pool) { return pool > draw.Length; }
-    public string Draw(ref byte pool)
+    public string Draw(byte pool)
     {
-        draw = "";
-        DrawRecurse(ref pool, (byte)(pool / 2), 0, draw);
-        System.Diagnostics.Debug.WriteLine("draw: " + draw);
-        RNG.Shuffle(draw.ToCharArray());
+        byte drawCount = 0;
+        drawLetterCount = new byte[ENGLISH_LETTERS];
+        found_words.Clear();
+
+        do
+        {
+            byte word_length = (byte)RNG.Next(1,(pool+2)-drawCount );
+            byte[] wordLetterCount = new byte[ENGLISH_LETTERS];
+            draw = "";
+            DrawRecurse(ref word_length, word_length, 0, "");
+            
+            System.Diagnostics.Debug.WriteLine(draw);
+            
+            foreach(char letter in draw)
+                wordLetterCount[(int)(letter - CharEncoding.ASCII.LETTER_a)]++;
+            drawCount = 0;
+            for(int x = 0; x < ENGLISH_LETTERS; x++)
+            {
+                drawLetterCount[x] = wordLetterCount[x] < drawLetterCount[x] ?
+                    drawLetterCount[x] :
+                    wordLetterCount[x];
+                drawCount += drawLetterCount[x];
+            }
+        } while (drawCount < pool);
+        
+        while (drawCount > pool)
+        {
+            byte maxIndex = 0;
+            for (byte x = 1; x < ENGLISH_LETTERS; x++)
+                if (drawLetterCount[x] > drawLetterCount[maxIndex])
+                    maxIndex = x;
+            drawLetterCount[maxIndex]--;
+            drawCount--;
+        }
+
+        char[] newPool = new char[pool];
+        byte poolCursor = 0;
+        for (byte x = 0; x < ENGLISH_LETTERS; x++)
+            if (drawLetterCount[x] > 0)
+                for (byte y = 0; y < drawLetterCount[x]; y++)
+                    newPool[poolCursor++] = (char)(x + CharEncoding.ASCII.LETTER_a);
+        RNG.Shuffle(newPool);
+
+        draw = new string(newPool);
         return draw;
     }
 
@@ -141,6 +181,7 @@ public class EnglishDictionary
         OCCURANCE_RATE = new double[1];
         OCCURANCE_RATE_POINT_MAP = new byte[1];
         RNG = new Random();
+        drawLetterCount = new byte[1];
     }
 
     // https://github.com/wordnik/wordlist/tree/main
@@ -149,6 +190,7 @@ public class EnglishDictionary
     // lower case
     public EnglishDictionary(Stream s, string path)
     {
+        drawLetterCount = new byte[1];
         WORD_COUNT = (uint)File.ReadLines(path).Count();
         dictionary.Add(new TrieNode());
         RNG = new Random();
@@ -156,7 +198,7 @@ public class EnglishDictionary
         //metadata about the loaded words
         LETTER_COUNT = new uint[ENGLISH_LETTERS];
         MAX_LETTER_COUNT = new byte[ENGLISH_LETTERS];
-        WORD_LENGTH_COUNT = new uint[MAX_POSSIBLE_WORD_LENGTH];
+        WORD_LENGTH_COUNT = new uint[byte.MaxValue];
         TOTAL_LETTERS = 0;
 
         //setup for stream reading
@@ -202,7 +244,7 @@ public class EnglishDictionary
         }
 
         //set max word length
-        for (MAX_WORD_LENGTH = MAX_POSSIBLE_WORD_LENGTH - 1;
+        for (MAX_WORD_LENGTH = byte.MaxValue - 1;
             WORD_LENGTH_COUNT[MAX_WORD_LENGTH] == 0;
             MAX_WORD_LENGTH--) ;
 
