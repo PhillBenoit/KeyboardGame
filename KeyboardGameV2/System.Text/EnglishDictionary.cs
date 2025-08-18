@@ -62,8 +62,8 @@ public class EnglishDictionary
 
             TryWord(root + pool[0], index1);
             TryWord(root + pool[1], index2);
-            TryWord(root + pool, index3);
-            TryWord(root + pool.Reverse(), index4);
+            if (index1 > 0) TryWord(root + pool, index3);
+            if (index2 > 0) TryWord(root + pool.Reverse(), index4);
         }
         else
         {
