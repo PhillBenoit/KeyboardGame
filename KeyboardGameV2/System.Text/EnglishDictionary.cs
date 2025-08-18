@@ -7,6 +7,12 @@ public class EnglishDictionary
     public const byte ENGLISH_LETTERS =
         CharEncoding.ASCII.LETTER_z - CharEncoding.ASCII.LETTER_a + 1;
 
+    //data about word lengths
+    public readonly double average_word_length;
+    public readonly double word_length_stdev;
+    public readonly byte word_stdev_min;
+    public readonly byte word_stdev_max;
+
     //count of words
     public readonly uint WORD_COUNT;
 
@@ -47,41 +53,57 @@ public class EnglishDictionary
         found_words.Sort();
     }
 
+    //check to see if indexed letter is the end of a word
     private void TryWord(string word, int index)
     { if (dictionary[index].endWord) found_words.Add(word); }
 
     private void Search(string pool, string root, int index)
     {
+        //check the current index for a valid word
         TryWord(root, index);
+        
+        //final outcome of pools that start greater than 2
         if (pool.Length == 2)
         {
+            //permute the remaining letters
             int index1 = dictionary[index].children[pool[0] - (int)CharEncoding.ASCII.LETTER_a];
             int index2 = dictionary[index].children[pool[1] - (int)CharEncoding.ASCII.LETTER_a];
             int index3 = dictionary[index1].children[pool[1] - (int)CharEncoding.ASCII.LETTER_a];
             int index4 = dictionary[index2].children[pool[0] - (int)CharEncoding.ASCII.LETTER_a];
 
+            //first trie node should never be the end of a word
             TryWord(root + pool[0], index1);
             TryWord(root + pool[1], index2);
+            
+            //make sure first letter was valid before checking second
             if (index1 > 0) TryWord(root + pool, index3);
             if (index2 > 0) TryWord(root + pool.Reverse(), index4);
         }
         else
         {
+            //go from second letter too the second from the last
             for (byte x = 1; x < pool.Length - 2; x++)
             {
+                //get index of the letter
                 int nextIndex = dictionary[index].children[pool[x] - (int)CharEncoding.ASCII.LETTER_a];
+                
+                //check to make sure it's a valid path
                 if (nextIndex > 0)
                 {
+                    //remove the letter from the pool and call the next search
                     string right = pool[(x + 1)..];
                     string left = pool[..(x - 1)];
                     Search(left + right, root + pool[x], nextIndex);
                 }
+                
+                //makes sure repeated letters aren't checked twice
                 while (x < pool.Length - 2 && pool[x] == pool[x + 1]) x++;
             }
         }
     }
-    //------------------------------------------------
+
     //rng for drawing letters
+    //------------------------------------------------
     private readonly Random RNG;
     private string draw = "";
     public byte[] drawLetterCount;
@@ -94,17 +116,22 @@ public class EnglishDictionary
 
         do
         {
-            //byte word_length = (byte)RNG.Next(1,(pool+2)-drawCount );
             byte word_length;
+            
+            //find a random word length within the standerd deviation
             do word_length = (byte)RNG.Next(
                 word_stdev_min,
                 Math.Min(pool, word_stdev_max));
             while (WORD_LENGTH_COUNT[word_length] == 0);
+            
+            //find a word and count the letters
             byte[] wordLetterCount = new byte[ENGLISH_LETTERS];
             draw = "";
             DrawRecurse(ref word_length, word_length, 0, "");
             foreach(char letter in draw)
                 wordLetterCount[(int)(letter - CharEncoding.ASCII.LETTER_a)]++;
+            
+            //add letters to the draw that don't already exist
             drawCount = 0;
             for(int x = 0; x < ENGLISH_LETTERS; x++)
             {
@@ -113,8 +140,10 @@ public class EnglishDictionary
                     wordLetterCount[x];
                 drawCount += drawLetterCount[x];
             }
+        //check to see if the pool is filled
         } while (drawCount < pool);
         
+        //remove excess letters by selecting the largest
         while (drawCount > pool)
         {
             byte maxIndex = 0;
@@ -125,31 +154,43 @@ public class EnglishDictionary
             drawCount--;
         }
 
+        //encode the pool as a char array
         char[] newPool = new char[pool];
         byte poolCursor = 0;
         for (byte x = 0; x < ENGLISH_LETTERS; x++)
             if (drawLetterCount[x] > 0)
                 for (byte y = 0; y < drawLetterCount[x]; y++)
                     newPool[poolCursor++] = (char)(x + CharEncoding.ASCII.LETTER_a);
+        
+        //randomize to match output from bag draws
         RNG.Shuffle(newPool);
 
+        //form and return the string
         draw = new string(newPool);
         return draw;
     }
 
+    //Traverse Tire to find a word
     private void DrawRecurse(ref byte pool, byte distance_remaining, int index, string root)
     {
         if (distance_remaining > 0)
         {
             bool[] letters = new bool[ENGLISH_LETTERS];
+            
+            //unrefrenced counter for letters
             for (byte x = 0; x < ENGLISH_LETTERS; x++)
             {
+                //check for base case
                 if (keep_drawing(ref pool))
                 {
                     byte next;
+                    
+                    //find and flag a letter from the avalible pool
                     do next = (byte)RNG.Next(ENGLISH_LETTERS);
                     while (letters[next]);
                     letters[next] = true;
+                    
+                    //go to next letter if it's valid
                     if (dictionary[index].children[next] > 0)
                         DrawRecurse(ref pool,
                             (byte)(distance_remaining - 1),
@@ -159,6 +200,7 @@ public class EnglishDictionary
                 else return;
             }
         }
+        //check to see if indexed at the end of a word
         else if (dictionary[index].endWord) draw += root;
     }
 
@@ -288,15 +330,11 @@ public class EnglishDictionary
         for (byte x = MIN_WORD_LENGTH; x <= MAX_WORD_LENGTH; x++)
             word_length_stdev += WORD_LENGTH_COUNT[x] * Math.Pow(x-average_word_length,2);
         word_length_stdev = Math.Sqrt(word_length_stdev/(WORD_COUNT - 1));
-        word_stdev_min = (byte)Math.Max(MIN_WORD_LENGTH, (int)Math.Round((word_length_stdev * 2) - average_word_length));
-        word_stdev_max = Math.Min(MAX_WORD_LENGTH, (byte)Math.Round((word_length_stdev * 2) + average_word_length));
+        word_stdev_min = (byte)Math.Round(average_word_length-(word_length_stdev * 2));
+        word_stdev_max = (byte)Math.Round(average_word_length+(word_length_stdev * 2));
     }
 
-    public readonly double average_word_length;
-    public readonly double word_length_stdev;
-    public readonly byte word_stdev_min;
-    public readonly byte word_stdev_max;
-
+    //logarithmic point scaler to keep letter scores in an acceptable range
     private static byte Occurance_Scaler(double x, double min, double max)
     {
         return Convert.ToByte((min + max) / 3 * Math.Log(x * 100, (min + 1) * (min + max) / 2));
@@ -307,9 +345,5 @@ public class EnglishDictionary
     {
         public int[] children = new int[ENGLISH_LETTERS];
         public bool endWord = false;
-        public TrieNode()
-        {
-            for (int x = 0; x < children.Length; x++) children[x] = 0;
-        }
     }
 }

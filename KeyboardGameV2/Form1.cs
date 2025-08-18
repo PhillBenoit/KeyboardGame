@@ -41,11 +41,15 @@ namespace KeyboardGameV2
         private WordScoreSystem wss;
 
         //number of tiles to draw in a game
-        private const byte TILES_TO_DRAW = 20;
+        private const byte MAX_TILES = 30;
+        private const byte DEFAULT_TILES = 20;
+        private byte TILES_TO_DRAW;
 
         //timer variables
-        private ushort MAX_SECONDS = 120;
-        private ushort _seconds = 0;
+        private const ushort MIN_SECONDS = 30;
+        private const ushort MAX_SECONDS = 300;
+        private const ushort DEFAULT_SECONDS = 120;
+        private ushort _seconds;
 
         //objext that holds all of the plaers' information
         private readonly KBGPlayer[] _players;
@@ -165,6 +169,8 @@ namespace KeyboardGameV2
             lblLetterPool.Text = "";
             dgvScoreboard.DataSource = _scoreboard;
             dgvScoreboard.AutoGenerateColumns = true;
+            _seconds = DEFAULT_SECONDS;
+            TILES_TO_DRAW = DEFAULT_TILES;
 
             //make keypresses do nothing by default
             for (byte x = 0; x < keyEvents.Length; x++)
@@ -312,9 +318,8 @@ namespace KeyboardGameV2
             if (start)
             {
                 nextText = MNUMSG_STOP;
-                _seconds = MAX_SECONDS;
-                barTimer.Maximum = MAX_SECONDS;
-                barTimer.Value = MAX_SECONDS;
+                barTimer.Maximum = _seconds;
+                barTimer.Value = _seconds;
                 foreach (KBGPlayer p in _players) p.Reset();
                 _bag.Reset();
                 _scoreboard.Clear();
@@ -361,6 +366,7 @@ namespace KeyboardGameV2
                     );
                 _bag = new LetterBag(_dictionary.MAX_LETTER_COUNT, (char)CharEncoding.ASCII.LETTER_a);
                 mnuLoad.Enabled = false;
+                mnuPoolLetterCount.Enabled = true;
                 mnuStart.Enabled = _keyboardMap.Count > 0;
             }
         }
@@ -373,13 +379,30 @@ namespace KeyboardGameV2
 
         private void TextChanged_optTime(object sender, EventArgs e)
         {
-            if (!UInt16.TryParse(optTime.Text, out MAX_SECONDS))
-                MAX_SECONDS = 120;
-            else if (MAX_SECONDS < 30)
-                MAX_SECONDS = 30;
-            else if (MAX_SECONDS > 300)
-                MAX_SECONDS = 300;
-            optTime.Text = MAX_SECONDS.ToString();
+            uint wrapper = _seconds;
+            SetNumericText(optTime, ref wrapper,
+                MIN_SECONDS, MAX_SECONDS, DEFAULT_SECONDS);
+            _seconds = (ushort)wrapper;
+        }
+
+        private void TextChanged_optPoolLetterCount(object sender, EventArgs e)
+        {
+            uint wrapper = TILES_TO_DRAW;
+            SetNumericText(optPoolLetterCount, ref wrapper,
+                _dictionary.word_stdev_min, MAX_TILES, DEFAULT_TILES);
+            TILES_TO_DRAW = (byte)wrapper;
+        }
+
+        private static void SetNumericText(ToolStripTextBox box,
+            ref uint value, uint min, uint max, uint deflt)
+        {
+            if (!UInt32.TryParse(box.Text, out value))
+                value = deflt;
+            else if (value < min)
+                value = min;
+            else if (value > max)
+                value = max;
+            box.Text = value.ToString();
         }
     }
 }
