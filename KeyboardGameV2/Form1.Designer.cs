@@ -40,6 +40,8 @@
             mnuLetterMode = new ToolStripMenuItem();
             optDictionarySelect = new ToolStripMenuItem();
             optBagSelect = new ToolStripMenuItem();
+            mnuTime = new ToolStripMenuItem();
+            optTime = new ToolStripTextBox();
             mnuPlayers = new ToolStripMenuItem();
             optP1 = new ToolStripMenuItem();
             optP2 = new ToolStripMenuItem();
@@ -110,7 +112,7 @@
             // 
             // mnuOptions
             // 
-            mnuOptions.DropDownItems.AddRange(new ToolStripItem[] { mnuLetterPool, mnuLetterMode });
+            mnuOptions.DropDownItems.AddRange(new ToolStripItem[] { mnuLetterPool, mnuLetterMode, mnuTime });
             mnuOptions.Name = "mnuOptions";
             mnuOptions.Size = new Size(173, 57);
             mnuOptions.Text = "Options";
@@ -119,7 +121,7 @@
             // 
             mnuLetterPool.DropDownItems.AddRange(new ToolStripItem[] { optSorted, optPoints, optSpaces });
             mnuLetterPool.Name = "mnuLetterPool";
-            mnuLetterPool.Size = new Size(538, 66);
+            mnuLetterPool.Size = new Size(572, 66);
             mnuLetterPool.Text = "Letter Pool";
             // 
             // optSorted
@@ -153,7 +155,7 @@
             // 
             mnuLetterMode.DropDownItems.AddRange(new ToolStripItem[] { optDictionarySelect, optBagSelect });
             mnuLetterMode.Name = "mnuLetterMode";
-            mnuLetterMode.Size = new Size(538, 66);
+            mnuLetterMode.Size = new Size(572, 66);
             mnuLetterMode.Text = "Letter Mode";
             // 
             // optDictionarySelect
@@ -161,16 +163,32 @@
             optDictionarySelect.Checked = true;
             optDictionarySelect.CheckState = CheckState.Checked;
             optDictionarySelect.Name = "optDictionarySelect";
-            optDictionarySelect.Size = new Size(538, 66);
+            optDictionarySelect.Size = new Size(379, 66);
             optDictionarySelect.Text = "Dictionary";
             optDictionarySelect.Click += Click_LetterMode;
             // 
             // optBagSelect
             // 
             optBagSelect.Name = "optBagSelect";
-            optBagSelect.Size = new Size(538, 66);
+            optBagSelect.Size = new Size(379, 66);
             optBagSelect.Text = "Bag";
             optBagSelect.Click += Click_LetterMode;
+            // 
+            // mnuTime
+            // 
+            mnuTime.DropDownItems.AddRange(new ToolStripItem[] { optTime });
+            mnuTime.Name = "mnuTime";
+            mnuTime.Size = new Size(572, 66);
+            mnuTime.Text = "Game Timer (seconds)";
+            // 
+            // optTime
+            // 
+            optTime.AutoSize = false;
+            optTime.Name = "optTime";
+            optTime.Size = new Size(150, 55);
+            optTime.Text = "120";
+            optTime.TextBoxTextAlign = HorizontalAlignment.Center;
+            optTime.TextChanged += TextChanged_optTime;
             // 
             // mnuPlayers
             // 
@@ -613,5 +631,7 @@
         private ToolStripMenuItem mnuLetterMode;
         private ToolStripMenuItem optDictionarySelect;
         private ToolStripMenuItem optBagSelect;
+        private ToolStripMenuItem mnuTime;
+        private ToolStripTextBox optTime;
     }
 }

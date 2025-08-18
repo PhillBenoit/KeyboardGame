@@ -44,7 +44,7 @@ namespace KeyboardGameV2
         private const byte TILES_TO_DRAW = 20;
 
         //timer variables
-        private const ushort MAX_SECONDS = 120;
+        private ushort MAX_SECONDS = 120;
         private ushort _seconds = 0;
 
         //objext that holds all of the plaers' information
@@ -369,6 +369,17 @@ namespace KeyboardGameV2
         {
             optBagSelect.Checked = optDictionarySelect.Checked;
             optDictionarySelect.Checked = !optDictionarySelect.Checked;
+        }
+
+        private void TextChanged_optTime(object sender, EventArgs e)
+        {
+            if (!UInt16.TryParse(optTime.Text, out MAX_SECONDS))
+                MAX_SECONDS = 120;
+            else if (MAX_SECONDS < 30)
+                MAX_SECONDS = 30;
+            else if (MAX_SECONDS > 300)
+                MAX_SECONDS = 300;
+            optTime.Text = MAX_SECONDS.ToString();
         }
     }
 }
