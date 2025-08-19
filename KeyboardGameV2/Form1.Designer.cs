@@ -93,14 +93,14 @@
             mnuStrip.Location = new Point(0, 0);
             mnuStrip.Name = "mnuStrip";
             mnuStrip.Padding = new Padding(18, 7, 0, 7);
-            mnuStrip.Size = new Size(2285, 71);
+            mnuStrip.Size = new Size(2285, 66);
             mnuStrip.TabIndex = 0;
             mnuStrip.Text = "menuStrip1";
             // 
             // mnuLoad
             // 
             mnuLoad.Name = "mnuLoad";
-            mnuLoad.Size = new Size(296, 57);
+            mnuLoad.Size = new Size(296, 52);
             mnuLoad.Text = "Load Dictionary";
             mnuLoad.Click += Click_mnuLoad;
             // 
@@ -108,7 +108,7 @@
             // 
             mnuStart.Enabled = false;
             mnuStart.Name = "mnuStart";
-            mnuStart.Size = new Size(224, 57);
+            mnuStart.Size = new Size(224, 52);
             mnuStart.Text = "Start Game";
             mnuStart.Click += Click_mnuStart;
             // 
@@ -116,7 +116,7 @@
             // 
             mnuOptions.DropDownItems.AddRange(new ToolStripItem[] { mnuLetterPoolFormat, mnuLetterMode, mnuTime, mnuPoolLetterCount });
             mnuOptions.Name = "mnuOptions";
-            mnuOptions.Size = new Size(173, 57);
+            mnuOptions.Size = new Size(173, 52);
             mnuOptions.Text = "Options";
             // 
             // mnuLetterPoolFormat
@@ -132,7 +132,7 @@
             optSorted.CheckOnClick = true;
             optSorted.CheckState = CheckState.Checked;
             optSorted.Name = "optSorted";
-            optSorted.Size = new Size(538, 66);
+            optSorted.Size = new Size(327, 66);
             optSorted.Text = "Sorted";
             // 
             // optPoints
@@ -141,7 +141,7 @@
             optPoints.CheckOnClick = true;
             optPoints.CheckState = CheckState.Checked;
             optPoints.Name = "optPoints";
-            optPoints.Size = new Size(538, 66);
+            optPoints.Size = new Size(327, 66);
             optPoints.Text = "Points";
             // 
             // optSpaces
@@ -150,14 +150,14 @@
             optSpaces.CheckOnClick = true;
             optSpaces.CheckState = CheckState.Checked;
             optSpaces.Name = "optSpaces";
-            optSpaces.Size = new Size(538, 66);
+            optSpaces.Size = new Size(327, 66);
             optSpaces.Text = "Spaces";
             // 
             // mnuLetterMode
             // 
             mnuLetterMode.DropDownItems.AddRange(new ToolStripItem[] { optDictionarySelect, optBagSelect });
             mnuLetterMode.Name = "mnuLetterMode";
-            mnuLetterMode.Size = new Size(586, 66);
+            mnuLetterMode.Size = new Size(572, 66);
             mnuLetterMode.Text = "Letter Mode";
             // 
             // optDictionarySelect
@@ -180,7 +180,7 @@
             // 
             mnuTime.DropDownItems.AddRange(new ToolStripItem[] { optTime });
             mnuTime.Name = "mnuTime";
-            mnuTime.Size = new Size(586, 66);
+            mnuTime.Size = new Size(572, 66);
             mnuTime.Text = "Game Timer (seconds)";
             // 
             // optTime
@@ -213,7 +213,7 @@
             // 
             mnuPlayers.DropDownItems.AddRange(new ToolStripItem[] { optP1, optP2, optP3, optP4 });
             mnuPlayers.Name = "mnuPlayers";
-            mnuPlayers.Size = new Size(159, 57);
+            mnuPlayers.Size = new Size(159, 52);
             mnuPlayers.Text = "Players";
             // 
             // optP1
@@ -333,6 +333,7 @@
             // 
             // lblP1CurrentWord
             // 
+            lblP1CurrentWord.BackColor = SystemColors.Window;
             lblP1CurrentWord.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblP1CurrentWord.Location = new Point(18, 60);
             lblP1CurrentWord.Margin = new Padding(8, 0, 8, 0);
@@ -402,6 +403,7 @@
             // 
             // lblP2CurrentWord
             // 
+            lblP2CurrentWord.BackColor = SystemColors.Window;
             lblP2CurrentWord.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblP2CurrentWord.Location = new Point(18, 60);
             lblP2CurrentWord.Margin = new Padding(8, 0, 8, 0);
@@ -471,6 +473,7 @@
             // 
             // lblP3CurrentWord
             // 
+            lblP3CurrentWord.BackColor = SystemColors.Window;
             lblP3CurrentWord.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblP3CurrentWord.Location = new Point(18, 60);
             lblP3CurrentWord.Margin = new Padding(8, 0, 8, 0);
@@ -540,6 +543,7 @@
             // 
             // lblP4CurrentWord
             // 
+            lblP4CurrentWord.BackColor = SystemColors.Window;
             lblP4CurrentWord.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblP4CurrentWord.Location = new Point(18, 60);
             lblP4CurrentWord.Margin = new Padding(8, 0, 8, 0);
