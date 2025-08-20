@@ -1,11 +1,96 @@
-﻿//ilist compatible object to store the words discovered
-
-using System.Collections;
-
-namespace KeyboardGameV2.src
+﻿namespace KeyboardGameV2.src
 {
-    public class Scoreboard : IList
+    public class Scoreboard //: IList
     {
+        private readonly DataGridView data;
+        private readonly ScoreBoardSort compareObject = new();
+
+        public Scoreboard(DataGridView data)
+        {
+            this.data = data;
+        }
+
+        public void Clear() { data.Rows.Clear(); }
+
+        public bool Add(string word, ushort points, byte playerIndex)
+        {
+            DataGridViewRow newRow = new();
+            newRow.CreateCells(data);
+            newRow.Cells[0].Value = word;
+            newRow.Cells[2].Value = points;
+
+            int rowIndex = Search(newRow);
+            if (rowIndex > -1)
+            {
+#pragma warning disable CS8605 // Unboxing a possibly null value.
+                if ((bool)data.Rows[rowIndex].Cells[playerIndex + 2].Value) return false;
+#pragma warning restore CS8605 // Unboxing a possibly null value.
+                else data.Rows[rowIndex].Cells[playerIndex + 2].Value = true;
+            }
+            else
+            {
+                newRow.Cells[1].Value = Mask(word);
+                newRow.Cells[3].Value = false;
+                newRow.Cells[4].Value = false;
+                newRow.Cells[5].Value = false;
+                newRow.Cells[6].Value = false;
+                newRow.Cells[playerIndex + 2].Value = true;
+                data.Rows.Add(newRow);
+                Sort();
+            }
+            return true;
+        }
+
+        private static string Mask(string word)
+        {
+            char[] mask = new char[word.Length];
+            Array.Fill(mask, '*');
+            return new string(mask);
+        }
+
+        private int Search(DataGridViewRow x)
+        {
+            int low = 0;
+            int high = data.Rows.Count - 1;
+            while (low <= high)
+            {
+                int mid = low + ((high - low)/2);
+                int cmp = compareObject.Compare(x, data.Rows[mid]);
+
+                if (cmp == 0) return mid;
+                if (cmp < 0) high = mid - 1;
+                else low = mid + 1;
+            }
+            return -1;
+        }
+
+        private void Sort() { data.Sort(compareObject); }
+
+        private class ScoreBoardSort : System.Collections.IComparer
+        {
+            public int Compare(object? x, object? y)
+            {
+                ArgumentNullException.ThrowIfNull(x);
+                ArgumentNullException.ThrowIfNull(y);
+                DataGridViewRow row_x = (DataGridViewRow)x;
+                DataGridViewRow row_y = (DataGridViewRow)y;
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+                string word_x = (string)row_x.Cells[0].Value;
+                string word_y = (string)row_y.Cells[0].Value;
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+                ArgumentNullException.ThrowIfNull(word_x);
+                ArgumentNullException.ThrowIfNull(word_y);
+#pragma warning disable CS8605 // Converting null literal or possible null value to non-nullable type.
+                ushort score_x = (ushort)row_x.Cells[2].Value;
+                ushort score_y = (ushort)row_y.Cells[2].Value;
+#pragma warning restore CS8605 // Converting null literal or possible null value to non-nullable type.
+                if (score_x != score_y) return score_y - score_x;
+                if (word_x.Length != word_y.Length) return word_y.Length - word_x.Length;
+                return word_x.CompareTo(word_y);
+            }
+        }
+
+        /*
         private readonly List<ScoreEntry> _data = [];
 
         public object? this[int index] { get { return _data[index]; }
@@ -106,5 +191,6 @@ namespace KeyboardGameV2.src
                 return Word.CompareTo(other.Word);
             }
         }
+        */
     }
 }

@@ -36,7 +36,7 @@ namespace KeyboardGameV2
         private LetterBag _bag = new();
 
         //list of words found by all players
-        private readonly Scoreboard _scoreboard = [];
+        private readonly Scoreboard _scoreboard;
 
         private WordScoreSystem wss;
 
@@ -167,10 +167,19 @@ namespace KeyboardGameV2
             }
             wss = new WordScoreSystem(new byte[1]);
             lblLetterPool.Text = "";
-            dgvScoreboard.DataSource = _scoreboard;
-            dgvScoreboard.AutoGenerateColumns = true;
             _seconds = DEFAULT_SECONDS;
             TILES_TO_DRAW = DEFAULT_TILES;
+
+            dgvScoreboard.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCellsExceptHeader;
+            dgvScoreboard.ColumnCount = 7;
+            dgvScoreboard.Columns[0].ValueType = typeof(string);
+            dgvScoreboard.Columns[1].ValueType = typeof(string);
+            dgvScoreboard.Columns[2].ValueType = typeof(ushort);
+            dgvScoreboard.Columns[3].ValueType = typeof(bool);
+            dgvScoreboard.Columns[4].ValueType = typeof(bool);
+            dgvScoreboard.Columns[5].ValueType = typeof(bool);
+            dgvScoreboard.Columns[6].ValueType = typeof(bool);
+            _scoreboard = new Scoreboard(dgvScoreboard);
 
             //make keypresses do nothing by default
             for (byte x = 0; x < keyEvents.Length; x++)
@@ -213,37 +222,11 @@ namespace KeyboardGameV2
         //process a correctly spelled word
         internal void AddWord(String word, UInt16 points, KBGPlayer player)
         {
-            //format found word for the scoreboard
-            Scoreboard.ScoreEntry entry = new(word, points);
-            entry.Players[player.PLAYER_INDEX - 1] = true;
 
-            //try to find it in the list
-            int index = _scoreboard.IndexOf(entry);
-
-            //if found
-            if (index > -1)
-            {
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-                entry = (Scoreboard.ScoreEntry)_scoreboard[index];
-#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
-                if (entry is null) throw new NullReferenceException();
-
-                //player is already credited with the word
-                if (entry.Players[player.PLAYER_INDEX - 1] == true) return;
-
-                //credit player in existing record
-                else entry.Players[player.PLAYER_INDEX - 1] = true;
-            }
-
-            //insert entry if it is not already in the list
-            else
-            {
-                _scoreboard.Add(entry);
-                _scoreboard.Sort();
-            }
+            //do nothing if the player already has credit for the word
+            if (!_scoreboard.Add(word, points, player.PLAYER_INDEX)) return;
 
             //update the ui
-            dgvScoreboard.Update();
             player.AddPoints(points);
             if (points == 0) player.UI.WorthPointsNo();
             else player.UI.WorthPointsYes();
@@ -252,7 +235,7 @@ namespace KeyboardGameV2
         //called from the windows message reader to register a player's keyboard
         private void ConfirmAssign(IntPtr h, KBGPlayer p)
         {
-            //add user ant turn off assignment flag
+            //add user and turn off assignment flag
             _keyboardMap.Add(h, p);
             p.assignFlag = false;
 
@@ -318,6 +301,7 @@ namespace KeyboardGameV2
             if (start)
             {
                 nextText = MNUMSG_STOP;
+                _seconds = ushort.Parse(optTime.Text);
                 barTimer.Maximum = _seconds;
                 barTimer.Value = _seconds;
                 foreach (KBGPlayer p in _players) p.Reset();
@@ -338,12 +322,16 @@ namespace KeyboardGameV2
                 }
                 lblLetterPool.Text = wss.FormatDraw(
                     optSorted.Checked, optPoints.Checked, optSpaces.Checked);
+                dgvScoreboard.Columns[1].Visible = true;
+                dgvScoreboard.Columns[0].Visible = false;
             }
 
             //stop game actions
             else
             {
                 nextText = MNUMSG_START;
+                dgvScoreboard.Columns[0].Visible = true;
+                dgvScoreboard.Columns[1].Visible = false;
             }
 
             //finish with these
