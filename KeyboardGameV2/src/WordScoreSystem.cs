@@ -44,6 +44,8 @@ namespace KeyboardGameV2.src
             Array.Copy(draw_count, _drawCount, draw_count.Length);
         }
 
+        public string GetDraw() { return draw; }
+
         public string FormatDraw(bool sort, bool score, bool spaces)
         {
             List<byte> draw_unicode = [];

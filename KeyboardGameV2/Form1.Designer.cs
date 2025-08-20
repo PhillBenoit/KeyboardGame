@@ -44,6 +44,8 @@
             optTime = new ToolStripTextBox();
             mnuPoolLetterCount = new ToolStripMenuItem();
             optPoolLetterCount = new ToolStripTextBox();
+            mnuShowWords = new ToolStripMenuItem();
+            optShowWords = new ToolStripTextBox();
             mnuPlayers = new ToolStripMenuItem();
             optP1 = new ToolStripMenuItem();
             optP2 = new ToolStripMenuItem();
@@ -94,14 +96,14 @@
             mnuStrip.Location = new Point(0, 0);
             mnuStrip.Name = "mnuStrip";
             mnuStrip.Padding = new Padding(18, 7, 0, 7);
-            mnuStrip.Size = new Size(2285, 66);
+            mnuStrip.Size = new Size(2285, 71);
             mnuStrip.TabIndex = 0;
             mnuStrip.Text = "menuStrip1";
             // 
             // mnuLoad
             // 
             mnuLoad.Name = "mnuLoad";
-            mnuLoad.Size = new Size(296, 52);
+            mnuLoad.Size = new Size(296, 57);
             mnuLoad.Text = "Load Dictionary";
             mnuLoad.Click += Click_mnuLoad;
             // 
@@ -109,22 +111,22 @@
             // 
             mnuStart.Enabled = false;
             mnuStart.Name = "mnuStart";
-            mnuStart.Size = new Size(224, 52);
+            mnuStart.Size = new Size(224, 57);
             mnuStart.Text = "Start Game";
             mnuStart.Click += Click_mnuStart;
             // 
             // mnuOptions
             // 
-            mnuOptions.DropDownItems.AddRange(new ToolStripItem[] { mnuLetterPoolFormat, mnuLetterMode, mnuTime, mnuPoolLetterCount });
+            mnuOptions.DropDownItems.AddRange(new ToolStripItem[] { mnuLetterPoolFormat, mnuLetterMode, mnuTime, mnuPoolLetterCount, mnuShowWords });
             mnuOptions.Name = "mnuOptions";
-            mnuOptions.Size = new Size(173, 52);
+            mnuOptions.Size = new Size(173, 57);
             mnuOptions.Text = "Options";
             // 
             // mnuLetterPoolFormat
             // 
             mnuLetterPoolFormat.DropDownItems.AddRange(new ToolStripItem[] { optSorted, optPoints, optSpaces });
             mnuLetterPoolFormat.Name = "mnuLetterPoolFormat";
-            mnuLetterPoolFormat.Size = new Size(572, 66);
+            mnuLetterPoolFormat.Size = new Size(923, 66);
             mnuLetterPoolFormat.Text = "Letter Pool Format";
             // 
             // optSorted
@@ -158,7 +160,7 @@
             // 
             mnuLetterMode.DropDownItems.AddRange(new ToolStripItem[] { optDictionarySelect, optBagSelect });
             mnuLetterMode.Name = "mnuLetterMode";
-            mnuLetterMode.Size = new Size(572, 66);
+            mnuLetterMode.Size = new Size(923, 66);
             mnuLetterMode.Text = "Letter Mode";
             // 
             // optDictionarySelect
@@ -181,7 +183,7 @@
             // 
             mnuTime.DropDownItems.AddRange(new ToolStripItem[] { optTime });
             mnuTime.Name = "mnuTime";
-            mnuTime.Size = new Size(572, 66);
+            mnuTime.Size = new Size(923, 66);
             mnuTime.Text = "Game Timer (seconds)";
             // 
             // optTime
@@ -198,7 +200,7 @@
             mnuPoolLetterCount.DropDownItems.AddRange(new ToolStripItem[] { optPoolLetterCount });
             mnuPoolLetterCount.Enabled = false;
             mnuPoolLetterCount.Name = "mnuPoolLetterCount";
-            mnuPoolLetterCount.Size = new Size(572, 66);
+            mnuPoolLetterCount.Size = new Size(923, 66);
             mnuPoolLetterCount.Text = "Pool Letter Count";
             // 
             // optPoolLetterCount
@@ -210,18 +212,38 @@
             optPoolLetterCount.TextBoxTextAlign = HorizontalAlignment.Center;
             optPoolLetterCount.TextChanged += TextChanged_optPoolLetterCount;
             // 
+            // mnuShowWords
+            // 
+            mnuShowWords.Checked = true;
+            mnuShowWords.CheckOnClick = true;
+            mnuShowWords.CheckState = CheckState.Checked;
+            mnuShowWords.DropDownItems.AddRange(new ToolStripItem[] { optShowWords });
+            mnuShowWords.Enabled = false;
+            mnuShowWords.Name = "mnuShowWords";
+            mnuShowWords.Size = new Size(923, 66);
+            mnuShowWords.Text = "Show Words Length X or Longer After Game";
+            // 
+            // optShowWords
+            // 
+            optShowWords.AutoSize = false;
+            optShowWords.Name = "optShowWords";
+            optShowWords.Size = new Size(150, 55);
+            optShowWords.Text = "5";
+            optShowWords.TextBoxTextAlign = HorizontalAlignment.Center;
+            optShowWords.TextChanged += TextChanged_optShowWords;
+            // 
             // mnuPlayers
             // 
             mnuPlayers.DropDownItems.AddRange(new ToolStripItem[] { optP1, optP2, optP3, optP4 });
             mnuPlayers.Name = "mnuPlayers";
-            mnuPlayers.Size = new Size(159, 52);
+            mnuPlayers.Size = new Size(159, 57);
             mnuPlayers.Text = "Players";
             // 
             // optP1
             // 
             optP1.CheckOnClick = true;
             optP1.Name = "optP1";
-            optP1.Size = new Size(343, 66);
+            optP1.Size = new Size(538, 66);
             optP1.Text = "Player 1";
             optP1.Click += Click_optP1;
             // 
@@ -229,7 +251,7 @@
             // 
             optP2.CheckOnClick = true;
             optP2.Name = "optP2";
-            optP2.Size = new Size(343, 66);
+            optP2.Size = new Size(538, 66);
             optP2.Text = "Player 2";
             optP2.Click += Click_optP2;
             // 
@@ -237,7 +259,7 @@
             // 
             optP3.CheckOnClick = true;
             optP3.Name = "optP3";
-            optP3.Size = new Size(343, 66);
+            optP3.Size = new Size(538, 66);
             optP3.Text = "Player 3";
             optP3.Click += Click_optP3;
             // 
@@ -245,7 +267,7 @@
             // 
             optP4.CheckOnClick = true;
             optP4.Name = "optP4";
-            optP4.Size = new Size(343, 66);
+            optP4.Size = new Size(538, 66);
             optP4.Text = "Player 4";
             optP4.Click += Click_optP4;
             // 
@@ -253,7 +275,7 @@
             // 
             mnuDictionaryTools.Alignment = ToolStripItemAlignment.Right;
             mnuDictionaryTools.Name = "mnuDictionaryTools";
-            mnuDictionaryTools.Size = new Size(300, 52);
+            mnuDictionaryTools.Size = new Size(300, 57);
             mnuDictionaryTools.Text = "Dictionary Tools";
             // 
             // Timer
@@ -681,5 +703,7 @@
         private ToolStripMenuItem mnuPoolLetterCount;
         private ToolStripTextBox optPoolLetterCount;
         private ToolStripMenuItem mnuDictionaryTools;
+        private ToolStripMenuItem mnuShowWords;
+        private ToolStripTextBox optShowWords;
     }
 }

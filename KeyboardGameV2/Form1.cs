@@ -51,6 +51,8 @@ namespace KeyboardGameV2
         private const ushort DEFAULT_SECONDS = 120;
         private ushort _seconds;
 
+        private byte showWordsLength = 5;
+
         //objext that holds all of the plaers' information
         private readonly KBGPlayer[] _players;
 
@@ -309,8 +311,8 @@ namespace KeyboardGameV2
             string nextText;
             mnuOptions.Enabled = Timer.Enabled;
             mnuPlayers.Enabled = Timer.Enabled;
-            dgvScoreboard.Columns[1].Visible = start;
             dgvScoreboard.Columns[0].Visible = Timer.Enabled;
+            dgvScoreboard.Columns[1].Visible = start;
             mnuDictionaryTools.Enabled = Timer.Enabled;
 
             //game start actions
@@ -338,12 +340,19 @@ namespace KeyboardGameV2
                 }
                 lblLetterPool.Text = wss.FormatDraw(
                     optSorted.Checked, optPoints.Checked, optSpaces.Checked);
-                
+                char[] sorted = wss.GetDraw().ToCharArray();
+                Array.Sort(sorted);
+                _dictionary.StartSearch(new string(sorted));
+                foreach (string word in _dictionary.found_words)
+                    _scoreboard.Add(word, wss.ScoreWord(word));
+                _scoreboard.Sort();
             }
 
             //stop game actions
             else
             {
+                if (mnuShowWords.Checked)
+                    _scoreboard.ShowWords(byte.Parse(optShowWords.Text));
                 nextText = MNUMSG_START;
             }
 
@@ -368,6 +377,8 @@ namespace KeyboardGameV2
                 _bag = new LetterBag(_dictionary.MAX_LETTER_COUNT, (char)CharEncoding.ASCII.LETTER_a);
                 mnuLoad.Enabled = false;
                 mnuPoolLetterCount.Enabled = true;
+                mnuShowWords.Enabled = true;
+                optShowWords.Text = _dictionary.word_stdev_min.ToString();
                 mnuStart.Enabled = _keyboardMap.Count > 0;
             }
         }
@@ -390,8 +401,19 @@ namespace KeyboardGameV2
         {
             uint wrapper = TILES_TO_DRAW;
             SetNumericText(optPoolLetterCount, ref wrapper,
-                _dictionary.word_stdev_min, MAX_TILES, DEFAULT_TILES);
+                _dictionary.word_2stdev_min, MAX_TILES, DEFAULT_TILES);
             TILES_TO_DRAW = (byte)wrapper;
+        }
+
+        private void TextChanged_optShowWords(object sender, EventArgs e)
+        {
+            uint wrapper = showWordsLength;
+            SetNumericText(optShowWords,
+                ref wrapper,
+                _dictionary.MIN_WORD_LENGTH,
+                _dictionary.MAX_WORD_LENGTH,
+                _dictionary.word_stdev_min);
+            showWordsLength = (byte)wrapper;
         }
 
         private static void SetNumericText(ToolStripTextBox box,

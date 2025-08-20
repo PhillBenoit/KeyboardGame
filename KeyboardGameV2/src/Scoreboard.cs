@@ -12,6 +12,29 @@ namespace KeyboardGameV2.src
 
         public void Clear() { data.Rows.Clear(); }
 
+        public void Add(string word, ushort points)
+        {
+            DataGridViewRow newRow = new();
+            newRow.CreateCells(data);
+            newRow.Cells[0].Value = word;
+            newRow.Cells[1].Value = Mask(word);
+            newRow.Cells[2].Value = points;
+            newRow.Cells[3].Value = empty;
+            newRow.Cells[4].Value = empty;
+            newRow.Cells[5].Value = empty;
+            newRow.Cells[6].Value = empty;
+            newRow.Visible = false;
+            data.Rows.Add(newRow);
+        }
+
+        public void ShowWords(byte length)
+        {
+            for(int x = 0; x < data.RowCount; x++)
+                if (data.Rows[x].Cells[0].Value is string s &&
+                    s.Length >= length)
+                    data.Rows[x].Visible = true;
+        }
+
         //adds a word to scoreboard or gives a player credit for it
         public bool Add(string word, ushort points, byte playerIndex)
         {
@@ -31,7 +54,8 @@ namespace KeyboardGameV2.src
 #pragma warning restore CS8605 // Unboxing a possibly null value.
                 
                 //give player credit for it if it exists
-                else data.Rows[rowIndex].Cells[playerIndex + 2].Value = full;
+                data.Rows[rowIndex].Cells[playerIndex + 2].Value = full;
+                data.Rows[rowIndex].Visible = true;
             }
             else
             {
@@ -42,7 +66,7 @@ namespace KeyboardGameV2.src
                 newRow.Cells[5].Value = empty;
                 newRow.Cells[6].Value = empty;
                 newRow.Cells[playerIndex + 2].Value = full;
-                
+
                 //add it and sort afterwards
                 data.Rows.Add(newRow);
                 Sort();
@@ -50,7 +74,7 @@ namespace KeyboardGameV2.src
             return true;
         }
 
-        private void Sort() { data.Sort(compareObject); }
+        public void Sort() { data.Sort(compareObject); }
 
         //hide words in scoreboard by storing masked data
         private static string Mask(string word)

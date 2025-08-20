@@ -12,6 +12,8 @@ public class EnglishDictionary
     public readonly double word_length_stdev;
     public readonly byte word_stdev_min;
     public readonly byte word_stdev_max;
+    public readonly byte word_2stdev_min;
+    public readonly byte word_2stdev_max;
 
     //count of words
     public readonly uint WORD_COUNT;
@@ -120,8 +122,8 @@ public class EnglishDictionary
             
             //find a random word length within the standerd deviation
             do word_length = (byte)RNG.Next(
-                word_stdev_min,
-                Math.Min(pool, word_stdev_max));
+                word_2stdev_min,
+                Math.Min(pool, word_2stdev_max));
             while (WORD_LENGTH_COUNT[word_length] == 0);
             
             //find a word and count the letters
@@ -330,8 +332,10 @@ public class EnglishDictionary
         for (byte x = MIN_WORD_LENGTH; x <= MAX_WORD_LENGTH; x++)
             word_length_stdev += WORD_LENGTH_COUNT[x] * Math.Pow(x-average_word_length,2);
         word_length_stdev = Math.Sqrt(word_length_stdev/(WORD_COUNT - 1));
-        word_stdev_min = (byte)Math.Round(average_word_length-(word_length_stdev * 2));
-        word_stdev_max = (byte)Math.Round(average_word_length+(word_length_stdev * 2));
+        word_stdev_min = (byte)Math.Round(average_word_length - word_length_stdev);
+        word_stdev_max = (byte)Math.Round(average_word_length + word_length_stdev);
+        word_2stdev_min = (byte)Math.Round(average_word_length-(word_length_stdev * 2));
+        word_2stdev_max = (byte)Math.Round(average_word_length+(word_length_stdev * 2));
     }
 
     //logarithmic point scaler to keep letter scores in an acceptable range
