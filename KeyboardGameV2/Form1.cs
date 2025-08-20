@@ -170,15 +170,21 @@ namespace KeyboardGameV2
             _seconds = DEFAULT_SECONDS;
             TILES_TO_DRAW = DEFAULT_TILES;
 
-            dgvScoreboard.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCellsExceptHeader;
             dgvScoreboard.ColumnCount = 7;
             dgvScoreboard.Columns[0].ValueType = typeof(string);
             dgvScoreboard.Columns[1].ValueType = typeof(string);
             dgvScoreboard.Columns[2].ValueType = typeof(ushort);
-            dgvScoreboard.Columns[3].ValueType = typeof(bool);
-            dgvScoreboard.Columns[4].ValueType = typeof(bool);
-            dgvScoreboard.Columns[5].ValueType = typeof(bool);
-            dgvScoreboard.Columns[6].ValueType = typeof(bool);
+            dgvScoreboard.Columns[3].ValueType = typeof(char);
+            dgvScoreboard.Columns[4].ValueType = typeof(char);
+            dgvScoreboard.Columns[5].ValueType = typeof(char);
+            dgvScoreboard.Columns[6].ValueType = typeof(char);
+            dgvScoreboard.Columns[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dgvScoreboard.Columns[1].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dgvScoreboard.Columns[2].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dgvScoreboard.Columns[3].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvScoreboard.Columns[4].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvScoreboard.Columns[5].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvScoreboard.Columns[6].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             _scoreboard = new Scoreboard(dgvScoreboard);
 
             //make keypresses do nothing by default

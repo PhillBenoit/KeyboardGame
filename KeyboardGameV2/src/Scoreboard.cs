@@ -1,46 +1,58 @@
-﻿namespace KeyboardGameV2.src
+﻿using System.Text;
+
+namespace KeyboardGameV2.src
 {
-    public class Scoreboard //: IList
+    public class Scoreboard(DataGridView data)
     {
-        private readonly DataGridView data;
+        private readonly DataGridView data = data;
         private readonly ScoreBoardSort compareObject = new();
 
-        public Scoreboard(DataGridView data)
-        {
-            this.data = data;
-        }
+        private const char empty = '☐';
+        private const char full = '☒';
 
         public void Clear() { data.Rows.Clear(); }
 
+        //adds a word to scoreboard or gives a player credit for it
         public bool Add(string word, ushort points, byte playerIndex)
         {
+            //setup as a row to use comparison object for searching
             DataGridViewRow newRow = new();
             newRow.CreateCells(data);
             newRow.Cells[0].Value = word;
             newRow.Cells[2].Value = points;
 
+            //look for the word
             int rowIndex = Search(newRow);
             if (rowIndex > -1)
             {
+                //return false if player already has credit for it
 #pragma warning disable CS8605 // Unboxing a possibly null value.
-                if ((bool)data.Rows[rowIndex].Cells[playerIndex + 2].Value) return false;
+                if ((char)data.Rows[rowIndex].Cells[playerIndex + 2].Value == full) return false;
 #pragma warning restore CS8605 // Unboxing a possibly null value.
-                else data.Rows[rowIndex].Cells[playerIndex + 2].Value = true;
+                
+                //give player credit for it if it exists
+                else data.Rows[rowIndex].Cells[playerIndex + 2].Value = full;
             }
             else
             {
+                //fill out row
                 newRow.Cells[1].Value = Mask(word);
-                newRow.Cells[3].Value = false;
-                newRow.Cells[4].Value = false;
-                newRow.Cells[5].Value = false;
-                newRow.Cells[6].Value = false;
-                newRow.Cells[playerIndex + 2].Value = true;
+                newRow.Cells[3].Value = empty;
+                newRow.Cells[4].Value = empty;
+                newRow.Cells[5].Value = empty;
+                newRow.Cells[6].Value = empty;
+                newRow.Cells[playerIndex + 2].Value = full;
+                
+                //add it and sort afterwards
                 data.Rows.Add(newRow);
                 Sort();
             }
             return true;
         }
 
+        private void Sort() { data.Sort(compareObject); }
+
+        //hide words in scoreboard by storing masked data
         private static string Mask(string word)
         {
             char[] mask = new char[word.Length];
@@ -48,6 +60,7 @@
             return new string(mask);
         }
 
+        //binary search for existing rows
         private int Search(DataGridViewRow x)
         {
             int low = 0;
@@ -64,133 +77,35 @@
             return -1;
         }
 
-        private void Sort() { data.Sort(compareObject); }
-
         private class ScoreBoardSort : System.Collections.IComparer
         {
             public int Compare(object? x, object? y)
             {
+                //format data to compare
                 ArgumentNullException.ThrowIfNull(x);
                 ArgumentNullException.ThrowIfNull(y);
                 DataGridViewRow row_x = (DataGridViewRow)x;
                 DataGridViewRow row_y = (DataGridViewRow)y;
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-                string word_x = (string)row_x.Cells[0].Value;
-                string word_y = (string)row_y.Cells[0].Value;
-#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+                string? word_x = row_x.Cells[0].Value as string;
+                string? word_y = row_y.Cells[0].Value as string;
                 ArgumentNullException.ThrowIfNull(word_x);
                 ArgumentNullException.ThrowIfNull(word_y);
-#pragma warning disable CS8605 // Converting null literal or possible null value to non-nullable type.
-                ushort score_x = (ushort)row_x.Cells[2].Value;
-                ushort score_y = (ushort)row_y.Cells[2].Value;
-#pragma warning restore CS8605 // Converting null literal or possible null value to non-nullable type.
-                if (score_x != score_y) return score_y - score_x;
+                ushort? score_x = row_x.Cells[2].Value as ushort?;
+                ushort? score_y = row_y.Cells[2].Value as ushort?;
+#pragma warning disable CA1871 // Do not pass a nullable struct to 'ArgumentNullException.ThrowIfNull'
+                ArgumentNullException.ThrowIfNull(score_x);
+                ArgumentNullException.ThrowIfNull(score_y);
+#pragma warning restore CA1871 // Do not pass a nullable struct to 'ArgumentNullException.ThrowIfNull'
+
+                //sort first by score
+                if (score_x.Value != score_y.Value) return score_y.Value - score_x.Value;
+                
+                //then by word length
                 if (word_x.Length != word_y.Length) return word_y.Length - word_x.Length;
+                
+                //finally alphabetically
                 return word_x.CompareTo(word_y);
             }
         }
-
-        /*
-        private readonly List<ScoreEntry> _data = [];
-
-        public object? this[int index] { get { return _data[index]; }
-            set {
-                ArgumentNullException.ThrowIfNull(value);
-                _data[index] = (ScoreEntry)value;
-            } }
-
-        public bool IsFixedSize => false;
-
-        public bool IsReadOnly => false;
-
-        public int Count => _data.Count;
-
-        public bool IsSynchronized => false;
-
-        public object SyncRoot => throw new NotImplementedException();
-
-        public int Add(object? value)
-        {
-            if (value is null) return -1;
-            _data.Add((ScoreEntry)value);
-            return _data.IndexOf((ScoreEntry)value);
-        }
-
-        public void Clear()
-        {
-            _data.Clear();
-        }
-
-        public bool Contains(object? value)
-        {
-            ArgumentNullException.ThrowIfNull(value);
-            return _data.Contains((ScoreEntry)value);
-        }
-
-        public void CopyTo(Array array, int index)
-        {
-            _data.CopyTo((ScoreEntry[])array, index);
-        }
-
-        public IEnumerator GetEnumerator()
-        {
-            return _data.GetEnumerator();
-        }
-        
-
-        public int IndexOf(object? value)
-        {
-            ArgumentNullException.ThrowIfNull(value);
-            int index = Array.BinarySearch([.. _data], (ScoreEntry)value);
-            return index < 0 ? -1 : index;
-        }
-
-        public void Insert(int index, object? value)
-        {
-            ArgumentNullException.ThrowIfNull(value);
-            _data.Insert(index, (ScoreEntry)value);
-        }
-
-        public void Remove(object? value)
-        {
-            ArgumentNullException.ThrowIfNull(value);
-            _data.Remove((ScoreEntry)value);
-        }
-
-        public void RemoveAt(int index)
-        {
-            _data.RemoveAt(index);
-        }
-
-        public void Sort()
-        {
-            _data.Sort();
-        }
-
-        //object for individual entries in the scoreboard
-        public class ScoreEntry(string Word, uint Points) : IComparable
-        {
-            public readonly string Word = Word;
-            public readonly uint Points = Points;
-            public bool[] Players = new bool[4];
-            
-            public int CompareTo(object? obj)
-            {
-                ArgumentNullException.ThrowIfNull(obj);
-                ScoreEntry other = (ScoreEntry)obj;
-
-                //sorted first by score
-                int scoreSort = (int)(other.Points - Points);
-                if (scoreSort != 0) return scoreSort;
-
-                //then by word size
-                int lengthSort = Word.Length - other.Word.Length;
-                if (lengthSort != 0) return lengthSort;
-
-                //finally alphabetically
-                return Word.CompareTo(other.Word);
-            }
-        }
-        */
     }
 }

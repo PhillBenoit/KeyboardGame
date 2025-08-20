@@ -2,26 +2,18 @@
 
 namespace KeyboardGameV2.src
 {
-    internal class WordScoreSystem
+    internal class WordScoreSystem(byte[] POINTS_MAP)
     {
         //holds the count of letters in the ltter pool
-        private byte[] _drawCount;
+        private readonly byte[] _drawCount = new byte[POINTS_MAP.Length];
 
         //point value for letters
-        private readonly byte[] POINTS_MAP;
+        private readonly byte[] POINTS_MAP = POINTS_MAP;
         
         //encoder for unicode used to give pool letters a subscript score
-        private readonly UnicodeEncoding UNICODE;
+        private readonly UnicodeEncoding UNICODE = new();
 
         private string draw = "";
-        
-        //bag constructor
-        public WordScoreSystem(byte[] POINTS_MAP)
-        {
-            this.POINTS_MAP = POINTS_MAP;
-            UNICODE = new UnicodeEncoding();
-            _drawCount = new byte[POINTS_MAP.Length];
-        }
 
         public ushort ScoreWord(string w)
         {

@@ -567,15 +567,29 @@
             // 
             dgvScoreboard.AllowUserToAddRows = false;
             dgvScoreboard.AllowUserToDeleteRows = false;
-            dgvScoreboard.AllowUserToOrderColumns = true;
+            dgvScoreboard.AllowUserToResizeColumns = false;
+            dgvScoreboard.AllowUserToResizeRows = false;
+            dgvScoreboard.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvScoreboard.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvScoreboard.ColumnHeadersVisible = false;
+            dgvScoreboard.EditMode = DataGridViewEditMode.EditProgrammatically;
             dgvScoreboard.Location = new Point(1242, 422);
             dgvScoreboard.Margin = new Padding(8, 10, 8, 10);
+            dgvScoreboard.MultiSelect = false;
             dgvScoreboard.Name = "dgvScoreboard";
             dgvScoreboard.ReadOnly = true;
+            dgvScoreboard.RowHeadersVisible = false;
             dgvScoreboard.RowHeadersWidth = 51;
+            dgvScoreboard.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            dgvScoreboard.ScrollBars = ScrollBars.Vertical;
+            dgvScoreboard.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            dgvScoreboard.ShowCellErrors = false;
+            dgvScoreboard.ShowCellToolTips = false;
+            dgvScoreboard.ShowEditingIcon = false;
+            dgvScoreboard.ShowRowErrors = false;
             dgvScoreboard.Size = new Size(1008, 1286);
-            dgvScoreboard.TabIndex = 10;
+            dgvScoreboard.TabIndex = 99;
+            dgvScoreboard.TabStop = false;
             // 
             // Form1
             // 
