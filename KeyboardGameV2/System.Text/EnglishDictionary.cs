@@ -105,12 +105,12 @@ public class EnglishDictionary
     //rng for drawing letters
     //------------------------------------------------
     private readonly Random RNG;
-    private string draw = "";
+    public string draw = "";
     public byte[] drawLetterCount;
     private bool keep_drawing(ref byte pool) { return pool > draw.Length; }
     public string Draw(byte pool)
     {
-        byte drawCount = 0;
+        byte drawCount;
         drawLetterCount = new byte[ENGLISH_LETTERS];
         found_words.Clear();
 

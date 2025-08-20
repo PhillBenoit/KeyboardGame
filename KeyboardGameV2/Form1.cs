@@ -185,6 +185,13 @@ namespace KeyboardGameV2
             dgvScoreboard.Columns[4].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dgvScoreboard.Columns[5].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dgvScoreboard.Columns[6].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvScoreboard.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgvScoreboard.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgvScoreboard.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dgvScoreboard.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dgvScoreboard.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dgvScoreboard.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dgvScoreboard.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
             _scoreboard = new Scoreboard(dgvScoreboard);
 
             //make keypresses do nothing by default
@@ -302,6 +309,9 @@ namespace KeyboardGameV2
             string nextText;
             mnuOptions.Enabled = Timer.Enabled;
             mnuPlayers.Enabled = Timer.Enabled;
+            dgvScoreboard.Columns[1].Visible = start;
+            dgvScoreboard.Columns[0].Visible = Timer.Enabled;
+            mnuDictionaryTools.Enabled = Timer.Enabled;
 
             //game start actions
             if (start)
@@ -317,8 +327,8 @@ namespace KeyboardGameV2
                 if (optDictionarySelect.Checked)
                 {
                     wss = new WordScoreSystem(_dictionary.OCCURANCE_RATE_POINT_MAP);
-                    byte draw = TILES_TO_DRAW;
-                    wss.SetDraw(_dictionary.Draw(draw));
+                    _dictionary.Draw(TILES_TO_DRAW);
+                    wss.SetDraw(_dictionary.draw, _dictionary.drawLetterCount);
                 }
                 else
                 {
@@ -328,16 +338,13 @@ namespace KeyboardGameV2
                 }
                 lblLetterPool.Text = wss.FormatDraw(
                     optSorted.Checked, optPoints.Checked, optSpaces.Checked);
-                dgvScoreboard.Columns[1].Visible = true;
-                dgvScoreboard.Columns[0].Visible = false;
+                
             }
 
             //stop game actions
             else
             {
                 nextText = MNUMSG_START;
-                dgvScoreboard.Columns[0].Visible = true;
-                dgvScoreboard.Columns[1].Visible = false;
             }
 
             //finish with these

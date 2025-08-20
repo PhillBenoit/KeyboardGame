@@ -49,6 +49,7 @@
             optP2 = new ToolStripMenuItem();
             optP3 = new ToolStripMenuItem();
             optP4 = new ToolStripMenuItem();
+            mnuDictionaryTools = new ToolStripMenuItem();
             Timer = new System.Windows.Forms.Timer(components);
             lblTimer = new Label();
             barTimer = new ProgressBar();
@@ -89,7 +90,7 @@
             // mnuStrip
             // 
             mnuStrip.ImageScalingSize = new Size(20, 20);
-            mnuStrip.Items.AddRange(new ToolStripItem[] { mnuLoad, mnuStart, mnuOptions, mnuPlayers });
+            mnuStrip.Items.AddRange(new ToolStripItem[] { mnuLoad, mnuStart, mnuOptions, mnuPlayers, mnuDictionaryTools });
             mnuStrip.Location = new Point(0, 0);
             mnuStrip.Name = "mnuStrip";
             mnuStrip.Padding = new Padding(18, 7, 0, 7);
@@ -247,6 +248,13 @@
             optP4.Size = new Size(343, 66);
             optP4.Text = "Player 4";
             optP4.Click += Click_optP4;
+            // 
+            // mnuDictionaryTools
+            // 
+            mnuDictionaryTools.Alignment = ToolStripItemAlignment.Right;
+            mnuDictionaryTools.Name = "mnuDictionaryTools";
+            mnuDictionaryTools.Size = new Size(300, 52);
+            mnuDictionaryTools.Text = "Dictionary Tools";
             // 
             // Timer
             // 
@@ -672,5 +680,6 @@
         private ToolStripTextBox optTime;
         private ToolStripMenuItem mnuPoolLetterCount;
         private ToolStripTextBox optPoolLetterCount;
+        private ToolStripMenuItem mnuDictionaryTools;
     }
 }

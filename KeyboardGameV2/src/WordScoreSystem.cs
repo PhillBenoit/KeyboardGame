@@ -38,15 +38,6 @@ namespace KeyboardGameV2.src
             return (ushort)score;
         }
 
-        public void SetDraw(string s)
-        {
-            draw = s;
-            for (int x = 0; x < _drawCount.Length; x++)
-                _drawCount[x] = 0;
-            foreach (char letter in s)
-                _drawCount[(int)(letter - CharEncoding.ASCII.LETTER_a)]++;
-        }
-
         public void SetDraw(string s, byte[] draw_count)
         {
             draw = s;
