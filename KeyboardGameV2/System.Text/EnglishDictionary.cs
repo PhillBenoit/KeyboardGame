@@ -113,17 +113,19 @@ public class EnglishDictionary
     public string Draw(byte pool)
     {
         byte drawCount;
+        byte min = word_2stdev_min;
+        byte max = word_2stdev_max;
+        while (WORD_LENGTH_COUNT[min] == 0 && min < max) min++;
+        while (WORD_LENGTH_COUNT[max] == 0 && max > min) max--;
+        if (WORD_LENGTH_COUNT[min] == 0 || WORD_LENGTH_COUNT[max] == 0)
+            throw new ArgumentException("words missing from dictionary");
         drawLetterCount = new byte[ENGLISH_LETTERS];
-        found_words.Clear();
-
+        
         do
         {
             byte word_length;
-            
-            //find a random word length within the standerd deviation
-            do word_length = (byte)RNG.Next(
-                word_2stdev_min,
-                Math.Min(pool, word_2stdev_max));
+            //find a random word length within 2 standerd deviations
+            do word_length = (byte)RNG.Next(min,max);
             while (WORD_LENGTH_COUNT[word_length] == 0);
             
             //find a word and count the letters
@@ -133,7 +135,7 @@ public class EnglishDictionary
             foreach(char letter in draw)
                 wordLetterCount[(int)(letter - CharEncoding.ASCII.LETTER_a)]++;
             
-            //add letters to the draw that don't already exist
+            //add letters to the draw that are not already in it
             drawCount = 0;
             for(int x = 0; x < ENGLISH_LETTERS; x++)
             {

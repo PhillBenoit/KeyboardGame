@@ -2,8 +2,93 @@
 
 namespace KeyboardGameV2.src
 {
-    public class Scoreboard(DataGridView data)
+    public class ScoreSystem(DataGridView data)
     {
+
+        //holds the count of letters in the ltter pool
+        private byte[] _drawCount;
+
+        //point value for letters
+        private byte[] POINTS_MAP;
+
+        private string draw;
+
+        //encoder for unicode used to give pool letters a subscript score
+        private readonly UnicodeEncoding UNICODE = new();
+
+        private ushort ScoreWord(string w)
+        {
+            byte[] wordLetterCount = new byte[_drawCount.Length];
+            int score = 0;
+
+            //count letters in the word and compile score
+            foreach (char letter in w)
+            {
+                byte offsetLetter = (byte)(letter - (char)CharEncoding.ASCII.LETTER_a);
+                wordLetterCount[offsetLetter]++;
+                score += POINTS_MAP[offsetLetter];
+            }
+            score *= w.Length;
+
+            //reject word if not enough letters are in the draw
+            for (byte x = 0; x < _drawCount.Length; x++)
+                if (_drawCount[x] - wordLetterCount[x] < 0)
+                    return 0;
+
+            //return score if enough letters found in the draw
+            return (ushort)score;
+        }
+
+        public void SetDraw(string s, byte[] draw_count, byte[] point_map)
+        {
+            draw = s;
+            _drawCount = draw_count;
+            POINTS_MAP = point_map;
+        }
+
+        public string GetDraw() { return draw; }
+
+        public string FormatDraw(bool sort, bool score, bool spaces)
+        {
+            List<byte> draw_unicode = [];
+            char[] draw_ascii = new char[draw.Length];
+            Array.Copy(draw.ToCharArray(), draw_ascii, draw.Length);
+            //alphabetize the list
+            if (sort) Array.Sort(draw_ascii);
+
+            //load unicode formatted return string
+            foreach (char l in draw_ascii)
+            {
+                //letter
+                draw_unicode.Add((byte)l);
+                draw_unicode.Add(0x00);
+
+                if (score)
+                    //substring for score
+                    foreach (char digit in POINTS_MAP[(int)(l - CharEncoding.ASCII.LETTER_a)].ToString())
+                    {
+                        draw_unicode.Add((byte)(digit + 0x50));
+                        draw_unicode.Add(0x20);
+                    }
+
+                if (spaces)
+                {
+                    //space
+                    draw_unicode.Add(0x20);
+                    draw_unicode.Add(0x00);
+                }
+            }
+
+            if (spaces)
+            {
+                //remove last space
+                draw_unicode.RemoveAt(draw_unicode.LastIndexOf(0x20));
+                draw_unicode.RemoveAt(draw_unicode.LastIndexOf(0x00));
+            }
+
+            return UNICODE.GetString([.. draw_unicode]);
+        }
+        //----------------------------------------------------------------
         private readonly DataGridView data = data;
         private readonly ScoreBoardSort compareObject = new();
 
@@ -12,13 +97,13 @@ namespace KeyboardGameV2.src
 
         public void Clear() { data.Rows.Clear(); }
 
-        public void Add(string word, ushort points)
+        public void Add(string word)
         {
             DataGridViewRow newRow = new();
             newRow.CreateCells(data);
             newRow.Cells[0].Value = word;
             newRow.Cells[1].Value = Mask(word);
-            newRow.Cells[2].Value = points;
+            newRow.Cells[2].Value = ScoreWord(word);
             newRow.Cells[3].Value = empty;
             newRow.Cells[4].Value = empty;
             newRow.Cells[5].Value = empty;
@@ -36,13 +121,15 @@ namespace KeyboardGameV2.src
         }
 
         //adds a word to scoreboard or gives a player credit for it
-        public bool Add(string word, ushort points, byte playerIndex)
+        public int Add(string word, byte playerIndex)
         {
+            ushort score = ScoreWord(word);
+            
             //setup as a row to use comparison object for searching
             DataGridViewRow newRow = new();
             newRow.CreateCells(data);
             newRow.Cells[0].Value = word;
-            newRow.Cells[2].Value = points;
+            newRow.Cells[2].Value = score;
 
             //look for the word
             int rowIndex = Search(newRow);
@@ -50,7 +137,7 @@ namespace KeyboardGameV2.src
             {
                 //return false if player already has credit for it
 #pragma warning disable CS8605 // Unboxing a possibly null value.
-                if ((char)data.Rows[rowIndex].Cells[playerIndex + 2].Value == full) return false;
+                if ((char)data.Rows[rowIndex].Cells[playerIndex + 2].Value == full) return -1;
 #pragma warning restore CS8605 // Unboxing a possibly null value.
                 
                 //give player credit for it if it exists
@@ -71,7 +158,7 @@ namespace KeyboardGameV2.src
                 data.Rows.Add(newRow);
                 Sort();
             }
-            return true;
+            return score;
         }
 
         public void Sort() { data.Sort(compareObject); }

@@ -36,9 +36,9 @@ namespace KeyboardGameV2
         private LetterBag _bag = new();
 
         //list of words found by all players
-        private readonly Scoreboard _scoreboard;
+        private readonly ScoreSystem _scoreboard;
 
-        private WordScoreSystem wss;
+        //private WordScoreSystem wss;
 
         //number of tiles to draw in a game
         private const byte MAX_TILES = 30;
@@ -139,7 +139,7 @@ namespace KeyboardGameV2
                 if (_dictionary.InDictionary(s))
                 {
                     p.UI.InDictionaryYes();
-                    AddWord(s, wss.ScoreWord(s), p);
+                    AddWord(s, p);
                 }
                 else p.UI.InDictionaryNo();
                 p.UI.SetWord("");
@@ -167,7 +167,6 @@ namespace KeyboardGameV2
                 p.Reset();
                 p.UI.SetAssignText(String.Format(MNUMSG_ASSIGN, p.PLAYER_INDEX));
             }
-            wss = new WordScoreSystem(new byte[1]);
             lblLetterPool.Text = "";
             _seconds = DEFAULT_SECONDS;
             TILES_TO_DRAW = DEFAULT_TILES;
@@ -194,7 +193,7 @@ namespace KeyboardGameV2
             dgvScoreboard.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
             dgvScoreboard.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
             dgvScoreboard.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            _scoreboard = new Scoreboard(dgvScoreboard);
+            _scoreboard = new ScoreSystem(dgvScoreboard);
 
             //make keypresses do nothing by default
             for (byte x = 0; x < keyEvents.Length; x++)
@@ -235,16 +234,19 @@ namespace KeyboardGameV2
         }
 
         //process a correctly spelled word
-        internal void AddWord(String word, UInt16 points, KBGPlayer player)
+        internal void AddWord(string word, KBGPlayer player)
         {
-
+            int points = _scoreboard.Add(word, player.PLAYER_INDEX);
             //do nothing if the player already has credit for the word
-            if (!_scoreboard.Add(word, points, player.PLAYER_INDEX)) return;
+            if (points == -1) return;
 
             //update the ui
-            player.AddPoints(points);
             if (points == 0) player.UI.WorthPointsNo();
-            else player.UI.WorthPointsYes();
+            else
+            {
+                player.UI.WorthPointsYes();
+                player.AddPoints((uint)points);
+            }
         }
 
         //called from the windows message reader to register a player's keyboard
@@ -328,23 +330,21 @@ namespace KeyboardGameV2
 
                 if (optDictionarySelect.Checked)
                 {
-                    wss = new WordScoreSystem(_dictionary.OCCURANCE_RATE_POINT_MAP);
                     _dictionary.Draw(TILES_TO_DRAW);
-                    wss.SetDraw(_dictionary.draw, _dictionary.drawLetterCount);
+                    _scoreboard.SetDraw(_dictionary.draw, _dictionary.drawLetterCount, _dictionary.OCCURANCE_RATE_POINT_MAP);
                 }
                 else
                 {
-                    wss = new WordScoreSystem(_bag.POINTS_MAP);
                     string? s = _bag.Draw(TILES_TO_DRAW);
-                    if (s is not null) wss.SetDraw(s, _bag._drawCount);
+                    if (s is not null) _scoreboard.SetDraw(s, _bag._drawCount, _bag.POINTS_MAP);
                 }
-                lblLetterPool.Text = wss.FormatDraw(
+                lblLetterPool.Text = _scoreboard.FormatDraw(
                     optSorted.Checked, optPoints.Checked, optSpaces.Checked);
-                char[] sorted = wss.GetDraw().ToCharArray();
+                char[] sorted = _scoreboard.GetDraw().ToCharArray();
                 Array.Sort(sorted);
                 _dictionary.StartSearch(new string(sorted));
                 foreach (string word in _dictionary.found_words)
-                    _scoreboard.Add(word, wss.ScoreWord(word));
+                    _scoreboard.Add(word);
                 _scoreboard.Sort();
             }
 
