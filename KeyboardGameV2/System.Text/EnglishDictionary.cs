@@ -22,11 +22,11 @@ public class EnglishDictionary
     public readonly byte MAX_WORD_LENGTH;
     public readonly byte MIN_WORD_LENGTH;
 
-    //count of word lengths
-    public readonly uint[] WORD_LENGTH_COUNT;
-
     //total letters in dictionary
     public readonly ulong TOTAL_LETTERS;
+
+    //count of word lengths
+    public readonly uint[] WORD_LENGTH_COUNT;
 
     //counts of letters in the dictionary
     public readonly uint[] LETTER_COUNT;
@@ -40,7 +40,8 @@ public class EnglishDictionary
     //point system scaled by occurance rate
     public readonly byte[] OCCURANCE_RATE_POINT_MAP;
 
-    private readonly List<TrieNode> dictionary = [];
+    private readonly List<TrieNode> dictionary_list = [];
+    private readonly TrieNode[] dictionary;
 
     //bute force search of sorted string of letters
     //------------------------------------------------
@@ -231,12 +232,20 @@ public class EnglishDictionary
         OCCURANCE_RATE_POINT_MAP = new byte[1];
         RNG = new Random();
         drawLetterCount = new byte[1];
+        dictionary = new TrieNode[1];
     }
 
+    // 190k list
     // https://github.com/wordnik/wordlist/tree/main
+
+    // bad words
+    // https://github.com/zacanger/profane-words
+
     // with quation marks removed
     // one word per line
     // lower case
+
+    /*
     public EnglishDictionary(Stream s, string path)
     {
         drawLetterCount = new byte[1];
@@ -291,6 +300,7 @@ public class EnglishDictionary
             //continue reading the stream
             wordFromFile = sr.ReadLine();
         }
+        sr.Close();
 
         //set max word length
         for (MAX_WORD_LENGTH = byte.MaxValue - 1;
@@ -339,6 +349,106 @@ public class EnglishDictionary
         word_2stdev_min = (byte)Math.Round(average_word_length-(word_length_stdev * 2));
         word_2stdev_max = (byte)Math.Round(average_word_length+(word_length_stdev * 2));
     }
+    */
+    
+    public EnglishDictionary(List<string> words)
+    {
+        dictionary = new TrieNode[1];
+        drawLetterCount = new byte[1];
+        WORD_COUNT = (uint)words.Count;
+        dictionary_list.Add(new TrieNode());
+        RNG = new Random();
+
+        //metadata about the loaded words
+        LETTER_COUNT = new uint[ENGLISH_LETTERS];
+        MAX_LETTER_COUNT = new byte[ENGLISH_LETTERS];
+        WORD_LENGTH_COUNT = new uint[byte.MaxValue];
+        TOTAL_LETTERS = 0;
+
+        //read stream
+        foreach(string word in words)
+        {
+            byte[] wordLetterCount = new byte[ENGLISH_LETTERS];
+            int dictionaryIndex = 0;
+
+            //metadata count
+            WORD_LENGTH_COUNT[word.Length]++;
+            foreach (char letter in word)
+            {
+                int letterIndex = letter - (byte)CharEncoding.ASCII.LETTER_a;
+
+                //dictionary node navigation and addition
+                if (dictionary_list[dictionaryIndex].children[letterIndex] == 0)
+                {
+                    TrieNode t = new();
+                    dictionary_list.Add(t);
+                    dictionary_list[dictionaryIndex].children[letterIndex] = dictionary_list.Count - 1;
+                    dictionaryIndex = dictionary_list[dictionaryIndex].children[letterIndex];
+                }
+                else dictionaryIndex = dictionary_list[dictionaryIndex].children[letterIndex];
+
+                //metadata count
+                TOTAL_LETTERS++;
+                LETTER_COUNT[letterIndex]++;
+                wordLetterCount[letterIndex]++;
+            }
+            dictionary_list[dictionaryIndex].endWord = true;
+
+            //check for max letter occurances
+            for (byte x = 0; x < ENGLISH_LETTERS; x++)
+                if (wordLetterCount[x] > MAX_LETTER_COUNT[x])
+                    MAX_LETTER_COUNT[x] = wordLetterCount[x];
+        }
+
+        //set max word length
+        for (MAX_WORD_LENGTH = byte.MaxValue - 1;
+            WORD_LENGTH_COUNT[MAX_WORD_LENGTH] == 0;
+            MAX_WORD_LENGTH--) ;
+
+        //set min word length
+        for (MIN_WORD_LENGTH = 1;
+            WORD_LENGTH_COUNT[MIN_WORD_LENGTH] == 0;
+            MIN_WORD_LENGTH++) ;
+
+        //setup for occurance rate calculations
+        OCCURANCE_RATE = new double[ENGLISH_LETTERS];
+        OCCURANCE_RATE_POINT_MAP = new byte[ENGLISH_LETTERS];
+        double dmin = Double.MaxValue;
+        double dmax = Double.MinValue;
+        byte tile_reduction;
+        byte points_offset;
+
+        //percent occurance rate for each letter
+        for (byte x = 0; x < ENGLISH_LETTERS; x++)
+        {
+            OCCURANCE_RATE[x] = (LETTER_COUNT[x] / (double)TOTAL_LETTERS) * 100;
+            if (OCCURANCE_RATE[x] < dmin) dmin = OCCURANCE_RATE[x];
+            if (OCCURANCE_RATE[x] > dmax) dmax = OCCURANCE_RATE[x];
+        }
+
+        //point scaling
+        tile_reduction = (byte)(Occurance_Scaler(dmin, dmin, dmax) - 1);
+        points_offset = (byte)(Occurance_Scaler(dmax, dmin, dmax) - tile_reduction + 1);
+        for (byte x = 0; x < ENGLISH_LETTERS; x++)
+            OCCURANCE_RATE_POINT_MAP[x] = (byte)(points_offset -
+                (Occurance_Scaler(OCCURANCE_RATE[x], dmin, dmax) - tile_reduction));
+
+        //Word Length Standard Deviation
+        ulong total_word_lengths = 0;
+        for (byte x = MIN_WORD_LENGTH; x <= MAX_WORD_LENGTH; x++)
+            total_word_lengths += WORD_LENGTH_COUNT[x] * x;
+        average_word_length = (double)total_word_lengths / (double)WORD_COUNT;
+        word_length_stdev = 0.0;
+        for (byte x = MIN_WORD_LENGTH; x <= MAX_WORD_LENGTH; x++)
+            word_length_stdev += WORD_LENGTH_COUNT[x] * Math.Pow(x - average_word_length, 2);
+        word_length_stdev = Math.Sqrt(word_length_stdev / (WORD_COUNT - 1));
+        word_stdev_min = (byte)Math.Round(average_word_length - word_length_stdev);
+        word_stdev_max = (byte)Math.Round(average_word_length + word_length_stdev);
+        word_2stdev_min = (byte)Math.Round(average_word_length - (word_length_stdev * 2));
+        word_2stdev_max = (byte)Math.Round(average_word_length + (word_length_stdev * 2));
+    }
+
+
 
     //logarithmic point scaler to keep letter scores in an acceptable range
     private static byte Occurance_Scaler(double x, double min, double max)
@@ -351,5 +461,98 @@ public class EnglishDictionary
     {
         public int[] children = new int[ENGLISH_LETTERS];
         public bool endWord = false;
+    }
+
+    
+
+    public EnglishDictionary(BinaryReader reader)
+    {
+        string language = reader.ReadString();
+        if (!language.Equals("en")) throw new NotImplementedException(language);
+        byte letters = ENGLISH_LETTERS;
+
+        word_stdev_min = reader.ReadByte();
+        word_stdev_max = reader.ReadByte();
+        word_2stdev_min = reader.ReadByte();
+        word_2stdev_max = reader.ReadByte();
+        MAX_WORD_LENGTH = reader.ReadByte();
+        MIN_WORD_LENGTH = reader.ReadByte();
+
+        WORD_COUNT = reader.ReadUInt32();
+
+        TOTAL_LETTERS = reader.ReadUInt64();
+
+        average_word_length = reader.ReadDouble();
+        word_length_stdev = reader.ReadDouble();
+
+        WORD_LENGTH_COUNT = new uint[MAX_WORD_LENGTH+1];
+        for (int x = 0; x < WORD_LENGTH_COUNT.Length; x++)
+            WORD_LENGTH_COUNT[x] = reader.ReadUInt32();
+        MAX_LETTER_COUNT = new byte[letters];
+        for (int letter = 0; letter < letters; letter++)
+            MAX_LETTER_COUNT[letter] = reader.ReadByte();
+        OCCURANCE_RATE_POINT_MAP = new byte[letters];
+        for (int letter = 0; letter < letters; letter++)
+            OCCURANCE_RATE_POINT_MAP[letter] = reader.ReadByte();
+        LETTER_COUNT = new uint[letters];
+        for (int letter = 0; letter < letters; letter++)
+            LETTER_COUNT[letter] = reader.ReadUInt32();
+        OCCURANCE_RATE = new double[letters];
+        for (int letter = 0; letter < letters; letter++)
+            OCCURANCE_RATE[letter] = reader.ReadDouble();
+
+        dictionary = new TrieNode[reader.ReadInt32()];
+        for (int x = 0; x < dictionary.Length; x++)
+        {
+            dictionary[x] = new TrieNode();
+            for (int letter = 0; letter < letters; letter++)
+                dictionary[x].children[letter] = reader.ReadInt32();
+            dictionary[x].endWord = reader.ReadBoolean();
+        }
+
+        RNG = new();
+        drawLetterCount = new byte[letters];
+    }
+
+    public void Write(BinaryWriter writer)
+    {
+        writer.Write("en");
+        
+        //byte
+        writer.Write(word_stdev_min);
+        writer.Write(word_stdev_max);
+        writer.Write(word_2stdev_min);
+        writer.Write(word_2stdev_max);
+        writer.Write(MAX_WORD_LENGTH);
+        writer.Write(MIN_WORD_LENGTH);
+        
+        //uint
+        writer.Write(WORD_COUNT);
+        
+        //ulong
+        writer.Write(TOTAL_LETTERS);
+        
+        //double
+        writer.Write(average_word_length);
+        writer.Write(word_length_stdev);
+        
+        for (int x = 0; x <= MAX_WORD_LENGTH; x++)
+            writer.Write(WORD_LENGTH_COUNT[x]);
+        foreach (byte letter in MAX_LETTER_COUNT)
+            writer.Write(letter);
+        foreach (byte letter in OCCURANCE_RATE_POINT_MAP)
+            writer.Write(letter);
+        foreach (uint letter in LETTER_COUNT)
+            writer.Write(letter);
+        foreach (double letter in OCCURANCE_RATE)
+            writer.Write(letter);
+        
+        writer.Write(dictionary_list.Count);
+        foreach (TrieNode node in dictionary_list)
+        {
+            foreach (int child in node.children)
+                writer.Write(child);
+            writer.Write(node.endWord);
+        }
     }
 }
