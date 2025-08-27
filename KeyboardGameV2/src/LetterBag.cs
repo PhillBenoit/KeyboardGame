@@ -1,8 +1,12 @@
 ﻿//bag of letters selected at random for the letter pool
+using System.Text;
+
 namespace KeyboardGameV2.src
 {
     public class LetterBag
     {
+        private readonly CharEncoding.Language language;
+
         private class LetterTile(char c)
         {
             public readonly char LETTER = c;
@@ -22,7 +26,8 @@ namespace KeyboardGameV2.src
         private readonly ushort TILE_COUNT;
 
         //number of letters left in the bag
-        public ushort tilesRemaining;
+        private ushort tilesRemaining;
+        public ushort TilesRemaining() { return tilesRemaining; }
 
         //holds the count of letters in the ltter pool
         public byte[] _drawCount;
@@ -30,27 +35,26 @@ namespace KeyboardGameV2.src
         public string draw_string = "";
 
         //generic constructor for basic declaration
+#pragma warning disable CS8618 //*********************************************************************
         public LetterBag()
         {
-            BAG = new LetterTile[1];
-            RNG = new Random();
-            POINTS_MAP = new byte[1];
-            _drawCount = new byte[1];
         }
+#pragma warning restore CS8618 //*********************************************************************
 
         //real constructor
-        public LetterBag(byte[] letters, char firstLetter)
+        public LetterBag(byte[] letters, CharEncoding.Language language)
         {
+            this.language = language;
+            
             //metadata for counting
             TILE_COUNT = 0;
             ushort tileCursor = 0;
             byte max = byte.MinValue;
-            char letterCursor = firstLetter;
 
             //establish the other class memebers
             RNG = new Random();
-            POINTS_MAP = new byte[letters.Length];
-            _drawCount = new byte[POINTS_MAP.Length];
+            POINTS_MAP = new byte[language.letterCount];
+            _drawCount = new byte[language.letterCount];
 
             //count the number of tiles that need to be created
             for (byte x = 0; x < letters.Length; x++)
@@ -74,9 +78,7 @@ namespace KeyboardGameV2.src
 
                 //create letter tiles
                 for (byte y = 0; y < letters[x]; y++)
-                    BAG[tileCursor++] = new LetterTile(letterCursor);
-
-                letterCursor++;
+                    BAG[tileCursor++] = new LetterTile(language.deindexer(x));
             }
         }
 
@@ -85,7 +87,7 @@ namespace KeyboardGameV2.src
             foreach (LetterTile t in BAG)
                 t.inBag = true;
             tilesRemaining = TILE_COUNT;
-            _drawCount = new byte[POINTS_MAP.Length];
+            _drawCount = new byte[language.letterCount];
             draw_string = "";
         }
 
@@ -98,7 +100,7 @@ namespace KeyboardGameV2.src
 
             char[] letters = new char[numberOfLetters];
             int randomPull;
-            _drawCount = new byte[POINTS_MAP.Length];
+            _drawCount = new byte[language.letterCount];
 
 
             for (byte x = 0; x < numberOfLetters; x++)
@@ -114,7 +116,7 @@ namespace KeyboardGameV2.src
                 letters[x] = BAG[randomPull].LETTER;
 
                 //increase count of letters used to determine a valid score
-                _drawCount[letters[x] - BAG[0].LETTER]++;
+                _drawCount[language.indexer(letters[x])]++;
 
                 //decrement the count so the bag can never be overdrawn
                 tilesRemaining--;

@@ -17,7 +17,9 @@ using Windows.Win32.UI.Input;
 
 namespace KeyboardGameV2
 {
+#pragma warning disable IDE1006 // Naming Styles
     public partial class frmGame : Form
+#pragma warning restore IDE1006 // Naming Styles
     {
         //Variables
         //---------------------------------
@@ -32,6 +34,8 @@ namespace KeyboardGameV2
         public const string POPMSG_FILE_FILTER = "one word per line txt files (*.txt)|*.txt";
         public const string POPMSG_FILE_FILTER_TRIE = "binary compiled dictionary (*.trie)|*.trie";
         private const string POPMSG_GAME_OVER = "Game Over!";
+
+        private static bool use_enye = false;
 
         //game tiles
         private LetterBag _bag = new();
@@ -61,7 +65,7 @@ namespace KeyboardGameV2
         private readonly Dictionary<IntPtr, KBGPlayer> _keyboardMap = [];
 
         //dictionary of correctly spelled words
-        private EnglishDictionary _dictionary;
+        private SpellingDictionary _dictionary;
 
         //Overrides for KB input
         //---------------------------------
@@ -124,7 +128,7 @@ namespace KeyboardGameV2
         private static void KELetter(KBGPlayer p, CharEncoding.VKEYS key)
         { p.UI.SetWord(p.UI.GetWord() + (char)(key + 0x20)); }
         private static void KEColon(KBGPlayer p, CharEncoding.VKEYS key)
-        { p.UI.SetWord(p.UI.GetWord() + (char)CharEncoding.ASCII.LETTER_ñ); }
+        { if (use_enye) p.UI.SetWord(p.UI.GetWord() + (char)CharEncoding.ASCII.LETTER_ñ); }
         private static void KEBackspace(KBGPlayer p, CharEncoding.VKEYS key)
         { string s = p.UI.GetWord(); if (!string.IsNullOrEmpty(s)) p.UI.SetWord(s[..^1]); }
         private static void KEDelete(KBGPlayer p, CharEncoding.VKEYS key)
@@ -171,6 +175,7 @@ namespace KeyboardGameV2
             lblLetterPool.Text = "";
             _seconds = DEFAULT_SECONDS;
             TILES_TO_DRAW = DEFAULT_TILES;
+            _dictionary = new SpellingDictionary();
 
             dgvScoreboard.ColumnCount = 7;
             dgvScoreboard.Columns[0].ValueType = typeof(string);
@@ -334,12 +339,15 @@ namespace KeyboardGameV2
                 if (optDictionarySelect.Checked)
                 {
                     _dictionary.Draw(TILES_TO_DRAW);
-                    _scoreboard.SetDraw(_dictionary.draw, _dictionary.drawLetterCount, _dictionary.OCCURANCE_RATE_POINT_MAP);
+                    _scoreboard.SetDraw(_dictionary.draw,
+                        _dictionary.drawLetterCount,
+                        _dictionary.OCCURANCE_RATE_POINT_MAP,
+                        _dictionary.language);
                 }
                 else
                 {
                     string? s = _bag.Draw(TILES_TO_DRAW);
-                    if (s is not null) _scoreboard.SetDraw(s, _bag._drawCount, _bag.POINTS_MAP);
+                    if (s is not null) _scoreboard.SetDraw(s, _bag._drawCount, _bag.POINTS_MAP, _dictionary.language);
                 }
                 lblLetterPool.Text = _scoreboard.FormatDraw(
                     optSorted.Checked, optPoints.Checked, optSpaces.Checked);
@@ -374,10 +382,11 @@ namespace KeyboardGameV2
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 BinaryReader reader = new(openFileDialog.OpenFile());
-                _dictionary = new EnglishDictionary(reader);
+                _dictionary = new SpellingDictionary(reader);
                 reader.Close();
-                
-                _bag = new LetterBag(_dictionary.MAX_LETTER_COUNT, (char)CharEncoding.ASCII.LETTER_a);
+
+                use_enye = _dictionary.language == CharEncoding.Languages.ES;
+                _bag = new LetterBag(_dictionary.MAX_LETTER_COUNT, _dictionary.language);
                 mnuLoad.Enabled = false;
                 mnuPoolLetterCount.Enabled = true;
                 mnuShowWords.Enabled = true;

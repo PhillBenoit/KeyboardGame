@@ -4,6 +4,45 @@ namespace System.Text
 {
     static public class CharEncoding
     {
+        //structures a language with common interfaces
+        public class Language(Func<char, byte> indexer, Func<byte, char> deindexer, byte letters)
+        {
+            public readonly Func<char, byte> indexer = indexer;
+            public readonly Func<byte, char> deindexer = deindexer;
+            public readonly byte letterCount = letters;
+        }
+
+        
+        //static lanuage definiations
+        public static class Languages
+        {
+            public static readonly Language EN = new(Encode_EN, Reverse_EN, 26);
+            public static readonly Language ES = new(Encode_ES, Reverse_ES, 27);
+
+            private static byte Encode_EN(char c)
+            {
+                return (byte)(c - 'a');
+            }
+            private static byte Encode_ES(char c)
+            {
+                byte value = (byte)(c - 'a');
+                if (value < 26) return value;
+                if (value == 0x90) return 26;
+                throw new ArgumentException(c + " not recognized");
+            }
+            private static char Reverse_EN(byte i)
+            {
+                return (char)(i + 'a');
+            }
+            private static char Reverse_ES(byte i)
+            {
+                if (i < 26) return (char)(i + 'a');
+                if (i == 26) return 'ñ';
+                throw new ArgumentException(i + " not recognized");
+            }
+
+        }
+
         //Windows-1252
         public enum ASCII : ushort
         {

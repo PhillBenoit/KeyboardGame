@@ -40,6 +40,7 @@
             boxOutput = new GroupBox();
             txtOutput = new TextBox();
             btnOutput = new Button();
+            chkEnye = new CheckBox();
             menuStrip1.SuspendLayout();
             boxLoad.SuspendLayout();
             boxExclude.SuspendLayout();
@@ -76,14 +77,15 @@
             // lblLoad
             // 
             lblLoad.BackColor = SystemColors.HighlightText;
-            lblLoad.Location = new Point(6, 51);
+            lblLoad.Location = new Point(98, 51);
             lblLoad.Name = "lblLoad";
-            lblLoad.Size = new Size(1024, 57);
+            lblLoad.Size = new Size(932, 57);
             lblLoad.TabIndex = 3;
             lblLoad.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // boxLoad
             // 
+            boxLoad.Controls.Add(chkEnye);
             boxLoad.Controls.Add(btnLoad);
             boxLoad.Controls.Add(lblLoad);
             boxLoad.Location = new Point(12, 116);
@@ -152,6 +154,7 @@
             txtOutput.Name = "txtOutput";
             txtOutput.Size = new Size(1018, 55);
             txtOutput.TabIndex = 6;
+            txtOutput.TextAlign = HorizontalAlignment.Center;
             // 
             // btnOutput
             // 
@@ -163,6 +166,16 @@
             btnOutput.Text = "Save";
             btnOutput.UseVisualStyleBackColor = true;
             btnOutput.Click += Click_btnOutput;
+            // 
+            // chkEnye
+            // 
+            chkEnye.AutoSize = true;
+            chkEnye.Location = new Point(6, 50);
+            chkEnye.Name = "chkEnye";
+            chkEnye.Size = new Size(86, 52);
+            chkEnye.TabIndex = 7;
+            chkEnye.Text = "ñ";
+            chkEnye.UseVisualStyleBackColor = true;
             // 
             // frmDictTools
             // 
@@ -180,6 +193,7 @@
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             boxLoad.ResumeLayout(false);
+            boxLoad.PerformLayout();
             boxExclude.ResumeLayout(false);
             boxExclude.PerformLayout();
             boxOutput.ResumeLayout(false);
@@ -202,5 +216,6 @@
         private GroupBox boxOutput;
         private Button btnOutput;
         private TextBox txtOutput;
+        private CheckBox chkEnye;
     }
 }

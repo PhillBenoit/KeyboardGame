@@ -2,8 +2,9 @@
 
 namespace KeyboardGameV2.src
 {
-    public class ScoreSystem(DataGridView data)
+    public class ScoreSystem
     {
+        private CharEncoding.Language language = CharEncoding.Languages.EN;
 
         //holds the count of letters in the ltter pool
         private byte[] _drawCount = new byte[1];
@@ -12,6 +13,16 @@ namespace KeyboardGameV2.src
         private byte[] POINTS_MAP = new byte[1];
 
         private string draw = "";
+
+        private readonly DataGridView data;
+        private readonly ScoreBoardSort compareObject = new();
+
+        private const char empty = '☐';
+        private const char full = '☒';
+
+
+        public ScoreSystem(DataGridView data)
+        { this.data = data; Clear(); }
 
         //encoder for unicode used to give pool letters a subscript score
         private readonly UnicodeEncoding UNICODE = new();
@@ -24,7 +35,7 @@ namespace KeyboardGameV2.src
             //count letters in the word and compile score
             foreach (char letter in w)
             {
-                byte offsetLetter = (byte)(letter - (char)CharEncoding.ASCII.LETTER_a);
+                byte offsetLetter = language.indexer(letter);
                 wordLetterCount[offsetLetter]++;
                 score += POINTS_MAP[offsetLetter];
             }
@@ -39,11 +50,12 @@ namespace KeyboardGameV2.src
             return (ushort)score;
         }
 
-        public void SetDraw(string s, byte[] draw_count, byte[] point_map)
+        public void SetDraw(string s, byte[] draw_count, byte[] point_map, CharEncoding.Language language)
         {
             draw = s;
             _drawCount = draw_count;
             POINTS_MAP = point_map;
+            this.language = language;
         }
 
         public string GetDraw() { return draw; }
@@ -65,7 +77,7 @@ namespace KeyboardGameV2.src
 
                 if (score)
                     //substring for score
-                    foreach (char digit in POINTS_MAP[(int)(l - CharEncoding.ASCII.LETTER_a)].ToString())
+                    foreach (char digit in POINTS_MAP[language.indexer(l)].ToString())
                     {
                         draw_unicode.Add((byte)(digit + 0x50));
                         draw_unicode.Add(0x20);
@@ -88,12 +100,6 @@ namespace KeyboardGameV2.src
 
             return UNICODE.GetString([.. draw_unicode]);
         }
-        //----------------------------------------------------------------
-        private readonly DataGridView data = data;
-        private readonly ScoreBoardSort compareObject = new();
-
-        private const char empty = '☐';
-        private const char full = '☒';
 
         public void Clear() { data.Rows.Clear(); }
 

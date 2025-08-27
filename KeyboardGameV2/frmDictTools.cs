@@ -3,7 +3,9 @@ using System.Text;
 
 namespace KeyboardGameV2
 {
+#pragma warning disable IDE1006 // Naming Styles
     public partial class frmDictTools : Form
+#pragma warning restore IDE1006 // Naming Styles
     {
 
         private List<string> baseWords = [];
@@ -54,6 +56,7 @@ namespace KeyboardGameV2
             using OpenFileDialog openFileDialog = new();
             openFileDialog.Filter = frmGame.POPMSG_FILE_FILTER;
             openFileDialog.RestoreDirectory = true;
+            words.Clear();
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -72,7 +75,7 @@ namespace KeyboardGameV2
 
         private void Click_btnOutput(object sender, EventArgs e)
         {
-            EnglishDictionary dictionary;
+            SpellingDictionary dictionary;
             if (lblLoad.Text.Equals("") ||
                 txtOutput.Text.Equals("") ||
                 (chkExclude.Checked && lblExclude.Text.Equals("")))
@@ -83,11 +86,15 @@ namespace KeyboardGameV2
             }
             else
             {
+                CharEncoding.Language language = chkEnye.Checked ?
+                    CharEncoding.Languages.ES :
+                    CharEncoding.Languages.EN;
                 //good
                 if (chkExclude.Checked)
                 {
                     List<string> filteredWords = [];
                     uint excludeIndex = 0;
+                    
                     for (uint baseIndex = 0; baseIndex < baseWords.Count; baseIndex++)
                     {
                         int compare = baseWords[(int)baseIndex].CompareTo(
@@ -100,11 +107,11 @@ namespace KeyboardGameV2
                         }
                         if (compare != 0) filteredWords.Add(baseWords[(int)baseIndex]);
                     }
-                    dictionary = new EnglishDictionary(filteredWords);
+                    dictionary = new SpellingDictionary(filteredWords, language);
                 }
                 else
                 {
-                    dictionary = new EnglishDictionary(baseWords);
+                    dictionary = new SpellingDictionary(baseWords, language);
                 }
             }
             BinaryWriter writer = new(new FileStream(
