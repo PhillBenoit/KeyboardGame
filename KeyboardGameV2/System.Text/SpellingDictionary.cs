@@ -210,15 +210,42 @@ public class SpellingDictionary
 
     //------------------------------------------------
     //validation
-    public bool InDictionary(string s)
+    public List<string> InDictionary(string s)
     {
+        List<string> list = [];
         int index = 0;
-        foreach (char c in s)
+        for (byte letter = 0; letter < s.Length; letter++)
         {
-            index = dictionary[index].children[language.indexer(c)];
-            if (index == 0) return false;
+            index = dictionary[index].children[language.indexer(s[letter])];
+            if (index == 0)
+            {
+                list.Clear();
+                return list;
+            }
+            if (dictionary[index].endWord) list.Add(s[..(letter+1)]);
         }
-        return dictionary[index].endWord;
+        if (!dictionary[index].endWord)
+        {
+            list.Clear();
+            return list;
+        }
+        for (byte startLetter = 1; startLetter < s.Length; startLetter++)
+            foreach (string word in FindChildren(s[startLetter..]))
+                list.Add(word);
+        return list;
+    }
+
+    private List<string> FindChildren(string s)
+    {
+        List<string> words = [];
+        int index = 0;
+        for (byte letter = 0; letter < s.Length; letter++)
+        {
+            index = dictionary[index].children[language.indexer(s[letter])];
+            if (index == 0) return words;
+            if (dictionary[index].endWord) words.Add(s[..letter]);
+        }
+        return words;
     }
 
     //dummy constructor
@@ -302,9 +329,6 @@ public class SpellingDictionary
         for (MIN_WORD_LENGTH = 1;
             WORD_LENGTH_COUNT[MIN_WORD_LENGTH] == 0;
             MIN_WORD_LENGTH++) ;
-
-        for (byte letter = 0; letter < LETTER_COUNT.Length; letter++)
-            System.Diagnostics.Debug.WriteLine(language.deindexer(letter) + " " + LETTER_COUNT[letter]);
 
         //setup for occurance rate calculations
         OCCURANCE_RATE = new double[language.letterCount];

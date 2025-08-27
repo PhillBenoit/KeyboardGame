@@ -11,6 +11,7 @@ This program works by:
 */
 
 using KeyboardGameV2.src;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
 using Windows.Win32.UI.Input;
@@ -139,12 +140,24 @@ namespace KeyboardGameV2
         {
             if (Timer.Enabled)
             {
-                string s = p.UI.GetWord();
+                //find words that match input
+                List<string> words =
+                    _dictionary.InDictionary(p.UI.GetWord());
                 //make sure word is in the dictionary
-                if (_dictionary.InDictionary(s))
+                if (words.Count > 0)
                 {
                     p.UI.InDictionaryYes();
-                    AddWord(s, p);
+
+                    int points = AddWord(p.UI.GetWord(), p);
+                    if (points > 0)
+                    {
+                        foreach (string word in words)
+                            if (word.Length > 0)
+                                points += AddWord(word, p);
+                        p.UI.WorthPointsYes();
+                        p.AddPoints((uint)points);
+                    }
+                    else p.UI.WorthPointsNo();
                 }
                 else p.UI.InDictionaryNo();
                 p.UI.SetWord("");
@@ -240,19 +253,11 @@ namespace KeyboardGameV2
         }
 
         //process a correctly spelled word
-        internal void AddWord(string word, KBGPlayer player)
+        internal int AddWord(string word, KBGPlayer player)
         {
             int points = _scoreboard.Add(word, player.PLAYER_INDEX);
             //do nothing if the player already has credit for the word
-            if (points == -1) return;
-
-            //update the ui
-            if (points == 0) player.UI.WorthPointsNo();
-            else
-            {
-                player.UI.WorthPointsYes();
-                player.AddPoints((uint)points);
-            }
+            return points == -1 ? 0 : points;
         }
 
         //called from the windows message reader to register a player's keyboard
