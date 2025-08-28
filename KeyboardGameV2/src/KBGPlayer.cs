@@ -29,6 +29,7 @@ namespace KeyboardGameV2.src
             public void ToggleWordVisibility() { CurrentWord.Visible = !CurrentWord.Visible; }
             public void SetAssignText(string s) { Assign.Text = s; Box.Enabled = Assign.Checked; }
             public bool IsAssigned() { return Assign.Checked; }
+            public void SetBoxText(string s) { Box.Text = s; }
 
             public void ClearLights() { 
                 Heartbeat.BackColor = Control.DefaultBackColor;

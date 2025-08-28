@@ -28,15 +28,9 @@ namespace KeyboardGameV2
         //Variables
         //---------------------------------
 
-        //strings for UI controlls
-        private const string MNUMSG_ASSIGN = "Assign Player {0}";
-        private const string MNUMSG_RELEASE = "Release Player {0}";
-        private const string MSG_ASSIGN = "please press a letter";
-        private const string MNUMSG_START = "Start Game";
-        private const string MNUMSG_STOP = "Stop Game";
+        //untranslated strings for UI controlls
         private const string POPMSG_HANDLE_ERROR = "Failed to set up handler for raw input.\n";
         public const string POPMSG_FILE_FILTER = "one word per line txt files (*.txt)|*.txt";
-        private const string POPMSG_GAME_OVER = "Game Over!";
 
         //cue for keyboard driver to process ñ
         private static bool use_enye = false;
@@ -69,6 +63,8 @@ namespace KeyboardGameV2
 
         //dictionary of correctly spelled words
         private SpellingDictionary _dictionary;
+
+        private UILanguages.UILanguage uilanguage = UILanguages.EN;
 
         //Overrides for KB input
         //---------------------------------
@@ -187,7 +183,7 @@ namespace KeyboardGameV2
             foreach (KBGPlayer p in _players)
             {
                 p.Reset();
-                p.UI.SetAssignText(String.Format(MNUMSG_ASSIGN, p.PLAYER_INDEX));
+                p.UI.SetAssignText(String.Format(uilanguage.menu.assign, p.PLAYER_INDEX));
             }
             lblLetterPool.Text = "";
             _seconds = DEFAULT_SECONDS;
@@ -253,7 +249,7 @@ namespace KeyboardGameV2
             if (_seconds == 0)
             {
                 Click_mnuStart(sender, e);
-                MessageBox.Show(POPMSG_GAME_OVER);
+                MessageBox.Show(uilanguage.gameOver);
             }
         }
 
@@ -273,7 +269,6 @@ namespace KeyboardGameV2
             p.assignFlag = false;
 
             //update and reactivate ui elements
-            p.UI.SetAssignText(String.Format(MNUMSG_RELEASE, p.PLAYER_INDEX));
             mnuStrip.Enabled = true;
             mnuStart.Enabled = DictSelected();
             p.UI.SetWord("");
@@ -287,16 +282,16 @@ namespace KeyboardGameV2
             //assign
             if (p.UI.IsAssigned())
             {
-                nextText = String.Format(MNUMSG_RELEASE, p.PLAYER_INDEX);
+                nextText = String.Format(uilanguage.menu.release, p.PLAYER_INDEX);
                 mnuStrip.Enabled = false;
                 p.assignFlag = true;
-                p.UI.SetWord(MSG_ASSIGN);
+                p.UI.SetWord(uilanguage.assign);
             }
 
             //release
             else
             {
-                nextText = String.Format(MNUMSG_ASSIGN, p.PLAYER_INDEX);
+                nextText = String.Format(uilanguage.menu.assign, p.PLAYER_INDEX);
                 //search for and remove handle
                 IntPtr key = IntPtr.Zero;
                 foreach (var kh in _keyboardMap) if (kh.Value == p) key = kh.Key;
@@ -339,7 +334,7 @@ namespace KeyboardGameV2
             //game start actions
             if (start)
             {
-                nextText = MNUMSG_STOP;
+                nextText = uilanguage.menu.stop;
                 _seconds = ushort.Parse(optTime.Text);
                 barTimer.Maximum = _seconds;
                 barTimer.Value = _seconds;
@@ -375,7 +370,7 @@ namespace KeyboardGameV2
             {
                 if (mnuShowWords.Checked)
                     _scoreboard.ShowWords(byte.Parse(optShowWords.Text));
-                nextText = MNUMSG_START;
+                nextText = uilanguage.menu.stop;
             }
 
             //finish with these
@@ -383,7 +378,7 @@ namespace KeyboardGameV2
             Timer.Enabled = start;
         }
 
-        //load dictionary and set up bag of game tiles
+        //load dictionary, set UI language and set up bag of game tiles
         private void Click_Dict(object? sender, EventArgs e)
         {
             ArgumentNullException.ThrowIfNull(sender);
@@ -394,6 +389,33 @@ namespace KeyboardGameV2
             reader.Close();
 
             use_enye = _dictionary.language == CharEncoding.Languages.ES;
+            uilanguage = use_enye ? UILanguages.ES : UILanguages.EN;
+
+            for (byte x = 0; x < 4; x++)
+            {
+                _players[x].UI.SetBoxText(String.Format(uilanguage.boxes, x+1));
+                string playerSet =
+                    ((ToolStripMenuItem)mnuPlayers.DropDownItems[x]).Checked ?
+                    uilanguage.menu.release :
+                    uilanguage.menu.assign;
+                mnuPlayers.DropDownItems[x].Text = String.Format(playerSet, x+1);
+            }
+
+            mnuLoad.Text = uilanguage.menu.load;
+            mnuStart.Text = uilanguage.menu.load;
+            mnuPlayers.Text = uilanguage.menu.players;
+            mnuOptions.Text = uilanguage.menu.options.self;
+            mnuTime.Text = uilanguage.menu.options.timer;
+            mnuPoolLetterCount.Text = uilanguage.menu.options.count;
+            mnuShowWords.Text = uilanguage.menu.options.show;
+            mnuLetterPoolFormat.Text = uilanguage.menu.options.letterPoolFormat.self;
+            optSorted.Text = uilanguage.menu.options.letterPoolFormat.sorted;
+            optPoints.Text = uilanguage.menu.options.letterPoolFormat.points;
+            optSpaces.Text = uilanguage.menu.options.letterPoolFormat.spaces;
+            mnuLetterMode.Text = uilanguage.menu.options.letterMode.self;
+            optDictionarySelect.Text = uilanguage.menu.options.letterMode.dictionary;
+            optBagSelect.Text = uilanguage.menu.options.letterMode.bag;
+
             _bag = new LetterBag(_dictionary.MAX_LETTER_COUNT, _dictionary.language);
             mnuPoolLetterCount.Enabled = true;
             mnuShowWords.Enabled = true;
