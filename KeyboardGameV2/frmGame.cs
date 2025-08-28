@@ -7,20 +7,23 @@ This program works by:
 - mapping keypresses to player objects
 - including uniform ui elements to manipulate in player objects
 - making actions universal amongst all players
-- using a binary search of word hashes to verify spelling 
+- using a trie to store and navigate the dictionary to perform various tasks
+- scoreboard is populated with all possible words from the draw when the game begins
+- entries are searched inside the datagridview using the same sorting comparer
 */
 
 using KeyboardGameV2.src;
-using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
 using Windows.Win32.UI.Input;
 
 namespace KeyboardGameV2
 {
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable IDE1006 // Naming Styles
     public partial class frmGame : Form
 #pragma warning restore IDE1006 // Naming Styles
+#pragma warning restore IDE0079 // Remove unnecessary suppression
     {
         //Variables
         //---------------------------------
@@ -33,9 +36,9 @@ namespace KeyboardGameV2
         private const string MNUMSG_STOP = "Stop Game";
         private const string POPMSG_HANDLE_ERROR = "Failed to set up handler for raw input.\n";
         public const string POPMSG_FILE_FILTER = "one word per line txt files (*.txt)|*.txt";
-        public const string POPMSG_FILE_FILTER_TRIE = "binary compiled dictionary (*.trie)|*.trie";
         private const string POPMSG_GAME_OVER = "Game Over!";
 
+        //cue for keyboard driver to process ñ
         private static bool use_enye = false;
 
         //game tiles
@@ -43,8 +46,6 @@ namespace KeyboardGameV2
 
         //list of words found by all players
         private readonly ScoreSystem _scoreboard;
-
-        //private WordScoreSystem wss;
 
         //number of tiles to draw in a game
         private const byte MAX_TILES = 30;
@@ -57,6 +58,7 @@ namespace KeyboardGameV2
         private const ushort DEFAULT_SECONDS = 120;
         private ushort _seconds;
 
+        //how long words need to be when shown after the game
         private byte showWordsLength = 5;
 
         //objext that holds all of the plaers' information
@@ -148,14 +150,16 @@ namespace KeyboardGameV2
                 {
                     p.UI.InDictionaryYes();
 
+                    //make sure the entered word is worth points
                     int points = AddWord(p.UI.GetWord(), p);
                     if (points > 0)
                     {
+                        //give the player credit for all the found words
                         foreach (string word in words)
                             if (word.Length > 0)
                                 points += AddWord(word, p);
-                        p.UI.WorthPointsYes();
                         p.AddPoints((uint)points);
+                        p.UI.WorthPointsYes();
                     }
                     else p.UI.WorthPointsNo();
                 }
@@ -190,6 +194,7 @@ namespace KeyboardGameV2
             TILES_TO_DRAW = DEFAULT_TILES;
             _dictionary = new SpellingDictionary();
 
+            //manual setup of datagridview
             dgvScoreboard.ColumnCount = 7;
             dgvScoreboard.Columns[0].ValueType = typeof(string);
             dgvScoreboard.Columns[1].ValueType = typeof(string);
@@ -270,7 +275,7 @@ namespace KeyboardGameV2
             //update and reactivate ui elements
             p.UI.SetAssignText(String.Format(MNUMSG_RELEASE, p.PLAYER_INDEX));
             mnuStrip.Enabled = true;
-            mnuStart.Enabled = mnuLoad.Enabled == false;
+            mnuStart.Enabled = DictSelected();
             p.UI.SetWord("");
         }
 
@@ -301,7 +306,7 @@ namespace KeyboardGameV2
                 p.Reset();
                 mnuStart.Enabled =
                     _keyboardMap.Count > 0 &&
-                    mnuLoad.Enabled == false;
+                    DictSelected();
             }
 
             p.UI.SetAssignText(nextText);
@@ -310,6 +315,7 @@ namespace KeyboardGameV2
         //Menu click events
         //---------------------------------
 
+        //subform for converting text dictionaries to tries
         private void Click_mnuDictionaryTools(object sender, EventArgs e) { new frmDictTools(this).Show(); this.Hide(); }
 
         //individual calls from each player menu option
@@ -378,28 +384,57 @@ namespace KeyboardGameV2
         }
 
         //load dictionary and set up bag of game tiles
+        private void Click_Dict(object? sender, EventArgs e)
+        {
+            ArgumentNullException.ThrowIfNull(sender);
+            foreach (ToolStripMenuItem file in mnuLoad.DropDownItems)
+                file.Checked = file.Equals(sender);
+            BinaryReader reader = new(File.Open(path + '\\' + ((ToolStripMenuItem)sender).Text + ".trie", FileMode.Open));
+            _dictionary = new SpellingDictionary(reader);
+            reader.Close();
+
+            use_enye = _dictionary.language == CharEncoding.Languages.ES;
+            _bag = new LetterBag(_dictionary.MAX_LETTER_COUNT, _dictionary.language);
+            mnuPoolLetterCount.Enabled = true;
+            mnuShowWords.Enabled = true;
+            optShowWords.Text = _dictionary.word_stdev_min.ToString();
+            mnuStart.Enabled = _keyboardMap.Count > 0;
+        }
+
+        //used to map a file path to dictionaries
+        private string path = "";
+
+        //used to determine if a dictionary has been selected
+        private bool DictSelected()
+        {
+            foreach (ToolStripMenuItem file in mnuLoad.DropDownItems)
+                if (file.Checked) return true;
+            return false;
+        }
+
+        //used to load a path and fill the file load menu
         private void Click_mnuLoad(object sender, EventArgs e)
         {
-            using OpenFileDialog openFileDialog = new();
-            openFileDialog.Filter = POPMSG_FILE_FILTER_TRIE;
-            openFileDialog.RestoreDirectory = true;
-
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            if (mnuLoad.DropDownItems.Count == 0)
             {
-                BinaryReader reader = new(openFileDialog.OpenFile());
-                _dictionary = new SpellingDictionary(reader);
-                reader.Close();
-
-                use_enye = _dictionary.language == CharEncoding.Languages.ES;
-                _bag = new LetterBag(_dictionary.MAX_LETTER_COUNT, _dictionary.language);
-                mnuLoad.Enabled = false;
-                mnuPoolLetterCount.Enabled = true;
-                mnuShowWords.Enabled = true;
-                optShowWords.Text = _dictionary.word_stdev_min.ToString();
-                mnuStart.Enabled = _keyboardMap.Count > 0;
+                //pop the dialog
+                FolderBrowserDialog dialog = new();
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    //load the menu and set the path
+                    path = dialog.SelectedPath;
+                    string[] filenames = Directory.GetFiles(path);
+                    foreach (string filename in filenames)
+                        mnuLoad.DropDownItems.Add(new ToolStripMenuItem(
+                            filename[(filename.LastIndexOf('\\') + 1)..filename.LastIndexOf('.')],
+                            null,
+                            new EventHandler(Click_Dict)));
+                }
             }
         }
 
+
+        //options
         private void Click_LetterMode(object sender, EventArgs e)
         {
             optBagSelect.Checked = optDictionarySelect.Checked;
@@ -433,6 +468,7 @@ namespace KeyboardGameV2
             showWordsLength = (byte)wrapper;
         }
 
+        //enforces min, max, and default values
         private static void SetNumericText(ToolStripTextBox box,
             ref uint value, uint min, uint max, uint deflt)
         {

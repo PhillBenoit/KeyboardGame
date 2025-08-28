@@ -39,6 +39,7 @@ namespace Windows.Win32.UI.Input
         }
 
         //https://gitlab.winehq.org/wine/wine/-/wikis/Wine-Developer%27s-Guide/List-of-Windows-Messages
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable CA1069 // Enums values should not be duplicated
         public enum WINDOWS_MESSAGE_TYPE : ushort
         {
@@ -1165,6 +1166,6 @@ namespace Windows.Win32.UI.Input
             WM_RASDIALEVENT = 0xcccd
         }
 #pragma warning restore CA1069 // Enums values should not be duplicated
-
+#pragma warning restore IDE0079 // Remove unnecessary suppression
     }
 }

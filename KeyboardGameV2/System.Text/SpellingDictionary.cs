@@ -210,31 +210,46 @@ public class SpellingDictionary
 
     //------------------------------------------------
     //validation
+    
+    //returns all words from a player entry that can be found in the substrings of the entry
     public List<string> InDictionary(string s)
     {
         List<string> list = [];
         int index = 0;
+        
+        //navigates the trie for the player entry
         for (byte letter = 0; letter < s.Length; letter++)
         {
             index = dictionary[index].children[language.indexer(s[letter])];
+            
+            //at no point can the trie path return to the origin
             if (index == 0)
             {
                 list.Clear();
                 return list;
             }
+            
+            //add words as the trie is navigated
             if (dictionary[index].endWord) list.Add(s[..(letter+1)]);
         }
+        
+        //make sure the entered word is valid
         if (!dictionary[index].endWord)
         {
             list.Clear();
             return list;
         }
+        
+        //iterate through substrings of the entered word
         for (byte startLetter = 1; startLetter < s.Length; startLetter++)
+            //find words in substrings
             foreach (string word in FindChildren(s[startLetter..]))
                 list.Add(word);
+        
         return list;
     }
 
+    //finds words to score that are substrings of the entered word
     private List<string> FindChildren(string s)
     {
         List<string> words = [];
@@ -270,6 +285,7 @@ public class SpellingDictionary
     // one word per line
     // lower case
 
+    //constructor for text file conversion
     public SpellingDictionary(List<string> words, CharEncoding.Language language)
     {
         this.language = language;
@@ -368,8 +384,6 @@ public class SpellingDictionary
         word_2stdev_max = (byte)Math.Round(average_word_length + (word_length_stdev * 2));
     }
 
-
-
     //logarithmic point scaler to keep letter scores in an acceptable range
     private static byte Occurance_Scaler(double x, double min, double max)
     {
@@ -384,8 +398,7 @@ public class SpellingDictionary
         public bool endWord = false;
     }
 
-    
-
+    //constructor for regular game use
     public SpellingDictionary(BinaryReader reader)
     {
         string fileLanguage = reader.ReadString();

@@ -2,6 +2,7 @@
 
 namespace KeyboardGameV2.src
 {
+    //object for keeping track of words in the game
     public class ScoreSystem
     {
         private CharEncoding.Language language = CharEncoding.Languages.EN;
@@ -12,15 +13,18 @@ namespace KeyboardGameV2.src
         //point value for letters
         private byte[] POINTS_MAP = new byte[1];
 
+        //drawn tiles / letters
         private string draw = "";
 
+        //base data components
         private readonly DataGridView data;
         private readonly ScoreBoardSort compareObject = new();
 
+        //markers for player word attribution
         private const char empty = '☐';
         private const char full = '☒';
 
-
+        
         public ScoreSystem(DataGridView data)
         { this.data = data; Clear(); }
 
@@ -103,6 +107,7 @@ namespace KeyboardGameV2.src
 
         public void Clear() { data.Rows.Clear(); }
 
+        //add for words before the game
         public void Add(string word)
         {
             DataGridViewRow newRow = new();
@@ -118,6 +123,7 @@ namespace KeyboardGameV2.src
             data.Rows.Add(newRow);
         }
 
+        //show words after the game that were not found
         public void ShowWords(byte length)
         {
             for(int x = 0; x < data.RowCount; x++)
@@ -194,6 +200,7 @@ namespace KeyboardGameV2.src
             return -1;
         }
 
+        //comparison object for searching and sorting
         private class ScoreBoardSort : System.Collections.IComparer
         {
             public int Compare(object? x, object? y)
