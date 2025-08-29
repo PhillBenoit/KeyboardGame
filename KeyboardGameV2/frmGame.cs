@@ -154,6 +154,7 @@ namespace KeyboardGameV2
                         foreach (string word in words)
                             if (word.Length > 0)
                                 points += AddWord(word, p);
+                        points *= words.Count;
                         p.AddPoints((uint)points);
                         p.UI.WorthPointsYes();
                     }
@@ -402,7 +403,7 @@ namespace KeyboardGameV2
             }
 
             mnuLoad.Text = uilanguage.menu.load;
-            mnuStart.Text = uilanguage.menu.load;
+            mnuStart.Text = uilanguage.menu.start;
             mnuPlayers.Text = uilanguage.menu.players;
             mnuOptions.Text = uilanguage.menu.options.self;
             mnuTime.Text = uilanguage.menu.options.timer;
