@@ -4,7 +4,7 @@ namespace KeyboardGameV2.src
     public class UILanguages
     {
         public static readonly UILanguage EN =
-            new("Game Over!", "please press a letter", "Player {0}",
+            new("Not Scrabble or Boggle", "Game Over!", "please press a letter", "Player {0}",
                 new("Load Dictionary","Start Game", "Stop Game", "Players",
                     "Assign Player {0}", "Release Player {0}",
                     new("Options", "Game Timer (seconds)",
@@ -14,7 +14,7 @@ namespace KeyboardGameV2.src
                         new("Letter Mode", "Dictionary", "Bag"))));
 
         public static readonly UILanguage ES =
-            new("¡Juego Terminado!", "por favor presione una letra", "Jugador {0}",
+            new("Necesito un Mejor Nombre Para Esto", "¡Juego Terminado!", "por favor presione una letra", "Jugador {0}",
                 new("Diccionario de Carga", "Iniciar Juego", "Detener el Juego", "Jugadores",
                     "Asignar Jugador {0}", "Liberar Jugador {0}",
                     new("Opciones", "Temporizador de Juego (segundos)",
@@ -23,8 +23,9 @@ namespace KeyboardGameV2.src
                         new("Formato de Letras de la Piscina", "Ordenado", "Agujas", "Espacios"),
                         new("Modo Letra", "Diccionario", "Bolsa"))));
 
-        public class UILanguage(string gameOver, string assign, string boxes, UILanguage.Menu menu)
+        public class UILanguage(string title, string gameOver, string assign, string boxes, UILanguage.Menu menu)
         {
+            public readonly string title = title;
             public readonly string gameOver = gameOver;
             public readonly string assign = assign;
             public readonly string boxes = boxes;

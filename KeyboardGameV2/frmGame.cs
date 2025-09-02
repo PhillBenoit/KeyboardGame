@@ -138,6 +138,7 @@ namespace KeyboardGameV2
         {
             if (Timer.Enabled)
             {
+                p.UI.ClearLights();
                 //find words that match input
                 List<string> words =
                     _dictionary.InDictionary(p.UI.GetWord());
@@ -251,6 +252,7 @@ namespace KeyboardGameV2
             {
                 Click_mnuStart(sender, e);
                 MessageBox.Show(uilanguage.gameOver);
+                //mnuStart.Text = uilanguage.menu.start;
             }
         }
 
@@ -329,8 +331,9 @@ namespace KeyboardGameV2
             mnuOptions.Enabled = Timer.Enabled;
             mnuPlayers.Enabled = Timer.Enabled;
             dgvScoreboard.Columns[0].Visible = Timer.Enabled;
-            dgvScoreboard.Columns[1].Visible = start;
             mnuDictionaryTools.Enabled = Timer.Enabled;
+            mnuLoad.Enabled = Timer.Enabled;
+            dgvScoreboard.Columns[1].Visible = start;
 
             //game start actions
             if (start)
@@ -371,7 +374,7 @@ namespace KeyboardGameV2
             {
                 if (mnuShowWords.Checked)
                     _scoreboard.ShowWords(byte.Parse(optShowWords.Text));
-                nextText = uilanguage.menu.stop;
+                nextText = uilanguage.menu.start;
             }
 
             //finish with these
@@ -416,6 +419,7 @@ namespace KeyboardGameV2
             mnuLetterMode.Text = uilanguage.menu.options.letterMode.self;
             optDictionarySelect.Text = uilanguage.menu.options.letterMode.dictionary;
             optBagSelect.Text = uilanguage.menu.options.letterMode.bag;
+            this.Text = uilanguage.title;
 
             _bag = new LetterBag(_dictionary.MAX_LETTER_COUNT, _dictionary.language);
             mnuPoolLetterCount.Enabled = true;

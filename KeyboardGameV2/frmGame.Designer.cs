@@ -304,7 +304,7 @@
             // 
             // lblLetterPool
             // 
-            lblLetterPool.Font = new Font("Segoe UI", 24F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblLetterPool.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblLetterPool.Location = new Point(14, 79);
             lblLetterPool.Name = "lblLetterPool";
             lblLetterPool.Size = new Size(887, 93);
