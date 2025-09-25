@@ -3,6 +3,7 @@ using System.Text;
 
 namespace KeyboardGameV2.src
 {
+    // one of the two structures avalible for selecting letters
     public class LetterBag
     {
         private readonly CharEncoding.Language language;

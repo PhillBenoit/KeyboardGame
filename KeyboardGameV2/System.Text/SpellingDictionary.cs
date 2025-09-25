@@ -277,8 +277,6 @@ public class SpellingDictionary
     // https://github.com/zacanger/profane-words
 
     // spanish
-    // https://github.com/words/an-array-of-spanish-words
-    // https://github.com/keepassxreboot/keepassxc/files/12651434/Diccionario.Espanol.136k.palabras.txt
     // https://launchpad.net/ubuntu/+source/wspanish/1.0.26
 
     // with quation marks removed

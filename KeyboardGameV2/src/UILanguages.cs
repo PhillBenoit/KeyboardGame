@@ -1,4 +1,5 @@
-﻿
+﻿// these are all the text labels in the user interface
+// a complete object is required for a full translation
 namespace KeyboardGameV2.src
 {
     public class UILanguages

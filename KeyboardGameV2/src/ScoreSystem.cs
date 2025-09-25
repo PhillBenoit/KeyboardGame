@@ -54,6 +54,7 @@ namespace KeyboardGameV2.src
             return (ushort)score;
         }
 
+        // sets up information about the letters in the pool
         public void SetDraw(string s, byte[] draw_count, byte[] point_map, CharEncoding.Language language)
         {
             draw = s;
